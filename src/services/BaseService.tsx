@@ -11,7 +11,7 @@ export class BaseService {
 
     async getAll() {
         try {
-            const response = await fetch(`${this.baseAPI}/api/${this.controller}/`);
+            const response = await fetch(`${this.baseAPI}/${this.controller}/`);
             if (!response.ok) {
                 throw new Error('Error fetching data');
             }
