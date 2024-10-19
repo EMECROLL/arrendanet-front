@@ -3,17 +3,19 @@ import 'primereact/resources/primereact.min.css'; //core css
 import 'primeicons/primeicons.css'; //icons
 import 'primeflex/primeflex.css'; // flex
 import './App.css';
-import Ejemplo from './pages/Ejemplo/Ejemplo';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './AuthContext'; // Ajusta la ruta si es necesario
+import AppRouter from './AppRouter';
 
 function App() {
 
+ 
   return (
-    <BrowserRouter>
-		<Routes>
-			<Route path="/" element={<Ejemplo />} />
-		</Routes>
-	</BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRouter></AppRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

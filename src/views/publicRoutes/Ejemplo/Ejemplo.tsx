@@ -1,11 +1,11 @@
 import { FilterMatchMode } from 'primereact/api';
 import { useEffect, useRef, useState } from 'react';
-import { ITableSchema } from '../../interfaces/DataTable';
-import { CustomerService } from '../../services/CustomerService';
-import checkedBodyTemplate from '../../components/checked-body-template/checkedBodyTemplate';
-import BasicDataTable from '../../components/basic-data-table/BasicDataTable';
-import DeleteModal from '../../components/delete-modal/DeleteModal';
 import { Toast } from 'primereact/toast';
+import { CustomerService } from '../../../services/CustomerService';
+import { ITableSchema } from '../../../interfaces/DataTable';
+import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
+import DeleteModal from '../../../components/delete-modal/DeleteModal';
+import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
 // import { CarrosService } from '../services/CarrosService';
 
 function Ejemplo() {
@@ -70,7 +70,6 @@ function Ejemplo() {
         { icon: 'pi-cog', class: 'p-button-warning', onClick: (rowData) => console.log('Custom action for', rowData), tooltip: 'Custom Action' },
       ]
     }
-  
   
     return (
       <div className="App">
