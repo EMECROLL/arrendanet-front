@@ -3,14 +3,17 @@ import 'primereact/resources/primereact.min.css'; //core css
 import 'primeicons/primeicons.css'; //icons
 import 'primeflex/primeflex.css'; // flex
 import './App.css';
-import Ejemplo from './pages/Ejemplo';
+import Ejemplo from './pages/Ejemplo/Ejemplo';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
 
   return (
-    <div className="App">
-      <Ejemplo />
-    </div>
+    <BrowserRouter>
+		<Routes>
+			<Route path="/" element={<Ejemplo />} />
+		</Routes>
+	</BrowserRouter>
   );
 }
 

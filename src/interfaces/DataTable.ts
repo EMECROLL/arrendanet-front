@@ -24,7 +24,9 @@ export interface IFilter {
 
 export interface ITableSchema {
     Configuration: {
+        title: string;
         paginator: boolean;
+        checked?: boolean;
         rows?: number;
         dataKey: string;
         filterDisplay?: 'row' | 'menu';
