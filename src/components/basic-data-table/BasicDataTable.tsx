@@ -8,7 +8,7 @@ import { InputIcon } from 'primereact/inputicon';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { TriStateCheckbox } from 'primereact/tristatecheckbox';
-import { ITableSchema } from '../../interfaces/DataTable';
+import { ITableSchema } from '../../interfaces/data-table/DataTable';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 

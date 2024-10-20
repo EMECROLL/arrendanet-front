@@ -9,12 +9,12 @@ function AppRouter() {
     return (
         <Routes>
             {/* RUTAS PUBLICAS */}
-            {/* <Route path="/" element={<Ejemplo />} /> */}
+            <Route path="/" element={<Ejemplo />} />
 
             {/* RUTAS PROTEGIDAS DEL ADMIN */}
             <Route 
                 path='/protected' 
-                element={<ProtectedRoute element={<Ejemplo />} />} 
+                // element={<ProtectedRoute element={<Ejemplo />} />} 
             />
 
             {/* RUTA NO ENCONTRADA */}

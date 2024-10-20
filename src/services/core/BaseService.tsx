@@ -22,7 +22,7 @@ export class BaseService {
         }
     }
 
-    async getById(id: string) {
+    async getById(id: number) {
         try {
             const response = await fetch(`${this.baseAPI}/${this.controller}/${id}`);
             if (!response.ok) {
@@ -54,7 +54,7 @@ export class BaseService {
         }
     }
 
-    async edit(id: string, data: any) {
+    async edit(id: number, data: any) {
         try {
             const response = await fetch(`${this.baseAPI}/${this.controller}/${id}`, {
                 method: 'PUT',
@@ -73,7 +73,7 @@ export class BaseService {
         }
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         try {
             const response = await fetch(`${this.baseAPI}/${this.controller}/${id}`, {
                 method: 'DELETE',
@@ -81,6 +81,10 @@ export class BaseService {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
+            if (response.status === 204) {
+                return null;
+            }
+
             return await response.json();
         } catch (error) {
             console.error('Error deleting data:', error);
