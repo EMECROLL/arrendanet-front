@@ -5,7 +5,7 @@ export class BaseService {
         this.controller = controller;
     }
 
-    private get baseAPI() {
+    protected get baseAPI() {
         return import.meta.env.VITE_API_URL;
     }
 

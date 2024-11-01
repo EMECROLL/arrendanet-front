@@ -9,7 +9,7 @@ import { PersonaService } from '../../../services/persona/PersonaService';
 import { IPersona } from '../../../interfaces/persona/Persona';
 
 function Ejemplo() {
-    const [data, setData] = useState<any>()
+    const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [selectedDeleteData, setSelectedDeleteData] = useState<IPersona>()
     const toast = useRef(null);

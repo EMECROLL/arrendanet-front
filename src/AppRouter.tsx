@@ -1,21 +1,22 @@
+// src/AppRouter.js
 import { Route, Routes } from 'react-router-dom';
-import ProtectedRoute from './components/protected-route/ProtectedRoute';
 import { useAuth } from './AuthContext';
-import Ejemplo from './views/publicRoutes/Ejemplo/Ejemplo';
+import publicRoutes from './routes/public/publicRoutes';
+import privateRoutes from './routes/private/privateRoutes';
+import authRoutes from './routes/auth/authRoutes';
 
 function AppRouter() {
     const { isAuthenticated } = useAuth();
-
     return (
         <Routes>
-            {/* RUTAS PUBLICAS */}
-            <Route path="/" element={<Ejemplo />} />
+            {/* RUTAS DE AUTENTICACIÓN */}
+            {authRoutes}
 
-            {/* RUTAS PROTEGIDAS DEL ADMIN */}
-            <Route 
-                path='/protected' 
-                // element={<ProtectedRoute element={<Ejemplo />} />} 
-            />
+            {/* RUTAS PUBLICAS */}
+            {publicRoutes}
+
+            {/* RUTAS PROTEGIDAS */}
+            {isAuthenticated && privateRoutes}
 
             {/* RUTA NO ENCONTRADA */}
             <Route path='/*' element={<div>No encontrado</div>} />
