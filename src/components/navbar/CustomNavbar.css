@@ -1,0 +1,21 @@
+.p-menuitem-content:hover {
+    background: #FFF;
+}
+
+.text-span{
+    color: #FFF;
+}
+
+.p-menuitem-content:hover .text-span {
+    color: #001F3F;
+}
+
+.p-button{
+    color: #001F3F;
+    background: #FFF;
+}
+
+.p-button:hover{
+    background: #001F3F;
+    color: #FFF;
+}

@@ -1,28 +1,28 @@
 
 import { Menubar } from 'primereact/menubar';
-import { InputText } from 'primereact/inputtext';
 import { Badge } from 'primereact/badge';
-import { Avatar } from 'primereact/avatar';  
+import { Avatar } from 'primereact/avatar';
 import { useAuth } from '../../AuthContext';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
+import "./CustomNavbar.css";
 
 export default function Navbar() {
     const { isAuthenticated, logout } = useAuth();
-    const navigate = useNavigate(); 
- 
+    const navigate = useNavigate();
+
     // Estructura para que se muestre de cierta forma
     const itemRenderer = (item) => (
-        <a className="flex align-items-center p-menuitem-link">
+        <a className="flex align-items-center p-menuitem-link font-Nunito text-lg px-3 py-2">
             <span className={item.icon} />
-            <span className="mx-2">{item.label}</span>
+            <span className="mx-2 text-span">{item.label}</span>
             {item.badge && <Badge className="ml-auto" value={item.badge} />}
             {item.shortcut && <span className="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{item.shortcut}</span>}
         </a>
     );
 
     // Rutas para el navbar - ¿Vas a añadir alguna? Hazlo aquí.
-    const publicItems = [
+    const privateItems = [
         {
             label: 'Home',
             icon: 'pi pi-home',
@@ -86,40 +86,56 @@ export default function Navbar() {
         }
     ];
 
-    const privateItems = [
+    const publicItems = [
         {
-            label: 'Home',
-            icon: 'pi pi-home',
-            url: '/'
+            label: 'Inicio',
+            url: '/',
+            template: itemRenderer
+        },
+        {
+            label: 'Sobre nosotros',
+            url: '/sobre-nosotros',
+            template: itemRenderer
+
+        },
+        {
+            label: 'Ayuda',
+            url: '/ayuda',
+            template: itemRenderer
+
+        },
+        {
+            label: 'Legal',
+            url: '/legal',
+            template: itemRenderer
 
         }
     ]
 
-    // ! DEBEREMOS CAMBIAR ESTE ICONO DESPUES POR EL DE ARRENDA NET
-    const start = <img alt="logo" src="https://primefaces.org/cdn/primereact/images/logo.png" height="40" className="mr-2"></img>;
-    
+    const start = <div className='flex space-x-2 items-center mx-2 h-12 logo'>
+        <img className='my-auto' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
+        <h1 className='font-Nunito font-extrabold text-3xl mt-auto text-white sm:hidden lg:block'>ArrendaNet</h1>
+    </div>;
+
     // ! Esto cambiarlo por un login, sign up, log out
     const end = (
         <div className="flex align-items-center gap-2">
             {
                 isAuthenticated ?
-                <>
-                    <Button label="Log Out" onClick={logout}/>
-                    <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" />
-                </>
-                :
-                <>
-                    <Button label="Log In" onClick={()=> navigate('/login')}/>
-                    <Button label="Sign Up" onClick={()=> navigate('/sign-up')}/>
-                </>
+                    <>
+                        <Button label="Log Out" onClick={logout} />
+                        <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" />
+                    </>
+                    :
+                    <>
+                        <Button className='px-4 py-2 text-lg font-semibold mx-3 border-2 border-white p-button' label="Acceder" onClick={() => navigate('/login')} />
+                        {/* <Button label="Sign Up" onClick={()=> navigate('/sign-up')}/> */}
+                    </>
             }
         </div>
     );
 
     return (
-        <div className="card">
-            <Menubar model={isAuthenticated ? publicItems : privateItems} start={start} end={end} />
-        </div>
+        <Menubar className='grid grid-cols-3 my-auto rounded-none bg-navy' model={isAuthenticated ? privateItems : publicItems} start={start} end={end} />
     )
 }
-        
