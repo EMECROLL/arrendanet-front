@@ -14,7 +14,7 @@ export default function Navbar() {
 
     // Estructura para que se muestre de cierta forma
     const itemRenderer = (item) => (
-        <a className="flex align-items-center p-menuitem-link font-Nunito text-lg px-3 py-2">
+        <a className="flex align-items-center p-menuitem-link font-Nunito text-md px-3 py-2 text-white hover:text-navy">
             <span className={item.icon} />
             <span className="mx-2 text-span">{item.label}</span>
             {item.badge && <Badge className="ml-auto" value={item.badge} />}
@@ -78,24 +78,24 @@ export default function Navbar() {
     const publicItems = [
         {
             label: 'Inicio',
-            url: '/',
+            command: () => navigate('/'),
             template: itemRenderer
         },
         {
             label: 'Sobre nosotros',
-            url: '/sobre-nosotros',
+            command: () => navigate('/sobre-nosotros'),
             template: itemRenderer
 
         },
         {
-            label: 'Ayuda',
-            url: '/ayuda',
+            label: 'Contacto',
+            command: () => navigate('/contacto'),
             template: itemRenderer
 
         },
         {
             label: 'Legal',
-            url: '/legal',
+            command: () => navigate('/legal'),
             template: itemRenderer
 
         }
