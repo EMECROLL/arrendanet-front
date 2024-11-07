@@ -38,8 +38,8 @@ export default function Ayuda() {
   return (
     <main>
       <section className="flex flex-col justify-center p-10">
-        <h1 className="font-Nunito text-4xl text-center font-bold text-navy my-0">¡Estamos aquí para ayudarte!</h1>
-        <h2 className="text-navy font-Nunito text-xl font-light text-center my-0 w-10/12 mx-auto">Un equipo de soporte listo para responder cualquier pregunta o consulta que puedas tener.</h2>
+        <h1 className="text-4xl text-center font-bold text-navy my-0">¡Estamos aquí para ayudarte!</h1>
+        <h2 className="text-navy text-xl font-light text-center my-0 w-10/12 mx-auto">Un equipo de soporte listo para responder cualquier pregunta o consulta que puedas tener.</h2>
       </section>
 
 
