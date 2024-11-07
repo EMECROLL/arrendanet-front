@@ -1,0 +1,7 @@
+.hero {
+    background-image:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6)),
+    url('/src/assets/images/villa_inicio_hero.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}

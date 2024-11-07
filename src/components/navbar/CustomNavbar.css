@@ -1,3 +1,8 @@
+.navbar-custom {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
 .p-menuitem-content:hover {
     background: #FFF;
 }
@@ -10,12 +15,12 @@
     color: #001F3F;
 }
 
-.p-button{
+.p-button-navbar{
     color: #001F3F;
     background: #FFF;
 }
 
-.p-button:hover{
+.p-button-navbar:hover{
     background: #001F3F;
     color: #FFF;
 }

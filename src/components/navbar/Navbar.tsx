@@ -13,7 +13,7 @@ export default function Navbar() {
 
     // Estructura para que se muestre de cierta forma
     const itemRenderer = (item) => (
-        <a className="flex align-items-center p-menuitem-link font-Nunito text-lg px-3 py-2">
+        <a href={item.url} className="flex align-items-center p-menuitem-link font-Nunito text-md px-3 py-2 text-white hover:text-navy">
             <span className={item.icon} />
             <span className="mx-2 text-span">{item.label}</span>
             {item.badge && <Badge className="ml-auto" value={item.badge} />}
@@ -89,24 +89,24 @@ export default function Navbar() {
     const publicItems = [
         {
             label: 'Inicio',
-            url: '/',
+            command: () => navigate('/'),
             template: itemRenderer
         },
         {
             label: 'Sobre nosotros',
-            url: '/sobre-nosotros',
+            command: () => navigate('/sobre-nosotros'),
             template: itemRenderer
 
         },
         {
             label: 'Ayuda',
-            url: '/ayuda',
+            command: () => navigate('/ayuda'),
             template: itemRenderer
 
         },
         {
             label: 'Legal',
-            url: '/legal',
+            command: () => navigate('/legal'),
             template: itemRenderer
 
         }
@@ -114,7 +114,7 @@ export default function Navbar() {
 
     const start = <div className='flex space-x-2 items-center mx-2 h-12 logo'>
         <img className='my-auto' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
-        <h1 className='font-Nunito font-extrabold text-3xl mt-auto text-white sm:hidden lg:block'>ArrendaNet</h1>
+        <h1 className='font-Nunito font-extrabold text-3xl my-auto text-white sm:hidden lg:block'>ArrendaNet</h1>
     </div>;
 
     // ! Esto cambiarlo por un login, sign up, log out
@@ -128,7 +128,7 @@ export default function Navbar() {
                     </>
                     :
                     <>
-                        <Button className='px-4 py-2 text-lg font-semibold mx-3 border-2 border-white p-button' label="Acceder" onClick={() => navigate('/login')} />
+                        <Button className='px-4 py-2 text-lg font-semibold mx-3 border-2 border-white p-button-navbar' label="Acceder" onClick={() => navigate('/login')} />
                         {/* <Button label="Sign Up" onClick={()=> navigate('/sign-up')}/> */}
                     </>
             }
@@ -136,6 +136,6 @@ export default function Navbar() {
     );
 
     return (
-        <Menubar className='grid grid-cols-3 my-auto rounded-none bg-navy' model={isAuthenticated ? privateItems : publicItems} start={start} end={end} />
+        <Menubar className='navbar-custom border-none my-auto rounded-none bg-navy' model={isAuthenticated ? privateItems : publicItems} start={start} end={end} />
     )
 }
