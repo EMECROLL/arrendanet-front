@@ -9,6 +9,7 @@ import "./CustomNavbar.css";
 
 export default function Navbar() {
     const { isAuthenticated, logout } = useAuth();
+    
     const navigate = useNavigate();
 
     // Estructura para que se muestre de cierta forma
@@ -24,65 +25,53 @@ export default function Navbar() {
     // Rutas para el navbar - ¿Vas a añadir alguna? Hazlo aquí.
     const privateItems = [
         {
-            label: 'Home',
-            icon: 'pi pi-home',
-            url: '/'
+            label: 'Dashboard',
+            icon: 'pi pi-chart-bar',
+            template: itemRenderer,
+            command: () => navigate('/dashboard')
 
         },
         {
-            label: 'Features',
-            icon: 'pi pi-star'
+            label: 'Contratos',
+            icon: 'pi pi-hammer',
+            template: itemRenderer,
+            command: () => navigate('/contratos')
         },
         {
-            label: 'Projects',
-            icon: 'pi pi-search',
-            items: [
-                {
-                    label: 'Core',
-                    icon: 'pi pi-bolt',
-                    shortcut: '⌘+S',
-                    template: itemRenderer
-                },
-                {
-                    label: 'Blocks',
-                    icon: 'pi pi-server',
-                    shortcut: '⌘+B',
-                    template: itemRenderer
-                },
-                {
-                    label: 'UI Kit',
-                    icon: 'pi pi-pencil',
-                    shortcut: '⌘+U',
-                    template: itemRenderer
-                },
-                {
-                    separator: true
-                },
-                {
-                    label: 'Templates',
-                    icon: 'pi pi-palette',
-                    items: [
-                        {
-                            label: 'Apollo',
-                            icon: 'pi pi-palette',
-                            badge: 2,
-                            template: itemRenderer
-                        },
-                        {
-                            label: 'Ultima',
-                            icon: 'pi pi-palette',
-                            badge: 3,
-                            template: itemRenderer
-                        }
-                    ]
-                }
-            ]
+            label: 'Edificios',
+            icon: 'pi pi-building',
+            template: itemRenderer,
+            command: () => navigate('/edificios')
         },
         {
-            label: 'Contact',
-            icon: 'pi pi-envelope',
-            badge: 3,
-            template: itemRenderer
+            label: 'Habitaciones',
+            icon: 'pi pi-home',
+            template: itemRenderer,
+            command: () => navigate('/habitaciones')
+        },
+        {
+            label: 'Pagos',
+            icon: 'pi pi-receipt',
+            template: itemRenderer,
+            command: () => navigate('/pagos')
+        },
+        {
+            label: 'Usuarios',
+            icon: 'pi pi-users',
+            template: itemRenderer,
+            command: () => navigate('/usuarios')
+        },
+        {
+            label: 'Mantenimiento',
+            icon: 'pi pi-wrench',
+            template: itemRenderer,
+            command: () => navigate('/')
+        },
+        {
+            label: 'Chat',
+            icon: 'pi pi-comments',
+            template: itemRenderer,
+            command: () => navigate('/')
         }
     ];
 
@@ -112,9 +101,10 @@ export default function Navbar() {
         }
     ]
 
-    const start = <div className='flex space-x-2 items-center mx-2 h-12 logo'>
-        <img className='my-auto' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
-        <h1 className='font-Nunito font-extrabold text-3xl mt-auto text-white sm:hidden lg:block'>ArrendaNet</h1>
+    const start = 
+    <div className='flex space-x-2 items-center justify-center h-12 mr-4 logo'>
+        <img className='my-auto sm:hidden' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
+        <h1 className='font-Nunito font-extrabold text-3xl text-white hidden sm:block lg:block'>ArrendaNet</h1>
     </div>;
 
     // ! Esto cambiarlo por un login, sign up, log out
@@ -128,14 +118,17 @@ export default function Navbar() {
                     </>
                     :
                     <>
-                        <Button className='px-4 py-2 text-lg font-semibold mx-3 border-2 border-white p-button' label="Acceder" onClick={() => navigate('/login')} />
-                        {/* <Button label="Sign Up" onClick={()=> navigate('/sign-up')}/> */}
+                        <Button
+                        label="Acceder" onClick={isAuthenticated ? () => navigate('/dashboard') : () => navigate('/login')} />
                     </>
             }
         </div>
     );
-
+    console.log(isAuthenticated);
+    
     return (
-        <Menubar className='grid grid-cols-3 my-auto rounded-none bg-navy' model={isAuthenticated ? privateItems : publicItems} start={start} end={end} />
+        <Menubar 
+        model={isAuthenticated ? privateItems : publicItems} 
+        start={start} end={end} />
     )
 }

@@ -1,4 +1,4 @@
-import 'primereact/resources/themes/lara-light-indigo/theme.css'; //theme
+import './assets/themes/tailwind/tailwind-light/theme.scss' //personalized theme css
 import 'primereact/resources/primereact.min.css'; //core css
 import 'primeicons/primeicons.css'; //icons
 import 'primeflex/primeflex.css'; // flex

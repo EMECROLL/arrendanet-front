@@ -1,21 +1,19 @@
-.p-menuitem-content:hover {
-    background: #FFF;
+.p-menubar {
+    justify-content: space-between;
+    margin: 0;
+    border-radius: 0;
 }
 
-.text-span{
-    color: #FFF;
+.p-menubar-end {
+    margin-left: 0;
 }
 
-.p-menuitem-content:hover .text-span {
-    color: #001F3F;
-}
+@media (max-width: 970px) { 
+    .p-menubar {
+        justify-content: flex-start; 
+    }
 
-.p-button{
-    color: #001F3F;
-    background: #FFF;
-}
-
-.p-button:hover{
-    background: #001F3F;
-    color: #FFF;
+    .p-menubar-end {
+        margin-left: auto;
+    }
 }

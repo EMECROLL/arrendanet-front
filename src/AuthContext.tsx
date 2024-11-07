@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import CryptoJS from 'crypto-js';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { AccountService } from './services/account/AccountService';
 
 const AuthContext = createContext();
@@ -21,28 +21,32 @@ export const AuthProvider = ({ children }) => {
     const accountService = new AccountService();
 
     useEffect(() => {
-        const checkAuth = async () => {
+        const checkAuth = async () => {            
             const encryptedToken = localStorage.getItem('token'); 
 
             if (encryptedToken) {
-                const token = decryptJWT(encryptedToken);
-                const decoded = jwtDecode(token);
-
+                const token = decryptJWT(encryptedToken);                
+                const decoded = jwtDecode(token);                
                 const response = await accountService.validateToken(token);
+                console.log(response);
+                
                 if(response.success){
                     setIsAuthenticated(true);
                     setUser(decoded);
-                }else{
+                } else {
                     setIsAuthenticated(false);
                 }              
+            } else {
+                setIsAuthenticated(false);
             }
             setLoading(false);
         };
+
         checkAuth();
     }, []);
 
     const login = async (credentials) => {
-        try {
+        try {            
             const response = await accountService.login(credentials);
             if(response.success){
                 const token = response.token;

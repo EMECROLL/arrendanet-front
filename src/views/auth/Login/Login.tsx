@@ -4,8 +4,10 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Message } from 'primereact/message';
 import { Checkbox } from 'primereact/checkbox';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [credentials, setCredentials] = useState({ 
       email: '', 
@@ -27,7 +29,7 @@ function Login() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = { user: '', email: '', password: '', rememberMe: false };
     if (!credentials.email) {
@@ -42,10 +44,14 @@ function Login() {
       return;
     }
 
-    const response = login(credentials);
+    const response = await login(credentials);
+    
     if(!response.success){
       newErrors.user = 'Error con el usuario o contraseña';
       setErrors(newErrors);
+    }else{
+      setCredentials({ email: '', password: '', rememberMe: false });
+      navigate('/dashboard')
     }
   };
 

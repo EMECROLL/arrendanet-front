@@ -1,4 +1,4 @@
-import { IAccount } from '../../interfaces/account/account';
+import { IAccount } from '../../interfaces/account/Account';
 import { BaseService } from '../core/BaseService';
 
 const controller = "Account";
@@ -27,14 +27,14 @@ export class AccountService extends BaseService {
         }
     }
     
-    async validateToken(data: IAccount) {
-        try {
-            const response = await fetch(`${this.baseAPI}/${controller}/login`, {
+    async validateToken(token: string) {
+        try {            
+            const response = await fetch(`${this.baseAPI}/${controller}/validateToken`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(token),
             });
             if (!response.ok) {
                 throw new Error('Network response was not ok');

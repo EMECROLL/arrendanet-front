@@ -9,6 +9,8 @@ export interface ITableColumn {
     filterPlaceholder?: string; // placeholder del filtro xD
     filterField?: string; // alc aun no se para que es
     filterType?: 'text' | 'dropdown' | 'multiSelect' | 'checked';
+    isEnum?: boolean; // si es un enumerable
+    enumList?: string[]; // Lista de los enum enum
     showFilterMenu?: boolean; // ¿Quieres que se muestre el menu de filtros? contener, empezar, etc
     filterMenuStyle?: React.CSSProperties; // Estilo del menu de filtros. 
     style?: React.CSSProperties; // Estilos de la columna completa

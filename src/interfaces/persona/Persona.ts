@@ -4,4 +4,5 @@ export interface IPersona extends IBaseEntity{
     nombre: string;
     apellidoPaterno: string;
     apellidoMaterno: string;
+    idUsuario: number;
 }

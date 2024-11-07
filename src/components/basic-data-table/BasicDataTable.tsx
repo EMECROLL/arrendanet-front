@@ -66,14 +66,22 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
         return Array.from(uniqueValues).map(name => (name));
     };
     
-    const dynamicDropdownFilterTemplate = (options:ColumnFilterElementTemplateOptions, field:string) => {                
-        const uniqueOptions = getUniqueValues(field); 
+    const dynamicDropdownFilterTemplate = (options:ColumnFilterElementTemplateOptions, field:string, isEnum: boolean = false, enumList: string[]) => {                
+        var uniqueOptions = getUniqueValues(field); 
+        if(isEnum){
+            uniqueOptions = enumList
+        }else{
+            uniqueOptions = getUniqueValues(field); 
+        }
+        
         
         return (
             <Dropdown
                 value={options.value}
                 options={uniqueOptions}
-                onChange={(e) => {options.filterApplyCallback(e.value)}}
+                onChange={(e) => { 
+                    options.filterApplyCallback(isEnum ? enumList.indexOf(e.value).toString() : e.value) 
+                }}
                 placeholder="Select One"
                 optionLabel="name"
                 className="p-column-filter"
@@ -181,7 +189,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
             </div>
             <div className="flex flex-wrap gap-2">
                 {renderHeader()}
-                {/* <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} /> */}
+                <Button label="New" icon="pi pi-plus" severity="success" onClick={()=> console.log()} />
                 {
                     TableSchema.Configuration?.checked && 
                     <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected}  disabled={!selectedData || !selectedData.length}/>
@@ -193,6 +201,9 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
 
     return (
         <div className="card">
+            <h1 
+            className='text-[rgb(0, 31, 63)] pl-4'
+            >{TableSchema.Configuration.title}</h1>
             <DataTable 
             ref={dt}
             rowsPerPageOptions={[10, 15, 25, 50]}
@@ -231,7 +242,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
                             body={column.body}
                             filterElement={column.filterElement 
                                 ?? column.filterType == 'dropdown' 
-                                ? (options) => dynamicDropdownFilterTemplate(options, column.field) : 
+                                ? (options) => dynamicDropdownFilterTemplate(options, column.field, column.isEnum, column.enumList) : 
                                 column.filterType == 'multiSelect'
                                 ? (options) => representativeRowFilterTemplate(options, column.field) : 
                                 column.filterType == 'checked' ?
