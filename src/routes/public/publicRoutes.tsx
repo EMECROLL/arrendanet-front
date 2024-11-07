@@ -9,7 +9,7 @@ import Ayuda from '../../views/public/Ayuda/Ayuda';
 const publicRoutes = [
     <Route path="/" element={<Home />} />,
     <Route path="/sobre-nosotros" element={<SobreNostros />} />,
-    <Route path="/ayuda" element={<Ayuda />} />,
+    <Route path="/contacto" element={<Ayuda />} />,
     <Route path="/legal" element={<Legal />} />,
     <Route path="/ejemplo" element={<Ejemplo />} />
 ];

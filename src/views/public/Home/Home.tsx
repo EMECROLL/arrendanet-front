@@ -5,7 +5,7 @@ import { Accordion, AccordionTab } from "primereact/accordion";
 
 function Home() {
   return (
-    <div className="font-Nunito">
+    <main className="font-Nunito">
       <section className="flex flex-col justify-center min-h-[600px] hero p-10">
         <h1 className="font-Nunito text-4xl text-center font-bold text-white my-0">Simplifica la gestión de tus propiedades con una plataforma todo-en-uno.</h1>
         <h2 className="text-white font-Nunito text-2xl font-light text-center my-0">Conectamos a propietarios, encargados e inquilinos en una plataforma eficiente y segura.</h2>
@@ -87,7 +87,7 @@ function Home() {
           </AccordionTab>
         </Accordion>
       </section>
-    </div>
+    </main>
   )
 }
 
