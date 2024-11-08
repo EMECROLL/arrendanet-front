@@ -43,7 +43,7 @@ function Edificios() {
     async function deleteFunction() {
       if (selectedData && selectedData.id) {
           try {
-              await edificioService .delete(selectedData.id);
+              await edificioService.delete(selectedData.id);
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Persona Eliminada', life: 3000 });
           } catch (error) {
@@ -100,18 +100,28 @@ function Edificios() {
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
+        { name: 'id', label: 'Id', type: 'number', showField:false},
         { name: 'direccion', label: 'Dirección', type: 'text' },
         { name: 'contacto', label: 'Contacto', type: 'text' },
       ]
     }
 
     function CreateEdit(formData) {
+      console.log(formData);
         if (isEdit) {
-            // Lógica de edición
-            console.log(formData);
+            edificioService.edit(formData.id, formData).then(() => {
+              loadData();
+            }).catch((error) => {
+                console.error('Error fetching personas:', error);
+            })
         } else {
-            // Lógica de creación
-            console.log(formData);
+          const newFormData = { ...formData, id: 0 };
+          edificioService.create(newFormData).then((data) => {
+              console.log(data);
+              loadData();
+          }).catch((error) => {
+              console.error('Error al crear:', error);
+          });
         }
     }
   

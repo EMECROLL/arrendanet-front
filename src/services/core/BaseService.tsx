@@ -63,10 +63,17 @@ export class BaseService {
                 },
                 body: JSON.stringify(data),
             });
+    
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return await response.json();
+    
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                return await response.json();
+            } else {
+                return null;
+            }
         } catch (error) {
             console.error('Error editing data:', error);
             throw error;
