@@ -9,11 +9,15 @@ import { HabitacionService } from '../../../services/habitacion/HabitacionServic
 import { IPersona } from '../../../interfaces/persona/Persona';
 import BasicModal from '../../../components/basic-modal/BasicModal';
 import { EstatusHabitacion } from '../../../common/enums/enums';
+import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
+import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 
 function Habitaciones() {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
+    const [isEdit, setIsEdit] = useState(false)
+    const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
     const toast = useRef(null);
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
@@ -34,22 +38,17 @@ function Habitaciones() {
       });
     }
 
-    // ? Función para eliminar
+   // ? Función para abrir modal de eliminar
     function deleteData(rowData) {
       setShowDeleteModal(true);
       setSelectedData(rowData)
     }
 
-     // ? Función para cargar modal con datos
-     function showData(rowData) {
-      setShowDataModal(true);
-      setSelectedData(rowData)
-    }
-
+    // ? Función para eliminar el elemento seleccionado
     async function deleteFunction() {
-      if (selectedDeleteData && selectedDeleteData.id) {
+      if (selectedData && selectedData.id) {
           try {
-              await habitacionService.delete(selectedDeleteData.id);
+              await habitacionService.delete(selectedData.id);
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Persona Eliminada', life: 3000 });
           } catch (error) {
@@ -59,7 +58,20 @@ function Habitaciones() {
       } else {
           toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ninguna persona para eliminar', life: 3000 });
       }
-  }
+    }
+
+    // ? Función para abrir modal para editar
+    function editData(rowData) {
+      setShowCreateEditModal(true);
+      setIsEdit(true);
+      setSelectedData(rowData)
+    }
+
+    // ? Función para cargar modal con datos
+    function showData(rowData) {
+      setShowDataModal(true);
+      setSelectedData(rowData)
+    }
   
   
     const filtersName: string[] = ['numeroHabitacion', 'capacidadInquilinos', 'estatusHabitacion', 'idEdificio'];
@@ -85,10 +97,33 @@ function Habitaciones() {
       },
       Data: data,
       Actions:[
-        { icon: 'pi-pencil', class: 'p-button-primary', onClick: (rowData) => console.log('Edit action for', rowData), tooltip: 'Edit' },
+        { icon: 'pi-pencil', class: 'p-button-primary', onClick: (rowData) => editData(rowData), tooltip: 'Edit' },
         { icon: 'pi-trash', class: 'p-button-danger', onClick: (rowData) => deleteData(rowData), tooltip: 'Delete' },
         { icon: 'pi-info-circle', class: 'p-button-warning', onClick: (rowData) => showData(rowData), tooltip: 'Ver Más' },
+      ],
+      Services:{
+        CreateOrEdit: () => setShowCreateEditModal(true),
+      }
+    }
+
+    const formSchema:IFormSchema = {
+      title: TableSchema.Configuration.title,
+      fields: [
+        { name: 'numeroHabitacion', label: 'Número de habitación', type: 'number' },
+        { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos', type: 'number' },
+        { name: 'estatusHabitacion', label: 'Estatus Habitación', type: 'select', isEnum: true, listEnum: estatusHabitacionList },
+        { name: 'idEdificio', label: 'Edificio', type: 'select' },
       ]
+    }
+
+    function CreateEdit(formData) {
+        if (isEdit) {
+            // Lógica de edición
+            console.log(formData);
+        } else {
+            // Lógica de creación
+            console.log(formData);
+        }
     }
   
     return (
@@ -108,6 +143,15 @@ function Habitaciones() {
         setShowDataModal={setShowDataModal}
         data={selectedData}
         ></BasicModal>
+        <CreateEditModal
+            visible={showCreateEditModal}
+            setVisible={setShowCreateEditModal}
+            formSchema={formSchema}
+            onSave={CreateEdit}
+            data={selectedData}
+            setIsEdit={setIsEdit}
+            isEdit={isEdit}
+        />
       </div>
     );
 }

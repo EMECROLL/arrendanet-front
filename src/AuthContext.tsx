@@ -21,14 +21,14 @@ export const AuthProvider = ({ children }) => {
     const accountService = new AccountService();
 
     useEffect(() => {
-        const checkAuth = async () => {            
+        const checkAuth = async () => { 
             const encryptedToken = localStorage.getItem('token'); 
+            // console.log(encryptedToken);
 
             if (encryptedToken) {
                 const token = decryptJWT(encryptedToken);                
                 const decoded = jwtDecode(token);                
                 const response = await accountService.validateToken(token);
-                console.log(response);
                 
                 if(response.success){
                     setIsAuthenticated(true);

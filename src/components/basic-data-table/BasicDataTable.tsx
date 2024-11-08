@@ -189,7 +189,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
             </div>
             <div className="flex flex-wrap gap-2">
                 {renderHeader()}
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={()=> console.log()} />
+                <Button label="Crear" icon="pi pi-plus" severity="success" onClick={TableSchema.Services?.CreateOrEdit} />
                 {
                     TableSchema.Configuration?.checked && 
                     <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected}  disabled={!selectedData || !selectedData.length}/>

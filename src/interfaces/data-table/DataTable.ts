@@ -39,6 +39,10 @@ export interface ITableSchema {
     Filters?: { [key: string]: IFilter };
     Data?: any[];
     Actions: IAction[];
+    Services?: {
+        CreateOrEdit?: (rowData: any) => void;
+        Delete?: (rowData: any) => void;
+    };
 }
 
 export interface IAction {
