@@ -4,17 +4,15 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import React, { useEffect, useState } from 'react';
 
-function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data}) {    
+function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data }) {
     const [formData, setFormData] = useState({});
 
     useEffect(() => {
         const initialFormData = formSchema.fields.reduce((acc, field) => {
             let value = isEdit && data ? data[field.name] || '' : field.value || '';
-
             if (field.type === 'date' && value) {
                 value = value.split('T')[0];
             }
-
             acc[field.name] = value;
             return acc;
         }, {});
@@ -77,7 +75,18 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                         <Dropdown
                                             id={field.name}
                                             value={formData[field.name] || ''}
-                                            options={field.listEnum.map(item => ({ label: item, value: item }))}
+                                            options={field.listEnum.map((item, idx) => ({ label: item, value: idx }))}
+                                            onChange={(e) => handleChange(e, field)}
+                                            placeholder={`Seleccione ${field.label}`}
+                                        />
+                                    ) : field.isEndpoint && field.endpointData ? (
+                                        <Dropdown
+                                            id={field.name}
+                                            value={formData[field.name] || ''}
+                                            options={field.endpointData.map(item => ({
+                                                label: item[field.labelField],
+                                                value: item[field.valueField]
+                                            }))}
                                             onChange={(e) => handleChange(e, field)}
                                             placeholder={`Seleccione ${field.label}`}
                                         />

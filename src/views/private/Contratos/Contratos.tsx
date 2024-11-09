@@ -109,7 +109,8 @@ function Contratos() {
         { icon: 'pi-pencil', class: 'p-button-primary', onClick: (rowData) => editData(rowData), tooltip: 'Edit' },
         { icon: 'pi-trash', class: 'p-button-danger', onClick: (rowData) => deleteData(rowData), tooltip: 'Delete' },
         { icon: 'pi-info-circle', class: 'p-button-warning', onClick: (rowData) => showData(rowData), tooltip: 'Ver Más' },
-        { icon: 'pi-info-circle', class: 'p-button-warning', onClick: (rowData) => showData(rowData), tooltip: 'Ver Contrato' },
+        { icon: 'pi-file', class: 'p-button-primary', onClick: (rowData) => showData(rowData), tooltip: 'Ver Contrato', 
+          style: {background: "rgb(0, 31, 100)", border: "1px solid rgb(0, 31, 100)"} },
       ],
       Services:{
         CreateOrEdit: () => setShowCreateEditModal(true),
@@ -125,7 +126,7 @@ function Contratos() {
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
         { name: 'duracion', label: 'Duración', type: 'text' },
         { name: 'monto', label: 'Monto', type: 'number' },
-        { name: 'rutaContrato', label: 'Contrato', type: 'select' },
+        { name: 'rutaContrato', label: 'Contrato', type: 'file' },
         { name: 'idInquilino', label: 'Inquilino', type: 'select' },
         { name: 'idHabitacion', label: 'Habitación', type: 'select' },
       ]

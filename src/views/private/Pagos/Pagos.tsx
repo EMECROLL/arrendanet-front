@@ -105,7 +105,8 @@ function Pagos() {
         CreateOrEdit: () => setShowCreateEditModal(true),
       }
     }
-
+    console.log(estatusPagoList);
+    
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
@@ -113,7 +114,9 @@ function Pagos() {
         { name: 'fechaFin', label: 'Fecha Fin', type: 'date' },
         { name: 'monto', label: 'Monto', type: 'number' },
         { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList },
-        { name: 'idContrato', label: 'Contrato', type: 'select' },
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: [{ id: 1, nombre: 'Contrato A' }, { id: 2, nombre: 'Contrato B' }], // Datos del JSON
+        labelField: 'nombre',
+        valueField: 'id'  },
       ]
     }
   

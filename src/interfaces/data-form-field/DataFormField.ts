@@ -11,6 +11,10 @@ export interface IDataFormField {
     showField?: boolean,
     helperText?: string,
     required?: boolean,
+    isEndpoint?:boolean, 
+    endpointData?: any[], // El JSON con los datos que recibi del endpoint
+    labelField?: string,   // Nombre que se vera en el dropdonw
+    valueField?: string,   // Dato que se enviara
     isEnum?:boolean, 
     listEnum?: string[]
 }
