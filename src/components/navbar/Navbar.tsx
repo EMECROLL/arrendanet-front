@@ -128,6 +128,7 @@ export default function Navbar() {
     
     return (
         <Menubar 
+        className='border-none'
         model={isAuthenticated ? privateItems : publicItems} 
         start={start} end={end} />
     )
