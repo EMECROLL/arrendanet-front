@@ -11,6 +11,8 @@ import BasicModal from '../../../components/basic-modal/BasicModal';
 import { EstatusContrato, TipoContrato } from '../../../common/enums/enums';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
+import { HabitacionService } from '../../../services/habitacion/HabitacionService';
+import { PersonaService } from '../../../services/persona/PersonaService';
 
 function Contratos() {
     const [data, setData] = useState()
@@ -20,23 +22,46 @@ function Contratos() {
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
     const toast = useRef(null);
-    const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusContratoList = Object.values(EstatusContrato);
     const tipoContratoList = Object.values(TipoContrato);
+    const [inquilinos, setInquilinos] = useState()
+    const [habitaciones, setHabitaciones] = useState()
+
+    const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const personaService = new PersonaService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const ingnoreColumns = ['idInquilino', 'id', 'idHabitacion', 'idInquilino', 'rutaContrato']
+
 
     useEffect(() => {  
         loadData();
     }, []);
     
-    function loadData(){
+    async function loadData(){
+      const inquilinosResponse = await getInquilinos();
+      const habitacionesResponse = await getHabitaciones();
+
+      const inquilinosMap = await inquilinosResponse.reduce((acc, edificio) => {
+        acc[edificio.id] = edificio;
+        return acc;
+      }, {});
+
+      const habitacionesMap = await habitacionesResponse.reduce((acc, edificio) => {
+        acc[edificio.id] = edificio;
+        return acc;
+      }, {});
+
       // ? Aqui hago el cambio de un digito a un enum
       contratoService.getAll().then((data) => {
         const updatedData = data.map((element) => ({
           ...element,
+          inquilino: inquilinosMap[element.idInquilino].nombre,
+          habitacion: habitacionesMap[element.idHabitacion].numeroHabitacion,
           estatusContrato: estatusContratoList[element.estatusContrato],
           tipoContrato: tipoContratoList[element.tipoContrato],
         }));
         setData(updatedData);
+        
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
@@ -66,9 +91,15 @@ function Contratos() {
 
     // ? Función para abrir modal para editar
     function editData(rowData) {
+      getHabitaciones();
       setShowCreateEditModal(true);
       setIsEdit(true);
-      setSelectedData(rowData)
+      const rowDataModified = {
+        ...rowData,
+        tipoContrato: Object.values(tipoContratoList).indexOf(rowData.tipoContrato),
+        estatusContrato: Object.values(estatusContratoList).indexOf(rowData.estatusContrato)
+      }
+      setSelectedData(rowDataModified)
     }
 
     // ? Función para cargar modal con datos
@@ -76,8 +107,10 @@ function Contratos() {
       setShowDataModal(true);
       setSelectedData(rowData)
     }
+
+
   
-    const filtersName: string[] = ['fechaInicio', 'fechaFin', 'estatusContrato', 'duracion', 'idInquilino'];
+    const filtersName: string[] = ['fechaInicio', 'fechaFin', 'estatusContrato', 'duracion', 'inquilino'];
     const TableSchema: ITableSchema = {
       Configuration: {
         title:'Contratos',
@@ -86,14 +119,14 @@ function Contratos() {
         globalFilterFields: filtersName,
       },
       Columns: [
-        { header: 'Fecha Inicio', field: 'fechaInicio'},
-        { header: 'Fecha Fin', field: 'fechaFin'},
+        { header: 'Fecha Inicio', field: 'fechaInicio', isDate: true},
+        { header: 'Fecha Fin', field: 'fechaFin', isDate: true},
         { header: 'Estatus Contrato', field: 'estatusContrato', filterType:'dropdown'},
         // { header: 'Tipo Contrato', field: 'tipoContrato'},
         { header: 'Duracion', field: 'duracion'},
         // { header: 'Monto', field: 'monto'},
         // { header: 'Ruta Contrato', field: 'rutaContrato'},
-        { header: 'Inquilino', field: 'idInquilino'},
+        { header: 'Inquilino', field: 'inquilino'},
         // { header: 'Habitación', field: 'idHabitacion'},
       ],
       Filters: {
@@ -109,10 +142,42 @@ function Contratos() {
         { icon: 'pi-pencil', class: 'p-button-primary', onClick: (rowData) => editData(rowData), tooltip: 'Edit' },
         { icon: 'pi-trash', class: 'p-button-danger', onClick: (rowData) => deleteData(rowData), tooltip: 'Delete' },
         { icon: 'pi-info-circle', class: 'p-button-warning', onClick: (rowData) => showData(rowData), tooltip: 'Ver Más' },
-        { icon: 'pi-info-circle', class: 'p-button-warning', onClick: (rowData) => showData(rowData), tooltip: 'Ver Contrato' },
+        { icon: 'pi-file', class: 'p-button-primary', onClick: (rowData) => showData(rowData), tooltip: 'Ver Contrato', 
+          style: {background: "rgb(0, 31, 100)", border: "1px solid rgb(0, 31, 100)"} },
       ],
       Services:{
         CreateOrEdit: () => setShowCreateEditModal(true),
+      }
+    }
+
+
+    function CreateEdit(formData) {
+      if (isEdit) {
+          // Lógica de edición
+          console.log(formData);
+      } else {
+          // Lógica de creación
+          console.log(formData);
+      }
+    }
+
+    async function getInquilinos(){
+      const response = await personaService.getAll();
+      try {
+        setInquilinos(response)
+        return response;
+      } catch (error) {
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+      }
+    }
+
+    async function getHabitaciones(){
+      const response = await habitacionService.getAll();
+      try {
+        setHabitaciones(response)
+        return response;
+      } catch (error) {
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
       }
     }
 
@@ -123,24 +188,15 @@ function Contratos() {
         { name: 'fechaFin', label: 'Fecha Fin', type: 'date', isEnum: false, listEnum: [] },
         { name: 'estatusContrato', label: 'Estatus Contrato', type: 'select', isEnum: true, listEnum: estatusContratoList },
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
-        { name: 'duracion', label: 'Duración', type: 'text' },
+        { name: 'duracion', label: 'Duración', type: 'number', min: 0},
         { name: 'monto', label: 'Monto', type: 'number' },
-        { name: 'rutaContrato', label: 'Contrato', type: 'select' },
-        { name: 'idInquilino', label: 'Inquilino', type: 'select' },
-        { name: 'idHabitacion', label: 'Habitación', type: 'select' },
+        { name: 'rutaContrato', label: 'Contrato', type: 'file' },
+        { name: 'idInquilino', label: 'Inquilino', type: 'select', isEndpoint: true, endpointData: inquilinos, valueField:'id', labelField:'nombre'},
+        { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: habitaciones, valueField:'id', labelField:'numeroHabitacion'},
       ]
     }
 
-    function CreateEdit(formData) {
-        if (isEdit) {
-            // Lógica de edición
-            console.log(formData);
-        } else {
-            // Lógica de creación
-            console.log(formData);
-        }
-    }
-  
+    
     return (
       <div className="App p-10">
         <Toast ref={toast} />
@@ -157,6 +213,7 @@ function Contratos() {
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
+        ingnoreColumns={ingnoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}

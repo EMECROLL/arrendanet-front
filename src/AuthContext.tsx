@@ -2,6 +2,7 @@ import { jwtDecode } from 'jwt-decode';
 import CryptoJS from 'crypto-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AccountService } from './services/account/AccountService';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
@@ -19,12 +20,11 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const accountService = new AccountService();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkAuth = async () => { 
             const encryptedToken = localStorage.getItem('token'); 
-            // console.log(encryptedToken);
-
             if (encryptedToken) {
                 const token = decryptJWT(encryptedToken);                
                 const decoded = jwtDecode(token);                
@@ -65,10 +65,12 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
         setUser(null);
+        navigate('/login');
     };
-
+    const userRole = user ? user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] : null;
+        
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, loading, user }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, loading, user, userRole}}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,3 +1,9 @@
+export enum Roles {
+    DUEÑO = "Dueño",
+    ENCARGADO = "Encargado",
+    ADMINISTRADOR = "Admin",
+    INQUILINO = "Inquilino"
+}
 export enum EstatusContrato {
     ACTIVO = "Activo",
     INACTIVO = "Inactivo",

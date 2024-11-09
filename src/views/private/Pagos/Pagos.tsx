@@ -22,7 +22,6 @@ function Pagos() {
     const toast = useRef(null);
     const pagoService = new PagoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusPagoList = Object.values(EstatusPago);
-    
     useEffect(() => {  
         loadData();
     }, []);
@@ -70,6 +69,7 @@ function Pagos() {
 
     // ? Función para cargar modal con datos
     function showData(rowData) {
+     
       setShowDataModal(true);
       setSelectedData(rowData)
     }
@@ -83,7 +83,7 @@ function Pagos() {
         globalFilterFields: filtersName,
       },
       Columns: [
-        { header: 'Fecha', field: 'fecha'},
+        { header: 'Fecha', field: 'fecha', isDate: true},
         { header: 'Monto', field: 'monto'},
         { header: 'Estatus Pago', field: 'estatusPago', filterType: 'multiSelect'},
         { header: 'Contrato', field: 'idContrato'},
@@ -105,15 +105,17 @@ function Pagos() {
         CreateOrEdit: () => setShowCreateEditModal(true),
       }
     }
-
+    console.log(estatusPagoList);
+    
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
         { name: 'fecha', label: 'Fecha', type: 'date' },
-        { name: 'fechaFin', label: 'Fecha Fin', type: 'date' },
         { name: 'monto', label: 'Monto', type: 'number' },
         { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList },
-        { name: 'idContrato', label: 'Contrato', type: 'select' },
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: [{ id: 1, nombre: 'Contrato A' }, { id: 2, nombre: 'Contrato B' }], // Datos del JSON
+        labelField: 'nombre',
+        valueField: 'id'  },
       ]
     }
   

@@ -11,6 +11,7 @@ import BasicModal from '../../../components/basic-modal/BasicModal';
 import { EstatusHabitacion } from '../../../common/enums/enums';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
+import { EdificioService } from '../../../services/edificio/EdificioService';
 
 function Habitaciones() {
     const [data, setData] = useState()
@@ -19,17 +20,27 @@ function Habitaciones() {
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
+    const [edificios, setEdificios] = useState()
     const toast = useRef(null);
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusHabitacionList = Object.values(EstatusHabitacion)
     useEffect(() => {  
         loadData();
     }, []);
     
-    function loadData(){
+    async function loadData(){
+      const edificiosResponse = await getEdificios();
+
+      const edificiosMap = await edificiosResponse.reduce((acc, edificio) => {
+        acc[edificio.id] = edificio;
+        return acc;
+      }, {});
+
       habitacionService.getAll().then((data) => {
         const updatedData = data.map((element) => ({
           ...element,
+          edificio: edificiosMap[element.idEdificio].direccion,
           estatusHabitacion: estatusHabitacionList[element.estatusHabitacion],
         }));
         setData(updatedData);
@@ -86,7 +97,7 @@ function Habitaciones() {
         { header: 'Número de habitación', field: 'numeroHabitacion'},
         { header: 'Capacidad Inquilinos', field: 'capacidadInquilinos'},
         { header: 'Estatus Habitación', field: 'estatusHabitacion', filterType: 'dropdown'},
-        { header: 'Edificio', field: 'idEdificio'},
+        { header: 'Edificio', field: 'edificio'},
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -106,13 +117,23 @@ function Habitaciones() {
       }
     }
 
+    async function getEdificios(){
+      const response = await edificioService.getAll();
+      try {
+        setEdificios(response)
+        return response;
+      } catch (error) {
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+      }
+    }
+
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
         { name: 'numeroHabitacion', label: 'Número de habitación', type: 'number' },
         { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos', type: 'number' },
         { name: 'estatusHabitacion', label: 'Estatus Habitación', type: 'select', isEnum: true, listEnum: estatusHabitacionList },
-        { name: 'idEdificio', label: 'Edificio', type: 'select' },
+        { name: 'idEdificio', label: 'Edificio', type: 'select', isEndpoint: true, endpointData: edificios, valueField:'id', labelField: 'direccion'  },
       ]
     }
 
@@ -125,6 +146,7 @@ function Habitaciones() {
             console.log(formData);
         }
     }
+    
   
     return (
       <div className="App p-10">

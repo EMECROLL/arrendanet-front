@@ -6,9 +6,10 @@ import { useAuth } from '../../AuthContext';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
 import "./CustomNavbar.css";
+import { Roles } from '../../common/enums/enums';
 
 export default function Navbar() {
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated, logout, userRole } = useAuth();
     
     const navigate = useNavigate();
 
@@ -21,57 +22,66 @@ export default function Navbar() {
             {item.shortcut && <span className="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{item.shortcut}</span>}
         </a>
     );
-
+    
     // Rutas para el navbar - ¿Vas a añadir alguna? Hazlo aquí.
     const privateItems = [
         {
             label: 'Dashboard',
             icon: 'pi pi-chart-bar',
             template: itemRenderer,
-            command: () => navigate('/dashboard')
+            command: () => navigate('/dashboard'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
 
         },
         {
             label: 'Contratos',
             icon: 'pi pi-hammer',
             template: itemRenderer,
-            command: () => navigate('/contratos')
+            command: () => navigate('/contratos'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+
         },
         {
             label: 'Edificios',
             icon: 'pi pi-building',
             template: itemRenderer,
-            command: () => navigate('/edificios')
+            command: () => navigate('/edificios'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
             label: 'Habitaciones',
             icon: 'pi pi-home',
             template: itemRenderer,
-            command: () => navigate('/habitaciones')
+            command: () => navigate('/habitaciones'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
             label: 'Pagos',
             icon: 'pi pi-receipt',
             template: itemRenderer,
-            command: () => navigate('/pagos')
+            command: () => navigate('/pagos'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
             label: 'Usuarios',
             icon: 'pi pi-users',
             template: itemRenderer,
-            command: () => navigate('/usuarios')
+            command: () => navigate('/usuarios'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
             label: 'Mantenimiento',
             icon: 'pi pi-wrench',
             template: itemRenderer,
-            command: () => navigate('/')
+            command: () => navigate('/'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
         },
         {
             label: 'Chat',
             icon: 'pi pi-comments',
             template: itemRenderer,
-            command: () => navigate('/')
+            command: () => navigate('/'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
         }
     ];
 
@@ -107,7 +117,6 @@ export default function Navbar() {
         <h1 className='font-Nunito font-extrabold text-3xl text-white hidden sm:block lg:block'>ArrendaNet</h1>
     </div>;
 
-    // ! Esto cambiarlo por un login, sign up, log out
     const end = (
         <div className="flex align-items-center gap-2">
             {
@@ -124,12 +133,11 @@ export default function Navbar() {
             }
         </div>
     );
-    console.log(isAuthenticated);
     
     return (
         <Menubar 
         className='border-none'
-        model={isAuthenticated ? privateItems : publicItems} 
+        model={isAuthenticated ? privateItems.filter(item=> item.authorizedRoles.includes(userRole)) : publicItems} 
         start={start} end={end} />
     )
 }

@@ -15,6 +15,12 @@ export default function BasicModal({title, showDataModal, setShowDataModal, data
 
     const combinedIgnoreColumns = ['esBorrado', ...ingnoreColumns];
 
+    const formatDate = (value: any) => {
+        if (!value) return '';
+        const date = new Date(value);
+        return !isNaN(date.getTime()) ? new Intl.DateTimeFormat('es-MX').format(date) : value;
+    };
+    
     return (
         <Dialog 
         visible={showDataModal} 
@@ -29,7 +35,7 @@ export default function BasicModal({title, showDataModal, setShowDataModal, data
                     return (
                         <div key={index}>
                             <h5>{formatLabel(key)}</h5>
-                            <p>{value}</p>
+                            <p>{key.toLocaleLowerCase().includes('fecha') || key.toLocaleLowerCase().includes('date') ? formatDate(value) : value}</p>
                         </div>
                     )
                 })
