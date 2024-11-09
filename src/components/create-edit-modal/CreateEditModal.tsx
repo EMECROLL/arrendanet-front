@@ -65,6 +65,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                             <div className="card flex justify-content-center" style={{ width: '45%' }} key={index}>
                                 <div className="flex flex-column gap-2" style={{ width: '100%' }}>
                                     <label htmlFor={field.name}>{field.label}</label>
+                                    {/* {console.log(formData)} */}
                                     {field.type === 'file' ? (
                                         <input
                                             id={field.name}
@@ -73,12 +74,17 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                         />
                                     ) : field.isEnum ? (
                                         <Dropdown
-                                            id={field.name}
-                                            value={formData[field.name] || ''}
-                                            options={field.listEnum.map((item, idx) => ({ label: item, value: idx }))}
-                                            onChange={(e) => handleChange(e, field)}
-                                            placeholder={`Seleccione ${field.label}`}
-                                        />
+                                        id={field.name}
+                                        value={formData[field.name] !== undefined ? Number(formData[field.name]) : ''}
+                                        options={field.listEnum.map((item, idx) => ({
+                                          label: item,    // El nombre del enum que se muestra
+                                          value: idx,     // El índice que se enviará al backend
+                                        }))} 
+                                        onChange={(e) => handleChange(e, field)}  // Maneja el cambio correctamente
+                                        placeholder={`Seleccione ${field.label}`}
+                                      />
+                                      
+                                      
                                     ) : field.isEndpoint && field.endpointData ? (
                                         <Dropdown
                                             id={field.name}
@@ -97,6 +103,8 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                             value={formData[field.name] || ''}
                                             onChange={(e) => handleChange(e, field)}
                                             type={field.type || 'text'}
+                                            min={field.min}
+                                            max={field.max}
                                         />
                                     )}
                                     {field.helperText && (

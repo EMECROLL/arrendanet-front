@@ -117,7 +117,6 @@ function Edificios() {
         } else {
           const newFormData = { ...formData, id: 0 };
           edificioService.create(newFormData).then((data) => {
-              console.log(data);
               loadData();
           }).catch((error) => {
               console.error('Error al crear:', error);

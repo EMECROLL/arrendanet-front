@@ -16,5 +16,7 @@ export interface IDataFormField {
     labelField?: string,   // Nombre que se vera en el dropdonw
     valueField?: string,   // Dato que se enviara
     isEnum?:boolean, 
-    listEnum?: string[]
+    listEnum?: string[],
+    min?: number,
+    max?: number,
 }

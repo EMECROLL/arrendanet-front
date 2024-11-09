@@ -199,6 +199,12 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
         
     );
 
+    const formatDate = (value: any) => {
+        if (!value) return '';
+        const date = new Date(value);
+        return !isNaN(date.getTime()) ? new Intl.DateTimeFormat('es-MX').format(date) : value;
+    };
+
     return (
         <div className="card">
             <h1 
@@ -239,7 +245,11 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
                             filterMenuStyle={column.filterMenuStyle}
                             filterPlaceholder={column.filterPlaceholder ?? `Search by ${column.header.toLowerCase()}`}
                             style={column.style}
-                            body={column.body}
+                            body={column.isDate ? (rowData) => {
+                                const value = rowData[column.field];
+                                return formatDate(value)
+                            } : column.body}
+                            
                             filterElement={column.filterElement 
                                 ?? column.filterType == 'dropdown' 
                                 ? (options) => dynamicDropdownFilterTemplate(options, column.field, column.isEnum, column.enumList) : 

@@ -13,13 +13,15 @@ function App() {
 
  
   return (
-    <AuthProvider>
       <BrowserRouter>
-        <Navbar/>
-        <AppRouter/>
-        <Footer/>
+        <AuthProvider>
+          <Navbar/>
+          <div className='min-h-screen h-full'>
+          <AppRouter/>
+          </div>
+          <Footer/>
+        </AuthProvider>
       </BrowserRouter>
-    </AuthProvider>
   );
 }
 

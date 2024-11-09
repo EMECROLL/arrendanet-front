@@ -45,7 +45,7 @@ function Login() {
     }
 
     const response = await login(credentials);
-    
+
     if(!response.success){
       newErrors.user = 'Error con el usuario o contraseña';
       setErrors(newErrors);
@@ -56,11 +56,15 @@ function Login() {
   };
 
   return (
-    <div className="card">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="card min-h-screen w-full h-full flex flex-col items-center justify-start mt-5">
+      <form onSubmit={handleSubmit} className='w-3/12 h-full'>
+        <h2>Login</h2>
+        <h2 className='text-center'>ARRENDA NET</h2>
+        <p className='text-center'>TU PROPIEDAD, NUESTRA TECNOLOGÍA</p>
+        <img src='/src/assets/Logo/arrendanet_full_logo.png'></img>
+
         {errors.user && <Message severity="error" text={errors.user} />}
-        <div className="field">
+        <div className="field flex flex-col">
           <label htmlFor="email" className="p-sr-only">Email</label>
           <InputText
             id="email"
@@ -69,9 +73,9 @@ function Login() {
             onChange={handleChange}
             className={errors.email ? 'p-invalid' : ''}
           />
-          {errors.email && <Message severity="error" text={errors.email} />}
+          {errors.email && <Message severity="error" text={errors.email} className='mt-2'/>}
         </div>
-        <div className="field">
+        <div className="field flex flex-col">
           <label htmlFor="password" className="p-sr-only">Password</label>
           <InputText
             id="password"
@@ -81,17 +85,9 @@ function Login() {
             onChange={handleChange}
             className={errors.password ? 'p-invalid' : ''}
           />
-          {errors.password && <Message severity="error" text={errors.password} />}
-        </div>
-        <div className="field">
-          <Checkbox
-            onChange={(e) => setCredentials({ ...credentials, rememberMe: e.target.checked })}
-            checked={credentials.rememberMe}
-          />
-          <label htmlFor="ingredient1" className="ml-2">Recordar</label>
-        </div>
-       
-        <Button type="submit" label="Log In" />
+          {errors.password && <Message severity="error" text={errors.password} className='mt-2'/>}
+        </div>      
+        <Button type="submit" label="Log In" className='w-full'/>
       </form>
     </div>
   );
