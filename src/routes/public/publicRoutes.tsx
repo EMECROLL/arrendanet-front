@@ -11,7 +11,7 @@ const publicRoutes = [
     <Route path="/sobre-nosotros" element={<SobreNostros />} />,
     <Route path="/contacto" element={<Ayuda />} />,
     <Route path="/legal" element={<Legal />} />,
-    <Route path="/ejemplo" element={<Ejemplo />} />
+    <Route path="/ejemplo" element={<Ejemplo />} />,
 ];
 
 export default publicRoutes;
