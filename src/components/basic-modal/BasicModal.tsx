@@ -1,7 +1,7 @@
 
 import { Dialog } from 'primereact/dialog';
 
-export default function BasicModal({title, showDataModal, setShowDataModal, data, ingnoreColumns = []}) {
+export default function BasicModal({title, showDataModal, setShowDataModal, data, ignoreColumns = []}) {
     
     const hideDeleteDataDialog = () => {
         setShowDataModal(false);
@@ -13,7 +13,7 @@ export default function BasicModal({title, showDataModal, setShowDataModal, data
             .replace(/^./, (str) => str.toUpperCase());
     };
 
-    const combinedIgnoreColumns = ['esBorrado', ...ingnoreColumns];
+    const combinedIgnoreColumns = ['esBorrado', 'id', ...ignoreColumns];
 
     const formatDate = (value: any) => {
         if (!value) return '';

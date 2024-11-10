@@ -25,6 +25,8 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => { 
             const encryptedToken = localStorage.getItem('token'); 
+            // console.log(encryptedToken);
+
             if (encryptedToken) {
                 const token = decryptJWT(encryptedToken);                
                 const decoded = jwtDecode(token);                

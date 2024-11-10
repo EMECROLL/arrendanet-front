@@ -30,7 +30,7 @@ function Contratos() {
     const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const personaService = new PersonaService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
-    const ingnoreColumns = ['idInquilino', 'id', 'idHabitacion', 'idInquilino', 'rutaContrato']
+    const ignoreColumns = ['idInquilino', 'idHabitacion', 'idInquilino', 'rutaContrato']
 
 
     useEffect(() => {  
@@ -184,7 +184,7 @@ function Contratos() {
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
-        { name: 'fechaInicio', label: 'Fecha Inicio', type: 'date', isEnum: false, listEnum: [] },
+        { name: 'fechaInicio', label: 'Fecha Inicio', type: 'date', isEnum: false, listEnum: []},
         { name: 'fechaFin', label: 'Fecha Fin', type: 'date', isEnum: false, listEnum: [] },
         { name: 'estatusContrato', label: 'Estatus Contrato', type: 'select', isEnum: true, listEnum: estatusContratoList },
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
@@ -213,7 +213,7 @@ function Contratos() {
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
-        ingnoreColumns={ingnoreColumns}
+        ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}
