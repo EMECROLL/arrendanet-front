@@ -113,7 +113,7 @@ export default function Navbar() {
 
     const start = 
     <div className='flex space-x-2 items-center justify-center h-12 mr-4 logo'>
-        <img className='my-auto sm:hidden' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
+        <img className='my-auto hidden lg:block' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
         <h1 className='font-Nunito font-extrabold text-3xl text-white hidden sm:block lg:block'>ArrendaNet</h1>
     </div>;
 
@@ -136,6 +136,7 @@ export default function Navbar() {
     
     return (
         <Menubar 
+        id='top-page'
         className='border-none'
         model={isAuthenticated ? privateItems.filter(item=> item.authorizedRoles.includes(userRole)) : publicItems} 
         start={start} end={end} />
