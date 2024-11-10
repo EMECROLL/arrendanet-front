@@ -3,9 +3,11 @@ import { useAuth } from '../../../AuthContext';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Message } from 'primereact/message';
-import { Checkbox } from 'primereact/checkbox';
 import { useNavigate } from 'react-router-dom';
 import { FloatLabel } from 'primereact/floatlabel';
+import { Checkbox } from 'primereact/checkbox';
+import { Password } from 'primereact/password';
+import './CustomLogin.css';
 
 function Login() {
   const navigate = useNavigate();
@@ -19,6 +21,14 @@ function Login() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name == 'rememberMe') {
+      setCredentials(prevState => ({
+        ...prevState,
+        [name]: !credentials.rememberMe
+      }));
+      return;
+    }
+
     setCredentials(prevState => ({
       ...prevState,
       [name]: value
@@ -66,20 +76,24 @@ function Login() {
           {errors.user && <Message severity="error" text={errors.user} />}
           <div className="mb-5 flex flex-col w-full">
             <FloatLabel>
-              <InputText id="email" type='email' value={credentials.email} onChange={handleChange} className={errors.email ? 'p-invalid' : 'w-full'} />
+              <InputText id="email" type='email' name='email' value={credentials.email} onChange={(e) => handleChange(e)} className={errors.email ? 'p-invalid' : 'w-full'} />
               <label style={{ fontSize: '16px' }} htmlFor="email">Correo electrónico</label>
             </FloatLabel>
             {errors.email && <Message severity="error" text={errors.email} className='mt-2' />}
           </div>
           <div className="flex flex-col w-full">
             <FloatLabel>
-              <InputText id="password" type='email' value={credentials.password} onChange={handleChange} className={errors.password ? 'p-invalid' : 'w-full'} />
+              <Password id="password" name='password' value={credentials.password} onChange={(e) => handleChange(e)} className={errors.password ? 'p-invalid' : 'w-full password-input-custom'} toggleMask panelClassName='hidden' />
               <label style={{ fontSize: '16px' }} htmlFor="password">Contraseña</label>
             </FloatLabel>
             {errors.password && <Message severity="error" text={errors.password} className='mt-2' />}
           </div>
-          <div className="flex flex-col justify-end w-full">
-            <Button className="text-navy font-Nunito font-bold text-sm ml-auto mb-4" label="¿Olvidaste tu contraseña?" link onClick={() => {
+          <div className="flex justify-between items-center w-full mt-3 mb-4">
+            <div className="flex align-items-center my-auto">
+              <Checkbox id="rememberMe" name="rememberMe" value={false} onChange={handleChange} checked={credentials.rememberMe} />
+              <label htmlFor="rememberMe" className="ml-2">Recordarme</label>
+            </div>
+            <Button className="text-navy font-Nunito font-bold text-sm ml-auto" label="¿Olvidaste tu contraseña?" link onClick={() => {
               navigate('/sign-up');
               window.scrollTo({
                 top: 0,
@@ -90,7 +104,7 @@ function Login() {
           </div>
           <Button className='mx-auto flex w-1/2' label="Iniciar sesión" type='submit' />
         </form>
-        <div className='mb-auto'>
+        <div className='mb-auto flex'>
           <p className='text-center flex items-center justify-center'>¿Aún no tienes cuenta? <Button className='text-navy' label="Regístrate" link onClick={() => {
             navigate('/sign-up');
             window.scrollTo({

@@ -9,7 +9,7 @@ export default function Footer() {
     const navigate = useNavigate();
 
     return (
-        <div className="bg-navy p-10 font-Nunito">
+        <div className="bg-navy p-10 font-Nunito pb-2">
             <div className="flex justify-between">
                 <div className="flex items-center">
                     <img className='my-auto' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
