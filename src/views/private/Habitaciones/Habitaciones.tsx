@@ -84,7 +84,6 @@ function Habitaciones() {
       setSelectedData(rowData)
     }
   
-  
     const filtersName: string[] = ['numeroHabitacion', 'capacidadInquilinos', 'estatusHabitacion', 'idEdificio'];
     const TableSchema: ITableSchema = {
       Configuration: {
@@ -134,17 +133,28 @@ function Habitaciones() {
         { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos', type: 'number' },
         { name: 'estatusHabitacion', label: 'Estatus Habitación', type: 'select', isEnum: true, listEnum: estatusHabitacionList },
         { name: 'idEdificio', label: 'Edificio', type: 'select', isEndpoint: true, endpointData: edificios, valueField:'id', labelField: 'direccion'  },
+        { name: 'id', label: 'id', type: 'number', showField: false},
       ]
     }
 
     function CreateEdit(formData) {
-        if (isEdit) {
-            // Lógica de edición
-            console.log(formData);
-        } else {
-            // Lógica de creación
-            console.log(formData);
-        }
+      if (isEdit) {
+        habitacionService.edit(formData.id, formData).then(() => {
+          loadData();
+          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Editada Exitosamente', life: 3000 });
+        }).catch((error) => {
+            console.error('Error fetching habitaciones:', error);
+        })
+      } else {
+        const newFormData = { ...formData, id: 0 };
+        habitacionService.create(newFormData).then((data) => {
+            loadData();
+            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Creada Exitosamente', life: 3000 });
+        }).catch((error) => {
+          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear la habitación', life: 3000 });
+            console.error('Error al crear:', error);
+        });
+      }
     }
     
   

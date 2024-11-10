@@ -34,18 +34,17 @@ export default function Navbar() {
 
         },
         {
-            label: 'Contratos',
-            icon: 'pi pi-hammer',
-            template: itemRenderer,
-            command: () => navigate('/contratos'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
-
-        },
-        {
             label: 'Edificios',
             icon: 'pi pi-building',
             template: itemRenderer,
             command: () => navigate('/edificios'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+        },
+        {
+            label: 'Usuarios',
+            icon: 'pi pi-users',
+            template: itemRenderer,
+            command: () => navigate('/usuarios'),
             authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
@@ -56,17 +55,18 @@ export default function Navbar() {
             authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
+            label: 'Contratos',
+            icon: 'pi pi-hammer',
+            template: itemRenderer,
+            command: () => navigate('/contratos'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+
+        },
+        {
             label: 'Pagos',
             icon: 'pi pi-receipt',
             template: itemRenderer,
             command: () => navigate('/pagos'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
-        },
-        {
-            label: 'Usuarios',
-            icon: 'pi pi-users',
-            template: itemRenderer,
-            command: () => navigate('/usuarios'),
             authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {

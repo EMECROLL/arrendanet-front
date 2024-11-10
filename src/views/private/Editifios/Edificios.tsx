@@ -107,7 +107,6 @@ function Edificios() {
     }
 
     function CreateEdit(formData) {
-      console.log(formData);
         if (isEdit) {
             edificioService.edit(formData.id, formData).then(() => {
               loadData();

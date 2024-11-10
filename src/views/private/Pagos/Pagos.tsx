@@ -11,22 +11,26 @@ import BasicModal from '../../../components/basic-modal/BasicModal';
 import { EstatusPago } from '../../../common/enums/enums';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
+import { ContratoService } from '../../../services/contrato/ContratoService';
 
 function Pagos() {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
+    const [contratos, setContratos] = useState()
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
     const toast = useRef(null);
     const pagoService = new PagoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusPagoList = Object.values(EstatusPago);
     useEffect(() => {  
         loadData();
     }, []);
     
     function loadData(){
+      getContratos();
       pagoService.getAll().then((data) => {
         const updatedData = data.map((element) => ({
           ...element,
@@ -36,6 +40,18 @@ function Pagos() {
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
+    }
+
+    async function getContratos(){
+      const response = await contratoService.getAll();
+      try {
+        console.log(response);
+        
+        setContratos(response)
+        return response;
+      } catch (error) {
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+      }
     }
 
     // ? Función para abrir modal de eliminar
@@ -50,13 +66,13 @@ function Pagos() {
           try {
               await pagoService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Persona Eliminada', life: 3000 });
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Eliminado exitosamente', life: 3000 });
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a la persona', life: 3000 });
-              console.error('Error al eliminar a la persona:', error);
+              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a el pago', life: 3000 });
+              console.error('Error al eliminar a el pago:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ninguna persona para eliminar', life: 3000 });
+          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun pago para eliminar', life: 3000 });
       }
     }
 
@@ -105,7 +121,6 @@ function Pagos() {
         CreateOrEdit: () => setShowCreateEditModal(true),
       }
     }
-    console.log(estatusPagoList);
     
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
@@ -113,20 +128,29 @@ function Pagos() {
         { name: 'fecha', label: 'Fecha', type: 'date' },
         { name: 'monto', label: 'Monto', type: 'number' },
         { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList },
-        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: [{ id: 1, nombre: 'Contrato A' }, { id: 2, nombre: 'Contrato B' }], // Datos del JSON
-        labelField: 'nombre',
-        valueField: 'id'  },
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
+        { name: 'id', label: 'id', type: 'number', showField: false},
       ]
     }
   
     function CreateEdit(formData) {
-        if (isEdit) {
-            // Lógica de edición
-            console.log(formData);
-        } else {
-            // Lógica de creación
-            console.log(formData);
-        }
+      if (isEdit) {
+        pagoService.edit(formData.id, formData).then(() => {
+          loadData();
+          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Editado Exitosamente', life: 3000 });
+        }).catch((error) => {
+            console.error('Error fetching habitaciones:', error);
+        })
+      } else {
+        const newFormData = { ...formData, id: 0 };
+        pagoService.create(newFormData).then((data) => {
+            loadData();
+            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Creado Exitosamente', life: 3000 });
+        }).catch((error) => {
+          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el pago', life: 3000 });
+            console.error('Error al crear:', error);
+        });
+      }
     }
     
   
