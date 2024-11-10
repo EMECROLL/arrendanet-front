@@ -45,13 +45,13 @@ function Edificios() {
           try {
               await edificioService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Persona Eliminada', life: 3000 });
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Eliminado Exitosamente', life: 3000 });
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a la persona', life: 3000 });
+              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });
               console.error('Error al eliminar a la persona:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ninguna persona para eliminar', life: 3000 });
+          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });
       }
     }
 
@@ -111,14 +111,17 @@ function Edificios() {
         if (isEdit) {
             edificioService.edit(formData.id, formData).then(() => {
               loadData();
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
             }).catch((error) => {
-                console.error('Error fetching personas:', error);
+                console.error('Error fetching edificios:', error);
             })
         } else {
           const newFormData = { ...formData, id: 0 };
           edificioService.create(newFormData).then((data) => {
               loadData();
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
           }).catch((error) => {
+            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el edificio', life: 3000 });
               console.error('Error al crear:', error);
           });
         }

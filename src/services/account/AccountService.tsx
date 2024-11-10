@@ -45,5 +45,18 @@ export class AccountService extends BaseService {
             throw error;
         }
     }
+
+    async getAllRoles() {
+        try {            
+            const response = await fetch(`${this.baseAPI}/${controller}/getAllRoles`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating data:', error);
+            throw error;
+        }
+    }
     
 }
