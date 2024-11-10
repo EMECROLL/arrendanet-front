@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="bg-navy p-10 font-Nunito">
             <div className="flex justify-between">
                 <div className="flex items-center">
-                    <img className='my-auto' alt="logo" src="/src/assets/Logo/logo_arrenda_net_blanco.svg" width={35}/>
+                    <img className='my-auto' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
                     <h1 className='font-Nunito font-extrabold text-3xl mb-auto text-white sm:hidden lg:block'>ArrendaNet</h1>
                 </div>
                 <div className="flex items-center">
