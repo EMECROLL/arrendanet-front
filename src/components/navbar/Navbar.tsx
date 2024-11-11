@@ -70,18 +70,26 @@ export default function Navbar() {
             authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
-            label: 'Mantenimiento',
+            label: 'Mantenimientos',
             icon: 'pi pi-wrench',
             template: itemRenderer,
-            command: () => navigate('/'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
+            command: () => navigate('/mantenimientos'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO]
+        },
+        {
+            label: 'Solicitar Mantenimiento',
+            icon: 'pi pi-wrench',
+            template: itemRenderer,
+            command: () => navigate('/solicitar-mantenimiento'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.INQUILINO]
         },
         {
             label: 'Chat',
             icon: 'pi pi-comments',
             template: itemRenderer,
-            command: () => navigate('/'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
+            command: () => navigate('/chat'),
+            // authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
+            authorizedRoles: [] // Descomentar si quieren el chat
         }
     ];
 
