@@ -11,6 +11,7 @@ import { EstatusHabitacion } from '../../../common/enums/enums';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import { EdificioService } from '../../../services/edificio/EdificioService';
+import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 
 function Habitaciones() {
     const [data, setData] = useState()
@@ -25,9 +26,20 @@ function Habitaciones() {
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusHabitacionList = Object.values(EstatusHabitacion)
     const ignoreColumns = ['idHabitacion', 'idEdificio']
+    const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {  
-        loadData();
-    }, []);
+      loadData();
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => {
+          window.removeEventListener('resize', handleResize);
+      };
+      }, []);
+
+    const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+    };
     
     async function loadData(){
       const edificiosResponse = await getEdificios();
@@ -160,8 +172,17 @@ function Habitaciones() {
   
     return (
       <div className="App p-10">
-        <Toast ref={toast} />
-        <BasicDataTable TableSchema={TableSchema} />
+            <Toast ref={toast} />
+            {isMobile ? (
+                <div className="flex justify-center">
+                    <div className="flex flex-col p-button p-button-rounded p-button-primary">
+                        <img src={iconoGirarCelular} alt="Rotate Phone" />
+                        Rota tu teléfono para una mejor experiencia
+                    </div>
+                </div>
+            ) : (
+                <BasicDataTable TableSchema={TableSchema} />
+            )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}

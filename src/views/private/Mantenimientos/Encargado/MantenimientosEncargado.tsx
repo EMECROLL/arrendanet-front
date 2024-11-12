@@ -8,7 +8,7 @@ import BasicDataTable from '../../../../components/basic-data-table/BasicDataTab
 import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
-
+import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 
 function MantenimentosEncargado() {
     const [data, setData] = useState()
@@ -19,10 +19,20 @@ function MantenimentosEncargado() {
     const [selectedData, setSelectedData] = useState()
     const toast = useRef(null);
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {  
-        loadData();
-    }, []);
+      loadData();
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => {
+          window.removeEventListener('resize', handleResize);
+      };
+      }, []);
+
+    const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+    };
     
     function loadData(){
       edificioService.getAll().then((data) => {
@@ -127,8 +137,17 @@ function MantenimentosEncargado() {
   
     return (
       <div className="App p-10">
-        <Toast ref={toast} />
-        <BasicDataTable TableSchema={TableSchema} />
+            <Toast ref={toast} />
+            {isMobile ? (
+                <div className="flex justify-center">
+                    <div className="flex flex-col p-button p-button-rounded p-button-primary">
+                        <img src={iconoGirarCelular} alt="Rotate Phone" />
+                        Rota tu teléfono para una mejor experiencia
+                    </div>
+                </div>
+            ) : (
+                <BasicDataTable TableSchema={TableSchema} />
+            )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
