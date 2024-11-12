@@ -8,7 +8,7 @@ import BasicDataTable from '../../../../components/basic-data-table/BasicDataTab
 import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
-import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
+import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
 
 function MantenimentosEncargado() {
     const [data, setData] = useState()
