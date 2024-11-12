@@ -8,7 +8,7 @@ export interface IContrato extends IBaseEntity{
     tipoContrato: TipoContrato;
     duracion: number;
     monto: number;
-    rutaContrato: string;
     idInquilino: number;
     idHabitacion: number;
+    contratoPDF: File;
 }

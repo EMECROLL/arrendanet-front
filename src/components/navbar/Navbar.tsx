@@ -81,7 +81,7 @@ export default function Navbar() {
             icon: 'pi pi-wrench',
             template: itemRenderer,
             command: () => navigate('/solicitar-mantenimiento'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.INQUILINO]
+            authorizedRoles: [Roles.INQUILINO]
         },
         {
             label: 'Chat',

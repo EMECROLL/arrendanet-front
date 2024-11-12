@@ -32,6 +32,7 @@ function Usuarios() {
     }, []);
     
     function loadData(){
+      getEdificios();
       accountService.getAllRoles().then((data) => {
         setRoles(data);
       }).catch((error) => {
@@ -79,8 +80,6 @@ function Usuarios() {
     // ? Función para abrir modal para editar
     function editData(rowData) {
       console.log(rowData);
-      
-      getEdificios();
       setShowCreateEditModal(true);
       setIsEdit(true);
       setSelectedData(rowData)

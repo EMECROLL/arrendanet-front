@@ -90,10 +90,10 @@ function Login() {
             {errors.password && <Message severity="error" text={errors.password} className='mt-2' />}
           </div>
           <div className="flex justify-between items-center w-full mt-3 mb-4">
-            <div className="flex align-items-center my-auto">
+            {/* <div className="flex align-items-center my-auto">
               <Checkbox id="rememberMe" name="rememberMe" value={false} onChange={handleChange} checked={credentials.rememberMe} />
               <label htmlFor="rememberMe" className="ml-2">Recordarme</label>
-            </div>
+            </div> */}
             <Button className="text-navy font-Nunito font-bold text-sm ml-auto" label="¿Olvidaste tu contraseña?" link onClick={() => {
               navigate('/sign-up');
               window.scrollTo({

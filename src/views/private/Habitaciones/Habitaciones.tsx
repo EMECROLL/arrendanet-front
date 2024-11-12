@@ -4,7 +4,6 @@ import { Toast } from 'primereact/toast';
 import { ITableSchema } from '../../../interfaces/data-table/DataTable';
 import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
 import DeleteModal from '../../../components/delete-modal/DeleteModal';
-// import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
 import { HabitacionService } from '../../../services/habitacion/HabitacionService';
 import { IPersona } from '../../../interfaces/persona/Persona';
 import BasicModal from '../../../components/basic-modal/BasicModal';
@@ -25,6 +24,7 @@ function Habitaciones() {
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusHabitacionList = Object.values(EstatusHabitacion)
+    const ignoreColumns = ['idHabitacion', 'idEdificio']
     useEffect(() => {  
         loadData();
     }, []);
@@ -174,6 +174,7 @@ function Habitaciones() {
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
+        ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}

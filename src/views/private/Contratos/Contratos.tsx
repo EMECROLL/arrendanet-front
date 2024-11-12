@@ -152,6 +152,8 @@ function Contratos() {
 
 
     function CreateEdit(formData) {
+      console.log(formData);
+      
       if (isEdit) {
         contratoService.edit(formData.id, formData).then(() => {
           loadData();
@@ -161,7 +163,7 @@ function Contratos() {
         })
       } else {
         const newFormData = { ...formData, id: 0 };
-        contratoService.create(newFormData).then((data) => {
+        contratoService.createContrato(newFormData).then((data) => {
             loadData();
             toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Creado Exitosamente', life: 3000 });
         }).catch((error) => {
@@ -200,7 +202,7 @@ function Contratos() {
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
         { name: 'duracion', label: 'Duración', type: 'number', min: 0},
         { name: 'monto', label: 'Monto', type: 'number' },
-        { name: 'rutaContrato', label: 'Contrato', type: 'file' },
+        { name: 'contratoPDF', label: 'Contrato', type: 'file' },
         { name: 'idInquilino', label: 'Inquilino', type: 'select', isEndpoint: true, endpointData: inquilinos, valueField:'id', labelField:'nombre'},
         { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: habitaciones, valueField:'id', labelField:'numeroHabitacion'},
         { name: 'id', label: 'id', type: 'number', showField: false},
