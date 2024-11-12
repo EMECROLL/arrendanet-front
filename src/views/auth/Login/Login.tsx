@@ -116,7 +116,7 @@ function Login() {
             />
           </div>
           
-          <Button className="mx-auto flex w-full sm:w-3/4 md:w-1/2" label="Iniciar sesión" type="submit" />
+          <Button className="mx-auto flex  sm:w-2/4 md:w-4/12" label="Iniciar sesión" type="submit" />
           <div className="mb-auto flex justify-center">
             <p className="text-center flex items-center justify-center">
               ¿Aún no tienes cuenta? 
