@@ -19,7 +19,7 @@ function Home() {
 
       <section className="p-10">
         <h1 className="text-navy text-center font-bold text-4xl mb-10">¿Por qué elegirnos?</h1>
-        <div className="flex flex-wrap md:flex-nowrap justify-center gap-6">
+        <div className="flex flex-wrap md:flex-nowrap justify-center gap-6 text-center">
           <Card title="Gestión simplificada" header={<><img src="/src/assets/images/porque_1.jpg" alt="" className="w-full" /></>} className="w-full sm:w-1/3 md:w-1/4 lg:w-1/4">
             <p className="m-0">
               Nuestra plataforma te permite administrar todas tus propiedades en un solo lugar, desde contratos hasta mantenimiento, con la seguridad de una experiencia confiable y transparente para propietarios e inquilinos.
