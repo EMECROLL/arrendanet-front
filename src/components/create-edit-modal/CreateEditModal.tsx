@@ -24,6 +24,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
             return acc;
         }, {});
         setFormData(initialFormData);
+        setErrors({});
     }, [formSchema.fields, isEdit, data]);
     
     function hideDialog() {
