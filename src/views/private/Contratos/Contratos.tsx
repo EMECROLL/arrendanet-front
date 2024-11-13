@@ -16,9 +16,11 @@ import { PersonaService } from '../../../services/persona/PersonaService';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 
 function Contratos() {
+    const url = import.meta.env.VITE_BACKEND_URL;
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
+    const [showContratoPDFModal, setShowContratoPDFModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
@@ -118,6 +120,12 @@ function Contratos() {
       setSelectedData(rowData)
     }
 
+    // ? Función para cargar modal con el PDF del contrato
+    function showContratoPDF(rowData) {
+      setShowContratoPDFModal(true);
+      setSelectedData(rowData)
+    }
+
 
   
     const filtersName: string[] = ['fechaInicio', 'fechaFin', 'estatusContrato', 'duracion', 'inquilino'];
@@ -132,12 +140,8 @@ function Contratos() {
         { header: 'Fecha Inicio', field: 'fechaInicio', isDate: true},
         { header: 'Fecha Fin', field: 'fechaFin', isDate: true},
         { header: 'Estatus Contrato', field: 'estatusContrato', filterType:'dropdown'},
-        // { header: 'Tipo Contrato', field: 'tipoContrato'},
         { header: 'Duracion', field: 'duracion'},
-        // { header: 'Monto', field: 'monto'},
-        // { header: 'Ruta Contrato', field: 'rutaContrato'},
         { header: 'Inquilino', field: 'inquilino'},
-        // { header: 'Habitación', field: 'idHabitacion'},
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -152,7 +156,7 @@ function Contratos() {
         { icon: 'pi-pencil', class: 'p-button-primary', onClick: (rowData) => editData(rowData), tooltip: 'Edit' },
         { icon: 'pi-trash', class: 'p-button-danger', onClick: (rowData) => deleteData(rowData), tooltip: 'Delete' },
         { icon: 'pi-info-circle', class: 'p-button-warning', onClick: (rowData) => showData(rowData), tooltip: 'Ver Más' },
-        { icon: 'pi-file', class: 'p-button-primary', onClick: (rowData) => showData(rowData), tooltip: 'Ver Contrato', 
+        { icon: 'pi-file', class: 'p-button-primary', onClick: (rowData) => showContratoPDF(rowData), tooltip: 'Ver Contrato', 
           style: {background: "rgb(0, 31, 100)", border: "1px solid rgb(0, 31, 100)"} },
       ],
       Services:{
@@ -165,7 +169,7 @@ function Contratos() {
       console.log(formData);
       
       if (isEdit) {
-        contratoService.edit(formData.id, formData).then(() => {
+        contratoService.editContrato(formData.id, formData).then(() => {
           loadData();
           toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Editado Exitosamente', life: 3000 });
         }).catch((error) => {
@@ -248,6 +252,14 @@ function Contratos() {
         data={selectedData}
         ignoreColumns={ignoreColumns}
         ></BasicModal>
+        <BasicModal
+        title="Contrato"
+        showDataModal={showContratoPDFModal} 
+        setShowDataModal={setShowContratoPDFModal}
+        ignoreColumns={ignoreColumns}
+        pdfUrl={`${url}${selectedData?.rutaContrato}`}
+        ></BasicModal>
+
         <CreateEditModal
             visible={showCreateEditModal}
             setVisible={setShowCreateEditModal}

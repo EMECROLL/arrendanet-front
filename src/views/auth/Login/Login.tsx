@@ -104,7 +104,7 @@ function Login() {
             {errors.password && <Message severity="error" text={errors.password} className="mt-2" />}
           </div>
 
-          <div className="flex justify-between items-center w-full mt-3 mb-4">
+          {/* <div className="flex justify-between items-center w-full mt-3 mb-4">
             <Button 
               className="text-navy font-Nunito font-bold text-sm ml-auto" 
               label="¿Olvidaste tu contraseña?" 
@@ -114,10 +114,10 @@ function Login() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
-          </div>
+          </div> */}
           
-          <Button className="mx-auto flex  sm:w-2/4 md:w-4/12" label="Iniciar sesión" type="submit" />
-          <div className="mb-auto flex justify-center">
+          <Button className="mx-auto flex  sm:w-2/4 md:w-4/12 mt-10" label="Iniciar sesión" type="submit" />
+          {/* <div className="mb-auto flex justify-center">
             <p className="text-center flex items-center justify-center">
               ¿Aún no tienes cuenta? 
               <Button 
@@ -130,7 +130,7 @@ function Login() {
                 }} 
               />
             </p>
-        </div>
+        </div> */}
         </form>
 
         

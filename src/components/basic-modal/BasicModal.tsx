@@ -1,7 +1,6 @@
-
 import { Dialog } from 'primereact/dialog';
 
-export default function BasicModal({title, showDataModal, setShowDataModal, data, ignoreColumns = []}) {
+export default function BasicModal({title, showDataModal, setShowDataModal, data, ignoreColumns = [], pdfUrl}) {
     
     const hideDeleteDataDialog = () => {
         setShowDataModal(false);
@@ -27,20 +26,25 @@ export default function BasicModal({title, showDataModal, setShowDataModal, data
         header={title} 
         style={{ width: '50vw' }} 
         onHide={hideDeleteDataDialog}>
-            {data && (
-                Object.entries(data).map(([key, value], index) => {
-                    if(combinedIgnoreColumns.includes(key)){
-                        return;
-                    }
-                    return (
-                        <div key={index}>
-                            <h5>{formatLabel(key)}</h5>
-                            <p>{key.toLocaleLowerCase().includes('fecha') || key.toLocaleLowerCase().includes('date') ? formatDate(value) : value}</p>
-                        </div>
-                    )
-                })
+            {pdfUrl ? (
+                <div style={{ width: '100%', height: '550px' }}>
+                    <embed src={pdfUrl} width="100%" height="100%" type="application/pdf" />
+                </div>
+            ) : (
+                data && (
+                    Object.entries(data).map(([key, value], index) => {
+                        if(combinedIgnoreColumns.includes(key)){
+                            return;
+                        }
+                        return (
+                            <div key={index}>
+                                <h5>{formatLabel(key)}</h5>
+                                <p>{key.toLocaleLowerCase().includes('fecha') || key.toLocaleLowerCase().includes('date') ? formatDate(value) : value}</p>
+                            </div>
+                        )
+                    })
+                )
             )}
         </Dialog>
     )
 }
-        
