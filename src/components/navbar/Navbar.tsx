@@ -119,7 +119,8 @@ export default function Navbar() {
         {
             label: 'Acceder',
             command: () => navigate('/login'),
-            template: itemRenderer
+            template: itemRenderer,
+            className: 'block md:hidden'
         }
     ]
 

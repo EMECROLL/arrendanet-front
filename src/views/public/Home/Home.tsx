@@ -2,16 +2,18 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import "./CustomHero.css";
 import { Accordion, AccordionTab } from "primereact/accordion";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
   return (
     <main className="font-Nunito">
       <section className="hero p-10 flex flex-col justify-center min-h-[600px] text-center">
         <h1 className="text-white font-Nunito text-4xl font-bold my-0">Simplifica la gestión de tus propiedades con una plataforma todo-en-uno.</h1>
         <h2 className="text-white text-2xl font-light my-0">Conectamos a propietarios, encargados e inquilinos en una plataforma eficiente y segura.</h2>
         <div className="flex justify-center gap-4 my-5">
-          <Button label="Conocer más" />
-          <Button label="Entrar" />
+          <Button onClick={() => navigate("/sobre-nosotros")} label="Conocer más" />
+          <Button onClick={() => navigate("/login")} label="Entrar" />
         </div>
       </section>
 
