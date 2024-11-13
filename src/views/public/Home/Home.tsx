@@ -40,7 +40,7 @@ function Home() {
 
       <section className="p-10">
         <h1 className="text-navy text-center font-bold text-4xl mb-10">Características</h1>
-        <div className="cards-container grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <div className="cards-container grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 text-center">
           <Card title="Gestión Completa de Contratos" className="w-full">
             <p className="m-0">
               Crea, almacena y renueva contratos de arrendamiento en minutos. Simplifica el proceso y mantén todo en orden desde cualquier dispositivo.
