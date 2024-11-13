@@ -81,7 +81,7 @@ function Login() {
                 name="email" 
                 value={credentials.email} 
                 onChange={(e) => handleChange(e)} 
-                className={errors.email ? 'p-invalid' : 'w-full'} 
+                className={errors.email ? 'p-invalid w-full' : 'w-full'} 
               />
               <label style={{ fontSize: '16px' }} htmlFor="email">Correo electrónico</label>
             </FloatLabel>
@@ -89,13 +89,13 @@ function Login() {
           </div>
           
           <div className="flex flex-col w-full">
-            <FloatLabel>
+            <FloatLabel className='w-full'>
               <Password 
                 id="password" 
                 name="password" 
                 value={credentials.password} 
                 onChange={(e) => handleChange(e)} 
-                className={errors.password ? 'p-invalid' : 'w-full password-input-custom'} 
+                className={errors.password ? 'p-invalid w-full' : 'w-full password-input-custom'} 
                 toggleMask 
                 panelClassName="hidden" 
               />

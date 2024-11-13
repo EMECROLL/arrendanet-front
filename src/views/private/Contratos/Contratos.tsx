@@ -103,6 +103,7 @@ function Contratos() {
 
     // ? Función para abrir modal para editar
     function editData(rowData) {
+      console.log(rowData);
       getHabitaciones();
       setShowCreateEditModal(true);
       setIsEdit(true);
@@ -165,24 +166,55 @@ function Contratos() {
     }
 
 
-    function CreateEdit(formData) {
-      console.log(formData);
-      
+    function CreateEdit(formData) {  
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'fechaInicio', label: 'Fecha Inicio'},
+        { name: 'fechaFin', label: 'Fecha Fin'},
+        { name: 'estatusContrato', label: 'Estatus Contrato', isEnum: true},
+        { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true},
+        { name: 'duracion', label: 'Duración'},
+        { name: 'monto', label: 'Monto' },
+        { name: 'contratoPDF', label: 'Contrato'},
+        { name: 'idInquilino', label: 'Inquilino'},
+        { name: 'idHabitacion', label: 'Habitación'},
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum) {
+            if (formData[field.name] === undefined || formData[field.name] === null) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        } else {
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        }
+      });
+
+      if (Object.keys(errors).length > 0) {
+          return Promise.resolve({ success: false, errors });
+      }
+          
       if (isEdit) {
-        contratoService.editContrato(formData.id, formData).then(() => {
+        return contratoService.editContrato(formData.id, formData).then(() => {
           loadData();
           toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Editado Exitosamente', life: 3000 });
+          return { success: true };
         }).catch((error) => {
             console.error('Error fetching contratos:', error);
+            return { success: false, errors: { general: 'Error al editar el contrato.' } };
         })
       } else {
         const newFormData = { ...formData, id: 0 };
-        contratoService.createContrato(newFormData).then((data) => {
+        return contratoService.createContrato(newFormData).then((data) => {
             loadData();
             toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Creado Exitosamente', life: 3000 });
+            return { success: true };
         }).catch((error) => {
           toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el contrato', life: 3000 });
             console.error('Error al crear:', error);
+            return { success: false, errors: { general: 'Error al crear el contrato.' } };
         });
       }
     }
@@ -210,8 +242,8 @@ function Contratos() {
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
-        { name: 'fechaInicio', label: 'Fecha Inicio', type: 'date', isEnum: false, listEnum: []},
-        { name: 'fechaFin', label: 'Fecha Fin', type: 'date', isEnum: false, listEnum: [] },
+        { name: 'fechaInicio', label: 'Fecha Inicio', type: 'date'},
+        { name: 'fechaFin', label: 'Fecha Fin', type: 'date'},
         { name: 'estatusContrato', label: 'Estatus Contrato', type: 'select', isEnum: true, listEnum: estatusContratoList },
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
         { name: 'duracion', label: 'Duración', type: 'number', min: 0},

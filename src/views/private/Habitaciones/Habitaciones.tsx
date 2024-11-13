@@ -87,7 +87,11 @@ function Habitaciones() {
     function editData(rowData) {
       setShowCreateEditModal(true);
       setIsEdit(true);
-      setSelectedData(rowData)
+      const rowDataModified = {
+        ...rowData,
+        estatusHabitacion: Object.values(estatusHabitacionList).indexOf(rowData.estatusHabitacion),
+      }
+      setSelectedData(rowDataModified)
     }
 
     // ? Función para cargar modal con datos
@@ -150,21 +154,49 @@ function Habitaciones() {
     }
 
     function CreateEdit(formData) {
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'numeroHabitacion', label: 'Número de habitación'},
+        { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos'},
+        { name: 'estatusHabitacion', label: 'Estatus Habitación', isEnum: true},
+        { name: 'idEdificio', label: 'Edificio'},
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum) {
+            if (formData[field.name] === undefined || formData[field.name] === null) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        } else {
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        }
+      });
+
+      if (Object.keys(errors).length > 0) {
+          return Promise.resolve({ success: false, errors });
+      }
+
       if (isEdit) {
-        habitacionService.edit(formData.id, formData).then(() => {
+        return habitacionService.edit(formData.id, formData).then(() => {
           loadData();
           toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Editada Exitosamente', life: 3000 });
+          return { success: true };
         }).catch((error) => {
             console.error('Error fetching habitaciones:', error);
+            return { success: false, errors: { general: 'Error al editar la habitación.' } };
         })
       } else {
         const newFormData = { ...formData, id: 0 };
-        habitacionService.create(newFormData).then((data) => {
+        return habitacionService.create(newFormData).then((data) => {
             loadData();
             toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Creada Exitosamente', life: 3000 });
+            return { success: true };
         }).catch((error) => {
           toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear la habitación', life: 3000 });
             console.error('Error al crear:', error);
+            return { success: false, errors: { general: 'Error al crear la habitación.' } };
         });
       }
     }

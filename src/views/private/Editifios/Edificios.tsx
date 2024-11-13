@@ -116,26 +116,59 @@ function Edificios() {
         { name: 'contacto', label: 'Contacto', type: 'text' },
       ]
     }
+    
 
     function CreateEdit(formData) {
-        if (isEdit) {
-            edificioService.edit(formData.id, formData).then(() => {
-              loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
-            }).catch((error) => {
-                console.error('Error fetching edificios:', error);
-            })
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'direccion', label: 'Dirección' },
+        { name: 'contacto', label: 'Contacto' }
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum) {
+            if (formData[field.name] === undefined || formData[field.name] === null) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
         } else {
-          const newFormData = { ...formData, id: 0 };
-          edificioService.create(newFormData).then((data) => {
-              loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
-          }).catch((error) => {
-            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el edificio', life: 3000 });
-              console.error('Error al crear:', error);
-          });
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
         }
+      });
+
+      if (Object.keys(errors).length > 0) {
+          return Promise.resolve({ success: false, errors });
+      }
+  
+      if (isEdit) {
+          return edificioService.edit(formData.id, formData)
+              .then(() => {
+                  loadData();
+                  toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
+                  return { success: true };
+              })
+              .catch((error) => {
+                  console.error('Error fetching edificios:', error);
+                  return { success: false, errors: { general: 'Error al editar el edificio.' } };
+              });
+      } else {
+          const newFormData = { ...formData, id: 0 };
+          return edificioService.create(newFormData)
+              .then(() => {
+                  loadData();
+                  toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
+                  return { success: true };
+              })
+              .catch((error) => {
+                  console.error('Error al crear:', error);
+                  return { success: false, errors: { general: 'Error al crear el edificio.' } };
+              });
+      }
     }
+  
+  
+  
   
     return (
       <div className="App p-10">
