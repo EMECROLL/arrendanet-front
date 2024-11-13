@@ -50,26 +50,26 @@ export default function Ayuda() {
             Formulario de contacto
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex flex-col">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
-                  <InputText id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
+                  <InputText style={{width: '100%'}} id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="nombre">
                     Nombre completo
                   </label>
                 </FloatLabel>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
-                  <InputText id="correo" type="email" value={formData.correo} onChange={handleChange} />
+                  <InputText style={{width: '100%'}} id="correo" type="email" value={formData.correo} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="correo">
                     Correo electrónico
                   </label>
                 </FloatLabel>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
                   <InputText
                     className="w-full"
@@ -84,16 +84,16 @@ export default function Ayuda() {
                 </FloatLabel>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
                   <InputText className="w-full" id="asunto" type="tel" value={formData.asunto} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="asunto">
-                    Asunto (Tema o motivo de contacto)
+                    Asunto (Motivo de contacto)
                   </label>
                 </FloatLabel>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
                   <InputTextarea className="w-full" id="mensaje" value={formData.mensaje} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="mensaje">
