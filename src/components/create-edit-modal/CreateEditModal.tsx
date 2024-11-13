@@ -65,7 +65,6 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                             <div className="card flex justify-content-center" style={{ width: '45%' }} key={index}>
                                 <div className="flex flex-column gap-2" style={{ width: '100%' }}>
                                     <label htmlFor={field.name}>{field.label}</label>
-                                    {/* {console.log(formData)} */}
                                     {field.type === 'file' ? (
                                         <input
                                             id={field.name}

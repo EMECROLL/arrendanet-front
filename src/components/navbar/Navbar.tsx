@@ -34,32 +34,10 @@ export default function Navbar() {
 
         },
         {
-            label: 'Contratos',
-            icon: 'pi pi-hammer',
-            template: itemRenderer,
-            command: () => navigate('/contratos'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
-
-        },
-        {
             label: 'Edificios',
             icon: 'pi pi-building',
             template: itemRenderer,
             command: () => navigate('/edificios'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
-        },
-        {
-            label: 'Habitaciones',
-            icon: 'pi pi-home',
-            template: itemRenderer,
-            command: () => navigate('/habitaciones'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
-        },
-        {
-            label: 'Pagos',
-            icon: 'pi pi-receipt',
-            template: itemRenderer,
-            command: () => navigate('/pagos'),
             authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
@@ -70,18 +48,48 @@ export default function Navbar() {
             authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
-            label: 'Mantenimiento',
+            label: 'Habitaciones',
+            icon: 'pi pi-home',
+            template: itemRenderer,
+            command: () => navigate('/habitaciones'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+        },
+        {
+            label: 'Contratos',
+            icon: 'pi pi-hammer',
+            template: itemRenderer,
+            command: () => navigate('/contratos'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+
+        },
+        {
+            label: 'Pagos',
+            icon: 'pi pi-receipt',
+            template: itemRenderer,
+            command: () => navigate('/pagos'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+        },
+        {
+            label: 'Mantenimientos',
             icon: 'pi pi-wrench',
             template: itemRenderer,
-            command: () => navigate('/'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
+            command: () => navigate('/mantenimientos'),
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO]
+        },
+        {
+            label: 'Solicitar Mantenimiento',
+            icon: 'pi pi-wrench',
+            template: itemRenderer,
+            command: () => navigate('/solicitar-mantenimiento'),
+            authorizedRoles: [Roles.INQUILINO]
         },
         {
             label: 'Chat',
             icon: 'pi pi-comments',
             template: itemRenderer,
-            command: () => navigate('/'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
+            command: () => navigate('/chat'),
+            // authorizedRoles: [Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]
+            authorizedRoles: [] // Descomentar si quieren el chat
         }
     ];
 

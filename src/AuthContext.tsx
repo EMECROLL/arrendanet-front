@@ -50,18 +50,31 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {            
             const response = await accountService.login(credentials);
-            if(response.success){
+            
+            if (response && response.success) {
                 const token = response.token;
                 const encryptedToken = encryptJWT(token);
                 localStorage.setItem('token', encryptedToken);
                 setIsAuthenticated(true);
-                setUser(jwtDecode(token));
+                
+                try {
+                    const user = jwtDecode(token);
+                    setUser(user);
+                } catch (decodeError) {
+                    console.error('Token decoding error:', decodeError);
+                    return { success: false, message: 'Failed to decode token' };
+                }
+    
+                return response;
+            } else {
+                return { success: false, message: 'Login failed' };
             }
-            return response;
         } catch (error) {
             console.error('Error during login:', error);
+            return { success: false, message: 'An unexpected error occurred' };
         }
     };
+    
 
     const logout = () => {
         localStorage.removeItem('token');

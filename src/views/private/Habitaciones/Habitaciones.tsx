@@ -4,7 +4,6 @@ import { Toast } from 'primereact/toast';
 import { ITableSchema } from '../../../interfaces/data-table/DataTable';
 import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
 import DeleteModal from '../../../components/delete-modal/DeleteModal';
-// import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
 import { HabitacionService } from '../../../services/habitacion/HabitacionService';
 import { IPersona } from '../../../interfaces/persona/Persona';
 import BasicModal from '../../../components/basic-modal/BasicModal';
@@ -12,6 +11,7 @@ import { EstatusHabitacion } from '../../../common/enums/enums';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import { EdificioService } from '../../../services/edificio/EdificioService';
+import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 
 function Habitaciones() {
     const [data, setData] = useState()
@@ -25,9 +25,21 @@ function Habitaciones() {
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusHabitacionList = Object.values(EstatusHabitacion)
+    const ignoreColumns = ['idHabitacion', 'idEdificio']
+    const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {  
-        loadData();
-    }, []);
+      loadData();
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => {
+          window.removeEventListener('resize', handleResize);
+      };
+      }, []);
+
+    const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+    };
     
     async function loadData(){
       const edificiosResponse = await getEdificios();
@@ -84,7 +96,6 @@ function Habitaciones() {
       setSelectedData(rowData)
     }
   
-  
     const filtersName: string[] = ['numeroHabitacion', 'capacidadInquilinos', 'estatusHabitacion', 'idEdificio'];
     const TableSchema: ITableSchema = {
       Configuration: {
@@ -134,24 +145,44 @@ function Habitaciones() {
         { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos', type: 'number' },
         { name: 'estatusHabitacion', label: 'Estatus Habitación', type: 'select', isEnum: true, listEnum: estatusHabitacionList },
         { name: 'idEdificio', label: 'Edificio', type: 'select', isEndpoint: true, endpointData: edificios, valueField:'id', labelField: 'direccion'  },
+        { name: 'id', label: 'id', type: 'number', showField: false},
       ]
     }
 
     function CreateEdit(formData) {
-        if (isEdit) {
-            // Lógica de edición
-            console.log(formData);
-        } else {
-            // Lógica de creación
-            console.log(formData);
-        }
+      if (isEdit) {
+        habitacionService.edit(formData.id, formData).then(() => {
+          loadData();
+          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Editada Exitosamente', life: 3000 });
+        }).catch((error) => {
+            console.error('Error fetching habitaciones:', error);
+        })
+      } else {
+        const newFormData = { ...formData, id: 0 };
+        habitacionService.create(newFormData).then((data) => {
+            loadData();
+            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Creada Exitosamente', life: 3000 });
+        }).catch((error) => {
+          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear la habitación', life: 3000 });
+            console.error('Error al crear:', error);
+        });
+      }
     }
     
   
     return (
       <div className="App p-10">
-        <Toast ref={toast} />
-        <BasicDataTable TableSchema={TableSchema} />
+            <Toast ref={toast} />
+            {isMobile ? (
+                <div className="flex justify-center">
+                    <div className="flex flex-col p-button p-button-rounded p-button-primary">
+                        <img src={iconoGirarCelular} alt="Rotate Phone" />
+                        Rota tu teléfono para una mejor experiencia
+                    </div>
+                </div>
+            ) : (
+                <BasicDataTable TableSchema={TableSchema} />
+            )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
@@ -164,6 +195,7 @@ function Habitaciones() {
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
+        ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}

@@ -13,11 +13,14 @@ import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import { HabitacionService } from '../../../services/habitacion/HabitacionService';
 import { PersonaService } from '../../../services/persona/PersonaService';
+import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 
 function Contratos() {
+    const url = import.meta.env.VITE_BACKEND_URL;
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
+    const [showContratoPDFModal, setShowContratoPDFModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
@@ -31,11 +34,20 @@ function Contratos() {
     const personaService = new PersonaService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const ignoreColumns = ['idInquilino', 'idHabitacion', 'idInquilino', 'rutaContrato']
-
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {  
-        loadData();
-    }, []);
+      loadData();
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => {
+          window.removeEventListener('resize', handleResize);
+      };
+      }, []);
+
+    const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+    };
     
     async function loadData(){
       const inquilinosResponse = await getInquilinos();
@@ -108,6 +120,12 @@ function Contratos() {
       setSelectedData(rowData)
     }
 
+    // ? Función para cargar modal con el PDF del contrato
+    function showContratoPDF(rowData) {
+      setShowContratoPDFModal(true);
+      setSelectedData(rowData)
+    }
+
 
   
     const filtersName: string[] = ['fechaInicio', 'fechaFin', 'estatusContrato', 'duracion', 'inquilino'];
@@ -122,12 +140,8 @@ function Contratos() {
         { header: 'Fecha Inicio', field: 'fechaInicio', isDate: true},
         { header: 'Fecha Fin', field: 'fechaFin', isDate: true},
         { header: 'Estatus Contrato', field: 'estatusContrato', filterType:'dropdown'},
-        // { header: 'Tipo Contrato', field: 'tipoContrato'},
         { header: 'Duracion', field: 'duracion'},
-        // { header: 'Monto', field: 'monto'},
-        // { header: 'Ruta Contrato', field: 'rutaContrato'},
         { header: 'Inquilino', field: 'inquilino'},
-        // { header: 'Habitación', field: 'idHabitacion'},
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -142,7 +156,7 @@ function Contratos() {
         { icon: 'pi-pencil', class: 'p-button-primary', onClick: (rowData) => editData(rowData), tooltip: 'Edit' },
         { icon: 'pi-trash', class: 'p-button-danger', onClick: (rowData) => deleteData(rowData), tooltip: 'Delete' },
         { icon: 'pi-info-circle', class: 'p-button-warning', onClick: (rowData) => showData(rowData), tooltip: 'Ver Más' },
-        { icon: 'pi-file', class: 'p-button-primary', onClick: (rowData) => showData(rowData), tooltip: 'Ver Contrato', 
+        { icon: 'pi-file', class: 'p-button-primary', onClick: (rowData) => showContratoPDF(rowData), tooltip: 'Ver Contrato', 
           style: {background: "rgb(0, 31, 100)", border: "1px solid rgb(0, 31, 100)"} },
       ],
       Services:{
@@ -152,12 +166,24 @@ function Contratos() {
 
 
     function CreateEdit(formData) {
+      console.log(formData);
+      
       if (isEdit) {
-          // Lógica de edición
-          console.log(formData);
+        contratoService.editContrato(formData.id, formData).then(() => {
+          loadData();
+          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Editado Exitosamente', life: 3000 });
+        }).catch((error) => {
+            console.error('Error fetching contratos:', error);
+        })
       } else {
-          // Lógica de creación
-          console.log(formData);
+        const newFormData = { ...formData, id: 0 };
+        contratoService.createContrato(newFormData).then((data) => {
+            loadData();
+            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Creado Exitosamente', life: 3000 });
+        }).catch((error) => {
+          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el contrato', life: 3000 });
+            console.error('Error al crear:', error);
+        });
       }
     }
 
@@ -190,17 +216,28 @@ function Contratos() {
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
         { name: 'duracion', label: 'Duración', type: 'number', min: 0},
         { name: 'monto', label: 'Monto', type: 'number' },
-        { name: 'rutaContrato', label: 'Contrato', type: 'file' },
+        { name: 'contratoPDF', label: 'Contrato', type: 'file' },
         { name: 'idInquilino', label: 'Inquilino', type: 'select', isEndpoint: true, endpointData: inquilinos, valueField:'id', labelField:'nombre'},
         { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: habitaciones, valueField:'id', labelField:'numeroHabitacion'},
+        { name: 'id', label: 'id', type: 'number', showField: false},
+
       ]
     }
 
     
     return (
       <div className="App p-10">
-        <Toast ref={toast} />
-        <BasicDataTable TableSchema={TableSchema} />
+            <Toast ref={toast} />
+            {isMobile ? (
+                <div className="flex justify-center">
+                    <div className="flex flex-col p-button p-button-rounded p-button-primary">
+                        <img src={iconoGirarCelular} alt="Rotate Phone" />
+                        Rota tu teléfono para una mejor experiencia
+                    </div>
+                </div>
+            ) : (
+                <BasicDataTable TableSchema={TableSchema} />
+            )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
@@ -215,6 +252,14 @@ function Contratos() {
         data={selectedData}
         ignoreColumns={ignoreColumns}
         ></BasicModal>
+        <BasicModal
+        title="Contrato"
+        showDataModal={showContratoPDFModal} 
+        setShowDataModal={setShowContratoPDFModal}
+        ignoreColumns={ignoreColumns}
+        pdfUrl={`${url}${selectedData?.rutaContrato}`}
+        ></BasicModal>
+
         <CreateEditModal
             visible={showCreateEditModal}
             setVisible={setShowCreateEditModal}

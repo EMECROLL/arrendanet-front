@@ -1,24 +1,22 @@
 import { FilterMatchMode } from 'primereact/api';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
-import { ITableSchema } from '../../../interfaces/data-table/DataTable';
-import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
-import DeleteModal from '../../../components/delete-modal/DeleteModal';
-// import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
-import { EdificioService } from '../../../services/edificio/EdificioService';
-import { IPersona } from '../../../interfaces/persona/Persona';
-import BasicModal from '../../../components/basic-modal/BasicModal';
-import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
-import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
-import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
+import { EdificioService } from '../../../../services/edificio/EdificioService';
+import { ITableSchema } from '../../../../interfaces/data-table/DataTable';
+import { IFormSchema } from '../../../../interfaces/data-form-field/DataFormField';
+import BasicDataTable from '../../../../components/basic-data-table/BasicDataTable';
+import DeleteModal from '../../../../components/delete-modal/DeleteModal';
+import BasicModal from '../../../../components/basic-modal/BasicModal';
+import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
+import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
 
-function Edificios() {
+function MantenimentosEncargado() {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
-    const [selectedData, setSelectedData] = useState<IPersona>()
+    const [selectedData, setSelectedData] = useState()
     const toast = useRef(null);
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
@@ -83,7 +81,7 @@ function Edificios() {
     const filtersName: string[] = ['direccion', 'contacto', 'apellidoMaterno'];
     const TableSchema: ITableSchema = {
       Configuration: {
-        title:'Edificios',
+        title:'Mantenimientos',
         paginator: true,
         dataKey: 'id', // Tomen muy en cuenta esto
         globalFilterFields: filtersName,
@@ -158,7 +156,7 @@ function Edificios() {
         message={selectedData?.nombre}
         ></DeleteModal>
         <BasicModal
-        title="Edificio"
+        title="Mantenimientos"
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
@@ -176,4 +174,4 @@ function Edificios() {
     );
 }
 
-export default Edificios
+export default MantenimentosEncargado

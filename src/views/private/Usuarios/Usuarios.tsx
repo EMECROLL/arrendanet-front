@@ -10,7 +10,7 @@ import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import { EdificioService } from '../../../services/edificio/EdificioService';
 import { AccountService } from '../../../services/account/AccountService';
-import { IAccount, IAccountPerson, IAccountPersonEdificio } from '../../../interfaces/account/Account';
+import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 
 function Usuarios() {
     const [data, setData] = useState()
@@ -27,11 +27,23 @@ function Usuarios() {
     const accountService = new AccountService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     // const rolesList = Object.values(Roles);
     const ignoreColumns = ['idPersona', 'idUsuario', 'idEdificio', 'idRol', 'contacto']
+    const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {  
-        loadData();
-    }, []);
+      loadData();
+      handleResize();
+      window.addEventListener('resize', handleResize);
+      return () => {
+          window.removeEventListener('resize', handleResize);
+      };
+      }, []);
+
+    const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+    };
     
     function loadData(){
+      getEdificios();
       accountService.getAllRoles().then((data) => {
         setRoles(data);
       }).catch((error) => {
@@ -79,8 +91,6 @@ function Usuarios() {
     // ? Función para abrir modal para editar
     function editData(rowData) {
       console.log(rowData);
-      
-      getEdificios();
       setShowCreateEditModal(true);
       setIsEdit(true);
       setSelectedData(rowData)
@@ -177,8 +187,17 @@ function Usuarios() {
   
     return (
       <div className="App p-10">
-        <Toast ref={toast} />
-        <BasicDataTable TableSchema={TableSchema} />
+            <Toast ref={toast} />
+            {isMobile ? (
+                <div className="flex justify-center">
+                    <div className="flex flex-col p-button p-button-rounded p-button-primary">
+                        <img src={iconoGirarCelular} alt="Rotate Phone" />
+                        Rota tu teléfono para una mejor experiencia
+                    </div>
+                </div>
+            ) : (
+                <BasicDataTable TableSchema={TableSchema} />
+            )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
