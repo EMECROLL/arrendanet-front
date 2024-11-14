@@ -14,20 +14,20 @@ export default function Footer() {
                     <img className='my-auto' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
                     <h1 className='font-Nunito font-extrabold text-2xl md:text-3xl text-white ml-3 hidden sm:block'>ArrendaNet</h1>
                 </div>
-                <div className="flex flex-wrap justify-center md:justify-end items-center space-x-4">
-                    <Button className="text-white font-Nunito font-bold text-lg" label="Inicio" link onClick={() =>  {
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-1">
+                    <Button className="text-white font-Nunito font-bold w-full md:w-auto text-lg" label="Inicio" link onClick={() =>  {
                         navigate('/');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}/>
-                    <Button className="text-white font-Nunito font-bold text-lg" label="Sobre Nosotros" link onClick={() =>  {
+                    <Button className="text-white font-Nunito font-bold text-lg w-full md:w-auto" label="Sobre Nosotros" link onClick={() =>  {
                         navigate('/sobre-nosotros');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}/>
-                    <Button className="text-white font-Nunito font-bold text-lg" label="Contacto" link onClick={() =>  {
+                    <Button className="text-white font-Nunito font-bold text-lg w-full md:w-auto" label="Contacto" link onClick={() =>  {
                         navigate('/contacto');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}/>
-                    <Button className="text-white font-Nunito font-bold text-lg" label="Legal" link onClick={() =>  {
+                    <Button className="text-white font-Nunito font-bold text-lg w-full md:w-auto" label="Legal" link onClick={() =>  {
                         navigate('/legal');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}/>

@@ -115,14 +115,19 @@ export default function Navbar() {
             label: 'Legal',
             command: () => navigate('/legal'),
             template: itemRenderer
-
+        },
+        {
+            label: 'Acceder',
+            command: () => navigate('/login'),
+            template: itemRenderer,
+            className: 'block md:hidden'
         }
     ]
 
     const start = 
     <div className='flex space-x-2 items-center justify-center h-12 mr-4 logo'>
         <img className='my-auto hidden lg:block' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={35}/>
-        <h1 className='font-Nunito font-extrabold text-3xl text-white hidden sm:block lg:block'>ArrendaNet</h1>
+        <h1 className='font-Nunito font-extrabold text-3xl text-white hidden sm:block'>ArrendaNet</h1>
     </div>;
 
     const end = (
@@ -135,7 +140,9 @@ export default function Navbar() {
                     </>
                     :
                     <>
-                        <Button
+                        <h1 className='font-Nunito font-extrabold text-xl text-white block md:hidden my-auto'>ArrendaNet</h1>
+                        <img className='my-auto block md:hidden' alt="logo" src="/src/assets/Logo/logo_arrendanet_blanco.svg" width={30}/>
+                        <Button className='hidden md:block'
                         label="Acceder" onClick={isAuthenticated ? () => navigate('/dashboard') : () => navigate('/login')} />
                     </>
             }

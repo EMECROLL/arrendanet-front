@@ -43,8 +43,8 @@ function Login() {
     e.preventDefault();
     
     const newErrors = {};
-    if (!credentials.email) newErrors.email = 'Email is required';
-    if (!credentials.password) newErrors.password = 'Password is required';
+    if (!credentials.email) newErrors.email = 'El correo electrónico es necesario';
+    if (!credentials.password) newErrors.password = 'La contraseña es necesaria';
   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -95,7 +95,7 @@ function Login() {
                 name="password" 
                 value={credentials.password} 
                 onChange={(e) => handleChange(e)} 
-                className={errors.password ? 'p-invalid w-full' : 'w-full password-input-custom'} 
+                className={errors.password ? 'p-invalid password-input-custom w-full' : 'w-full password-input-custom'} 
                 toggleMask 
                 panelClassName="hidden" 
               />
