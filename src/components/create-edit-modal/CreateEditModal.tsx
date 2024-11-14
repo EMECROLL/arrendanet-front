@@ -6,19 +6,27 @@ import React, { useEffect, useState } from 'react';
 
 function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data }) {
     const [formData, setFormData] = useState({});
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const initialFormData = formSchema.fields.reduce((acc, field) => {
-            let value = isEdit && data ? data[field.name] || '' : field.value || '';
-            if (field.type === 'date' && value) {
+            let value = isEdit && data ? data[field.name] : field.value;
+            
+            if (field.isEnum && (value === undefined || value === '')) {
+                value = 0;
+            } else if (field.type === 'date' && value) {
                 value = value.split('T')[0];
+            } else if (value === undefined || value === null) {
+                value = '';
             }
+    
             acc[field.name] = value;
             return acc;
         }, {});
         setFormData(initialFormData);
+        setErrors({});
     }, [formSchema.fields, isEdit, data]);
-
+    
     function hideDialog() {
         setVisible(false);
         setTimeout(() => {
@@ -30,12 +38,20 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
     function handleChange(e, field) {
         const value = field.type === 'file' ? e.target.files[0] : e.target.value || e.value;
         setFormData({ ...formData, [field.name]: value });
+        setErrors({ ...errors, [field.name]: '' });
     }
 
-    function saveData() {
-        onSave(formData);
-        hideDialog();
+     function saveData() {
+        onSave(formData).then((result) => {
+            if (result.success) {
+                hideDialog();
+            } else {
+                setErrors(result.errors);
+            }
+        });
     }
+    
+    
 
     const dialogFooter = (
         <React.Fragment>
@@ -70,6 +86,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                             id={field.name}
                                             type="file"
                                             onChange={(e) => handleChange(e, field)}
+                                            className={errors[field.name] ? 'p-invalid' : ''}
                                         />
                                     ) : field.isEnum ? (
                                         <Dropdown
@@ -79,8 +96,9 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                           label: item,    // El nombre del enum que se muestra
                                           value: idx,     // El índice que se enviará al backend
                                         }))} 
-                                        onChange={(e) => handleChange(e, field)}  // Maneja el cambio correctamente
+                                        onChange={(e) => handleChange(e, field)}
                                         placeholder={`Seleccione ${field.label}`}
+                                        className={errors[field.name] ? 'p-invalid' : ''}
                                       />
                                       
                                       
@@ -94,6 +112,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                             }))}
                                             onChange={(e) => handleChange(e, field)}
                                             placeholder={`Seleccione ${field.label}`}
+                                            className={errors[field.name] ? 'p-invalid' : ''}
                                         />
                                     ) : (
                                         <InputText
@@ -104,11 +123,12 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                             type={field.type || 'text'}
                                             min={field.min}
                                             max={field.max}
+                                            className={errors[field.name] ? 'p-invalid' : ''}
                                         />
                                     )}
-                                    {field.helperText && (
-                                        <small id={`${field.name}-help`}>
-                                            {field.helperText}
+                                    {errors[field.name] && (
+                                        <small id={`${field.name}-help`} style={{ color: 'red' }}>
+                                            {errors[field.name]}
                                         </small>
                                     )}
                                 </div>

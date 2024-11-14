@@ -27,6 +27,8 @@ function Pagos() {
     const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusPagoList = Object.values(EstatusPago);
     const [isMobile, setIsMobile] = useState(false);
+    const ignoreColumns = ['idContrato']
+
 
     useEffect(() => {  
       loadData();
@@ -56,9 +58,7 @@ function Pagos() {
 
     async function getContratos(){
       const response = await contratoService.getAll();
-      try {
-        console.log(response);
-        
+      try {        
         setContratos(response)
         return response;
       } catch (error) {
@@ -92,12 +92,15 @@ function Pagos() {
     function editData(rowData) {
       setShowCreateEditModal(true);
       setIsEdit(true);
-      setSelectedData(rowData)
+      const rowDataModified = {
+        ...rowData,
+        estatusPago: Object.values(estatusPagoList).indexOf(rowData.estatusPago),
+      }
+      setSelectedData(rowDataModified)
     }
 
     // ? Función para cargar modal con datos
     function showData(rowData) {
-     
       setShowDataModal(true);
       setSelectedData(rowData)
     }
@@ -139,28 +142,60 @@ function Pagos() {
       fields: [
         { name: 'fecha', label: 'Fecha', type: 'date' },
         { name: 'monto', label: 'Monto', type: 'number' },
-        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList },
+        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, // ? Me funciona cuando esta en enum false, eso no deberia ser
         { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
         { name: 'id', label: 'id', type: 'number', showField: false},
       ]
     }
   
     function CreateEdit(formData) {
+      
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'fecha', label: 'Fecha' },
+        { name: 'monto', label: 'Monto' },
+        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true }, // ? Me funciona cuando esta en enum false, eso no deberia ser
+        { name: 'idContrato', label: 'Contrato' },
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum) {
+            if (formData[field.name] === undefined || formData[field.name] === null) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        } else {
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        }
+      });
+
+      if (Object.keys(errors).length > 0) {
+        return Promise.resolve({ success: false, errors });
+      }
+      
       if (isEdit) {
-        pagoService.edit(formData.id, formData).then(() => {
+        return pagoService.edit(formData.id, formData).then(() => {
           loadData();
           toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Editado Exitosamente', life: 3000 });
+          return { success: true };
+
         }).catch((error) => {
             console.error('Error fetching habitaciones:', error);
+            return { success: false, errors: { general: 'Error al editar el pago.' } };
+
         })
       } else {
         const newFormData = { ...formData, id: 0 };
-        pagoService.create(newFormData).then((data) => {
+        return pagoService.create(newFormData).then((data) => {
             loadData();
             toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Creado Exitosamente', life: 3000 });
+            return { success: true };
+
         }).catch((error) => {
           toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el pago', life: 3000 });
             console.error('Error al crear:', error);
+            return { success: false, errors: { general: 'Error al crear el pago.' } };
         });
       }
     }
@@ -191,6 +226,7 @@ function Pagos() {
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
+        ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}

@@ -89,7 +89,7 @@ function Login() {
           </div>
           
           <div className="flex flex-col w-full">
-            <FloatLabel>
+            <FloatLabel className='w-full'>
               <Password 
                 id="password" 
                 name="password" 

@@ -136,7 +136,7 @@ export default function Navbar() {
                 isAuthenticated ?
                     <>
                         <Button label="Log Out" onClick={logout} />
-                        <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" />
+                        {/* <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" /> */}
                     </>
                     :
                     <>

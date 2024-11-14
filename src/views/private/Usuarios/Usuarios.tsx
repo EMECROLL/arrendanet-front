@@ -22,10 +22,8 @@ function Usuarios() {
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState()
     const toast = useRef(null);
-    // const personaService = new PersonaService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const accountService = new AccountService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
-    // const rolesList = Object.values(Roles);
     const ignoreColumns = ['idPersona', 'idUsuario', 'idEdificio', 'idRol', 'contacto']
     const [isMobile, setIsMobile] = useState(false);
 
@@ -165,22 +163,55 @@ function Usuarios() {
     }
 
     function CreateEdit(formData) {
-      console.log(formData);
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'nombre', label: 'Nombre' },
+        { name: 'apellidoPaterno', label: 'Apellido Paterno' },
+        { name: 'apellidoMaterno', label: 'Apellido Materno' },
+        { name: 'email', label: 'Correo Electrónico' },
+        { name: 'password', label: 'Password' },
+        { name: 'confirmPassword', label: 'Confirmar Password' },
+        { name: 'numeroDeTelefono', label: 'Número de Teléfono' },
+        { name: 'idEdificio', label: 'Edificio' },
+        { name: 'idRol', label: 'Rol' },
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum) {
+            if (formData[field.name] === undefined || formData[field.name] === null) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        } else {
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        }
+      });
+
+      if (Object.keys(errors).length > 0) {
+        return Promise.resolve({ success: false, errors });
+      }
+
         if (isEdit) {
-            accountService.edit(formData.idPersona, formData).then(() => {
+            return accountService.edit(formData.idPersona, formData).then(() => {
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Editado Exitosamente', life: 3000 });
+              return { success: true };
             }).catch((error) => {
                 console.error('Error fetching usuarios:', error);
+                return { success: false, errors: { general: 'Error al editar el usuario.' } };
+
             })
         } else {
           const newFormData = { ...formData, id: 0 };
-          accountService.create(newFormData).then((data) => {
+          return accountService.create(newFormData).then((data) => {
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Creado Exitosamente', life: 3000 });
+              return { success: true };
           }).catch((error) => {
             toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el usuario', life: 3000 });
               console.error('Error al crear:', error);
+              return { success: false, errors: { general: 'Error al crear el usuario.' } };
           });
         }
     }
