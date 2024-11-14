@@ -173,11 +173,11 @@ function Contratos() {
         { name: 'fechaFin', label: 'Fecha Fin'},
         { name: 'estatusContrato', label: 'Estatus Contrato', isEnum: true},
         { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true},
-        { name: 'duracion', label: 'Duración'},
-        { name: 'monto', label: 'Monto' },
-        { name: 'contratoPDF', label: 'Contrato'},
-        { name: 'idInquilino', label: 'Inquilino'},
-        { name: 'idHabitacion', label: 'Habitación'},
+        // { name: 'duracion', label: 'Duración'},
+        // { name: 'monto', label: 'Monto' },
+        // { name: 'contratoPDF', label: 'Contrato'},
+        // { name: 'idInquilino', label: 'Inquilino'},
+        // { name: 'idHabitacion', label: 'Habitación'},
       ];
 
       fieldsToValidate.forEach(field => {
@@ -197,7 +197,7 @@ function Contratos() {
       }
           
       if (isEdit) {
-        return contratoService.editContrato(formData.id, formData).then(() => {
+        return contratoService.updateContrato(formData.id, formData).then(() => {
           loadData();
           toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Editado Exitosamente', life: 3000 });
           return { success: true };
