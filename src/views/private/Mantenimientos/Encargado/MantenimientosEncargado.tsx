@@ -9,6 +9,8 @@ import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
 import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
+import { EstatusMantenimiento } from '../../../../common/enums/enums';
+import { MantenimientoService } from '../../../../services/mantenimiento/MantenimientoService';
 
 function MantenimentosEncargado() {
     const [data, setData] = useState()
@@ -18,8 +20,9 @@ function MantenimentosEncargado() {
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState()
     const toast = useRef(null);
-    const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
+    const estatusMantenimientoList = Object.values(EstatusMantenimiento);
 
     useEffect(() => {  
       loadData();
@@ -35,8 +38,12 @@ function MantenimentosEncargado() {
     };
     
     function loadData(){
-      edificioService.getAll().then((data) => {
-        setData(data);
+      mantenimientoService.getAll().then((data) => {
+        const updatedData = data.map((element) => ({
+          ...element,
+          estatus: estatusMantenimientoList[element.estatus],
+        }));
+        setData(updatedData);
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
@@ -68,7 +75,11 @@ function MantenimentosEncargado() {
     function editData(rowData) {
       setShowCreateEditModal(true);
       setIsEdit(true);
-      setSelectedData(rowData)
+      const rowDataModified = {
+        ...rowData,
+        estatus: Object.values(estatusMantenimientoList).indexOf(rowData.estatus)
+      }
+      setSelectedData(rowDataModified)
     }
 
     // ? Función para cargar modal con datos
@@ -78,7 +89,7 @@ function MantenimentosEncargado() {
     }
   
   
-    const filtersName: string[] = ['direccion', 'contacto', 'apellidoMaterno'];
+    const filtersName: string[] = ['titulo', 'descripcion', 'estatus', 'costo', 'idContrato'];
     const TableSchema: ITableSchema = {
       Configuration: {
         title:'Mantenimientos',
@@ -87,8 +98,11 @@ function MantenimentosEncargado() {
         globalFilterFields: filtersName,
       },
       Columns: [
-        { header: 'Direccion', field: 'direccion'},
-        { header: 'contacto', field: 'contacto'},
+        { header: 'Título', field: 'titulo' },
+        { header: 'Descripción', field: 'descripcion' },
+        { header: 'Estatus', field: 'estatus' },
+        { header: 'Costo', field: 'costo' },
+        { header: 'Contrato', field: 'idContrato' },
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -109,15 +123,19 @@ function MantenimentosEncargado() {
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
+        { name: 'titulo', label: 'Titulo', type: 'text' },
+        { name: 'descripcion', label: 'Descripcion', type: 'text' },
+        { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
+        { name: 'costo', label: 'Costo', type: 'number' },
+        { name: 'idContrato', label: 'Contrato', type: 'text' },
         { name: 'id', label: 'Id', type: 'number', showField:false},
-        { name: 'direccion', label: 'Dirección', type: 'text' },
-        { name: 'contacto', label: 'Contacto', type: 'text' },
+
       ]
     }
 
     function CreateEdit(formData) {
         if (isEdit) {
-            edificioService.edit(formData.id, formData).then(() => {
+            mantenimientoService.edit(formData.id, formData).then(() => {
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
             }).catch((error) => {
@@ -125,7 +143,7 @@ function MantenimentosEncargado() {
             })
         } else {
           const newFormData = { ...formData, id: 0 };
-          edificioService.create(newFormData).then((data) => {
+          mantenimientoService.create(newFormData).then((data) => {
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
           }).catch((error) => {

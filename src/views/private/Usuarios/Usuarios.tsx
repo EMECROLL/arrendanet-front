@@ -164,6 +164,8 @@ function Usuarios() {
     }
 
     function CreateEdit(formData) {
+      console.log(formData);
+      
       const errors = {};
       const fieldsToValidate = [
         { name: 'nombre', label: 'Nombre' },
@@ -173,8 +175,6 @@ function Usuarios() {
         { name: 'password', label: 'Password' },
         { name: 'confirmPassword', label: 'Confirmar Password' },
         { name: 'numeroDeTelefono', label: 'Número de Teléfono' },
-        { name: 'idEdificio', label: 'Edificio' },
-        { name: 'idRol', label: 'Rol' },
       ];
 
       fieldsToValidate.forEach(field => {
@@ -189,30 +189,53 @@ function Usuarios() {
         }
       });
 
+      const password = formData['password'];
+      if (password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{}|;:'",.<>?/\\-])[A-Za-z\d!@#$%^&*()_+[\]{}|;:'",.<>?/\\-]{7,}$/;
+        if (!passwordRegex.test(password)) {
+          errors['password'] = 'La contraseña debe tener al menos una mayúscula, una minúscula, un número, un carácter especial y una longitud mínima de 7 caracteres.';
+        }
+      }
+      
+      if (formData['password'] !== formData['confirmPassword']) {
+        errors['confirmPassword'] = 'Las contraseñas no coinciden.';
+      }
+
+
       if (Object.keys(errors).length > 0) {
         return Promise.resolve({ success: false, errors });
       }
 
         if (isEdit) {
-            return accountService.edit(formData.idPersona, formData).then(() => {
-              loadData();
-              toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Editado Exitosamente', life: 3000 });
-              return { success: true };
+            return accountService.edit(formData.idPersona, formData).then((data) => {
+              if(data.success){
+                loadData();
+                toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Editado Exitosamente', life: 3000 });
+                return { success: true };  
+              }else{
+                toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                console.error('Error al crear:', error);
+                return { success: false, errors: { general: data.message } };
+              }
             }).catch((error) => {
-                console.error('Error fetching usuarios:', error);
-                return { success: false, errors: { general: 'Error al editar el usuario.' } };
-
-            })
+              console.error('Error al crear:', error);
+              return { success: false, errors: { general: data.message } };
+            });
         } else {
           const newFormData = { ...formData, id: 0 };
           return accountService.create(newFormData).then((data) => {
-              loadData();
-              toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Creado Exitosamente', life: 3000 });
-              return { success: true };
+              if(data.success){
+                loadData();
+                toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Creado Exitosamente', life: 3000 });
+                return { success: true };  
+              }else{
+                toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                console.error('Error al crear:', error);
+                return { success: false, errors: { general: data.message } };
+              }
           }).catch((error) => {
-            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el usuario', life: 3000 });
               console.error('Error al crear:', error);
-              return { success: false, errors: { general: 'Error al crear el usuario.' } };
+              return { success: false, errors: { general: data.message } };
           });
         }
     }
