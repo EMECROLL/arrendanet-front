@@ -27,3 +27,9 @@ export enum EstatusPago {
     EN_PROCESO = "En Proceso",
     RECHAZADO = "Rechazado",
 }
+
+export enum EstatusMantenimiento {
+    PENDIENTE = "Pendiente",
+    EN_PROCESO = "En Proceso",
+    FINALIZADO = "Finalizado",
+}
