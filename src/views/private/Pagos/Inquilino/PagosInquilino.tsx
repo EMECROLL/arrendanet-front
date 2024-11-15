@@ -1,32 +1,38 @@
 import { FilterMatchMode } from 'primereact/api';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
-import { EdificioService } from '../../../../services/edificio/EdificioService';
 import { ITableSchema } from '../../../../interfaces/data-table/DataTable';
-import { IFormSchema } from '../../../../interfaces/data-form-field/DataFormField';
 import BasicDataTable from '../../../../components/basic-data-table/BasicDataTable';
 import DeleteModal from '../../../../components/delete-modal/DeleteModal';
+// import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
+import { PagoService } from '../../../../services/pago/PagoService';
+import { IPersona } from '../../../../interfaces/persona/Persona';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
+import { EstatusPago } from '../../../../common/enums/enums';
+import { IFormSchema } from '../../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
+import { ContratoService } from '../../../../services/contrato/ContratoService';
 import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
-import { EstatusMantenimiento } from '../../../../common/enums/enums';
-import { MantenimientoService } from '../../../../services/mantenimiento/MantenimientoService';
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
 import { DataView } from 'primereact/dataview';
 import { Tag } from 'primereact/tag';
 
-function MantenimentosInquilino() {
+function PagosInquilino() {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
+    const [contratos, setContratos] = useState()
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
-    const [selectedData, setSelectedData] = useState()
+    const [selectedData, setSelectedData] = useState<IPersona>()
     const toast = useRef(null);
-    const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const pagoService = new PagoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const estatusPagoList = Object.values(EstatusPago);
     const [isMobile, setIsMobile] = useState(false);
-    const estatusMantenimientoList = Object.values(EstatusMantenimiento);
+    const ignoreColumns = ['idContrato']
+
 
     useEffect(() => {  
       loadData();
@@ -42,15 +48,26 @@ function MantenimentosInquilino() {
     };
     
     function loadData(){
-      mantenimientoService.getAll().then((data) => {
+      getContratos();
+      pagoService.getAll().then((data) => {
         const updatedData = data.map((element) => ({
           ...element,
-          estatus: estatusMantenimientoList[element.estatus],
+          estatusPago: estatusPagoList[element.estatusPago],
         }));
         setData(updatedData);
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
+    }
+
+    async function getContratos(){
+      const response = await contratoService.getAll();
+      try {        
+        setContratos(response)
+        return response;
+      } catch (error) {
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+      }
     }
 
     // ? Función para abrir modal de eliminar
@@ -63,15 +80,15 @@ function MantenimentosInquilino() {
     async function deleteFunction() {
       if (selectedData && selectedData.id) {
           try {
-              await edificioService.delete(selectedData.id);
+              await pagoService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Eliminado Exitosamente', life: 3000 });
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Eliminado exitosamente', life: 3000 });
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });
-              console.error('Error al eliminar a la persona:', error);
+              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a el pago', life: 3000 });
+              console.error('Error al eliminar a el pago:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });
+          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun pago para eliminar', life: 3000 });
       }
     }
 
@@ -81,7 +98,7 @@ function MantenimentosInquilino() {
       setIsEdit(true);
       const rowDataModified = {
         ...rowData,
-        estatus: Object.values(estatusMantenimientoList).indexOf(rowData.estatus)
+        estatusPago: Object.values(estatusPagoList).indexOf(rowData.estatusPago),
       }
       setSelectedData(rowDataModified)
     }
@@ -92,26 +109,26 @@ function MantenimentosInquilino() {
       setSelectedData(rowData)
     }
   
-  
-    const filtersName: string[] = ['titulo', 'descripcion', 'estatus', 'costo', 'idContrato'];
+    const filtersName: string[] = ['fecha', 'monto', 'estatusPago', 'idContrato'];
     const TableSchema: ITableSchema = {
       Configuration: {
-        title:'Mantenimientos',
+        title:'Pagos',
         paginator: true,
         dataKey: 'id', // Tomen muy en cuenta esto
         globalFilterFields: filtersName,
       },
       Columns: [
-        { header: 'Título', field: 'titulo' },
-        { header: 'Descripción', field: 'descripcion' },
-        { header: 'Estatus', field: 'estatus' },
-        { header: 'Costo', field: 'costo' },
-        { header: 'Contrato', field: 'idContrato' },
+        { header: 'Fecha', field: 'fecha', isDate: true},
+        { header: 'Monto', field: 'monto'},
+        { header: 'Estatus Pago', field: 'estatusPago', filterType: 'multiSelect'},
+        { header: 'Contrato', field: 'idContrato'},
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
         [filtersName[0]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         [filtersName[1]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        [filtersName[2]]: { value: null, matchMode: FilterMatchMode.IN },
+        [filtersName[3]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
       },
       Data: data,
       Actions:[
@@ -123,38 +140,68 @@ function MantenimentosInquilino() {
         CreateOrEdit: () => setShowCreateEditModal(true),
       }
     }
-
+    
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
-        { name: 'titulo', label: 'Título', type: 'text' },
-        { name: 'descripcion', label: 'Descripción', type: 'text' },
-        { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
-        { name: 'costo', label: 'Costo', type: 'number' },
-        { name: 'idContrato', label: 'Contrato', type: 'text' },
-        { name: 'id', label: 'Id', type: 'number', showField:false},
-
+        { name: 'fecha', label: 'Fecha', type: 'date' },
+        { name: 'monto', label: 'Monto', type: 'number' },
+        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, // ? Me funciona cuando esta en enum false, eso no deberia ser
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
+        { name: 'id', label: 'id', type: 'number', showField: false},
       ]
     }
-
+  
     function CreateEdit(formData) {
-        if (isEdit) {
-            mantenimientoService.edit(formData.id, formData).then(() => {
-              loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
-            }).catch((error) => {
-                console.error('Error fetching edificios:', error);
-            })
+      
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'fecha', label: 'Fecha' },
+        { name: 'monto', label: 'Monto' },
+        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true }, // ? Me funciona cuando esta en enum false, eso no deberia ser
+        { name: 'idContrato', label: 'Contrato' },
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum) {
+            if (formData[field.name] === undefined || formData[field.name] === null) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
         } else {
-          const newFormData = { ...formData, id: 0 };
-          mantenimientoService.create(newFormData).then((data) => {
-              loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
-          }).catch((error) => {
-            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el edificio', life: 3000 });
-              console.error('Error al crear:', error);
-          });
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
         }
+      });
+
+      if (Object.keys(errors).length > 0) {
+        return Promise.resolve({ success: false, errors });
+      }
+      
+      if (isEdit) {
+        return pagoService.edit(formData.id, formData).then(() => {
+          loadData();
+          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Editado Exitosamente', life: 3000 });
+          return { success: true };
+
+        }).catch((error) => {
+            console.error('Error fetching habitaciones:', error);
+            return { success: false, errors: { general: 'Error al editar el pago.' } };
+
+        })
+      } else {
+        const newFormData = { ...formData, id: 0 };
+        return pagoService.create(newFormData).then((data) => {
+            loadData();
+            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Creado Exitosamente', life: 3000 });
+            return { success: true };
+
+        }).catch((error) => {
+          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el pago', life: 3000 });
+            console.error('Error al crear:', error);
+            return { success: false, errors: { general: 'Error al crear el pago.' } };
+        });
+      }
     }
 
     const formatDate = (value: any) => {
@@ -163,18 +210,19 @@ function MantenimentosInquilino() {
       return !isNaN(date.getTime()) ? new Intl.DateTimeFormat('es-MX').format(date) : value;
     };
 
-    const getSeverityEstatusMantenimiento = (data) => {
+    const getSeverityEstatusPago = (data) => {
       console.log(data);
       
-      switch (data.estatus) {
-          case 'Finalizado':
+      switch (data.estatusPago) {
+          case 'Aprobado':
               return 'success';
 
           case 'En proceso':
               return 'warning';
 
-          case 'Pendiente':
-              return 'info';
+          case 'Rechazado':
+              return 'danger';
+
           default:
               return null;
       }
@@ -189,23 +237,19 @@ function MantenimentosInquilino() {
                   <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
                       <div className="flex flex-column align-items-center sm:align-items-start gap-3">
                           <div className="text-2xl font-bold text-900">
-                            <span>Título: {formatDate(data.titulo)}</span>
+                            <span>Fecha: {formatDate(data.fecha)}</span>
                           </div>
-                          <span className="flex align-items-center gap-2">
-                                  <p><strong>Descripción: </strong></p>
-                                  <span className="font-semibold">{data.descripcion }</span>
-                              </span>
                           {/* <Rating value={product.rating} readOnly cancel={false}></Rating> */}
                           <div className="flex align-items-center gap-3">
                               <span className="flex align-items-center gap-2">
                                   <p><strong>Monto: </strong></p>
-                                  <span className="font-semibold">{data.monto ?? 0 }</span>
+                                  <span className="font-semibold">{data.monto}</span>
                               </span>
                               <span className="flex align-items-center gap-2">
                                   <p><strong>Contrato: </strong></p>
                                   <span className="font-semibold">{data.idContrato}</span>
                               </span>
-                              <strong>Estatus:</strong><Tag value={data.estatus} severity={getSeverityEstatusMantenimiento(data)}></Tag>
+                              <strong>Estatus:</strong><Tag value={data.estatusPago} severity={getSeverityEstatusPago(data)}></Tag>
                           </div>
                       </div>
                       <div className="grid grid-cols-2 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
@@ -228,6 +272,7 @@ function MantenimentosInquilino() {
 
       return <div className="grid grid-nogutter">{list}</div>;
   };
+    
   
     return (
       <div className="App p-10">
@@ -243,8 +288,8 @@ function MantenimentosInquilino() {
               <div className="card">
                 {/* <DataView value={data} listTemplate={listTemplate} paginator rows={5} /> */}
                 <DataView value={data} listTemplate={listTemplate} />
-              </div>            
-            )}
+              </div>
+      )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
@@ -253,10 +298,11 @@ function MantenimentosInquilino() {
         message={selectedData?.nombre}
         ></DeleteModal>
         <BasicModal
-        title="Mantenimientos"
+        title="Pago"
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
+        ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}
@@ -271,4 +317,4 @@ function MantenimentosInquilino() {
     );
 }
 
-export default MantenimentosInquilino
+export default PagosInquilino

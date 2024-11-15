@@ -11,14 +11,18 @@ import { Roles } from '../../common/enums/enums';
 import Chat from '../../views/private/Chat/Chat';
 import MantenimientosEncargado from '../../views/private/Mantenimientos/Encargado/MantenimientosEncargado';
 import MantenimientosInquilino from '../../views/private/Mantenimientos/Inquilino/MantenimientosInquilino';
+import PagosInquilino from '../../views/private/Pagos/Inquilino/PagosInquilino';
+import ContratosInquilino from '../../views/private/Contratos/Inquilino/ContratosInquilino';
 
 const privateRoutes = [
     <Route path="/dashboard" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]} ><Dashboard /></ProtectedRoute>} />,
     <Route path="/usuarios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Usuarios /></ProtectedRoute>}  />,
     <Route path="/edificios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Edificios /></ProtectedRoute>}  />,
     <Route path="/contratos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Contratos /></ProtectedRoute>}  />,
+    <Route path="/consultar-contratos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.INQUILINO]}><ContratosInquilino /></ProtectedRoute>}  />,
     <Route path="/habitaciones" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Habitaciones /></ProtectedRoute>}  />,
     <Route path="/pagos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Pagos /></ProtectedRoute>}  />,
+    <Route path="/consultar-pagos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.INQUILINO]}><PagosInquilino /></ProtectedRoute>}  />,
     <Route path="/mantenimientos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.ENCARGADO]}><MantenimientosEncargado /></ProtectedRoute>}  />,
     <Route path="/solicitar-mantenimiento" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.INQUILINO]}><MantenimientosInquilino /></ProtectedRoute>}  />,
     <Route path="/chat" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.ENCARGADO, Roles.INQUILINO]}><Chat /></ProtectedRoute>}  />,
