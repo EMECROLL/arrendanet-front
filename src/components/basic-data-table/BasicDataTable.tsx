@@ -50,7 +50,6 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
         const uniqueValues = new Set();
     
         if (!TableSchema || !TableSchema.Data) {
-            console.error('TableSchema or TableSchema.Data is undefined');
             return [];
         }
         
