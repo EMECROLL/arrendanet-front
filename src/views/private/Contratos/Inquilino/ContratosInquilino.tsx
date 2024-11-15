@@ -1,21 +1,25 @@
 import { FilterMatchMode } from 'primereact/api';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
-import { ITableSchema } from '../../../interfaces/data-table/DataTable';
-import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
-import DeleteModal from '../../../components/delete-modal/DeleteModal';
-// import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
-import { ContratoService } from '../../../services/contrato/ContratoService';
-import { IPersona } from '../../../interfaces/persona/Persona';
-import BasicModal from '../../../components/basic-modal/BasicModal';
-import { EstatusContrato, TipoContrato } from '../../../common/enums/enums';
-import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
-import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
-import { HabitacionService } from '../../../services/habitacion/HabitacionService';
-import { PersonaService } from '../../../services/persona/PersonaService';
-import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
+import { ITableSchema } from '../../../../interfaces/data-table/DataTable';
+import BasicDataTable from '../../../../components/basic-data-table/BasicDataTable';
+import DeleteModal from '../../../../components/delete-modal/DeleteModal';
+// import checkedBodyTemplate from '../../../../components/checked-body-template/checkedBodyTemplate';
+import { ContratoService } from '../../../../services/contrato/ContratoService';
+import { IPersona } from '../../../../interfaces/persona/Persona';
+import BasicModal from '../../../../components/basic-modal/BasicModal';
+import { EstatusContrato, TipoContrato } from '../../../../common/enums/enums';
+import { IFormSchema } from '../../../../interfaces/data-form-field/DataFormField';
+import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
+import { HabitacionService } from '../../../../services/habitacion/HabitacionService';
+import { PersonaService } from '../../../../services/persona/PersonaService';
+import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
+import { DataView } from 'primereact/dataview';
+import { Button } from 'primereact/button';
+import { classNames } from 'primereact/utils';
+import { Tag } from 'primereact/tag';
 
-function Contratos() {
+function ContratosInquilino() {
     const url = import.meta.env.VITE_BACKEND_URL;
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -259,6 +263,80 @@ function Contratos() {
 
       ]
     }
+
+    const formatDate = (value: any) => {
+      if (!value) return '';
+      const date = new Date(value);
+      return !isNaN(date.getTime()) ? new Intl.DateTimeFormat('es-MX').format(date) : value;
+    };
+
+    const getSeverityEstatusContrato = (data) => {
+      console.log(data);
+      
+      switch (data.estatusContrato) {
+          case 'Activo':
+              return 'success';
+
+          case 'Inactivo':
+              return 'warning';
+
+          case 'Vencido':
+              return 'danger';
+
+          default:
+              return null;
+      }
+  };
+
+
+    const itemTemplate = (data, index) => {
+      console.log(data)
+      return (
+          <div className="col-12" key={data.id}>
+              <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
+                  <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                      <div className="flex flex-column align-items-center sm:align-items-start gap-3">
+                          <div className="text-2xl font-bold text-900">
+                            <span>Fecha Inicio: {formatDate(data.fechaInicio)}</span> - Fecha Fin: <span>{formatDate(data.fechaFin)}</span>
+                          </div>
+                          {/* <Rating value={product.rating} readOnly cancel={false}></Rating> */}
+                          <div className="flex align-items-center gap-3">
+                              <span className="flex align-items-center gap-2">
+                                  <p><strong>Habitación: </strong></p>
+                                  <span className="font-semibold">{data.habitacion}</span>
+                              </span>
+                              <span className="flex align-items-center gap-2">
+                                  <p><strong>Monto: </strong></p>
+                                  <span className="font-semibold">{data.monto}</span>
+                              </span>
+                              <span className="flex align-items-center gap-2">
+                                  <p><strong>Tipo Contrato: </strong></p>
+                                  <span className="font-semibold">{data.tipoContrato}</span>
+                              </span>
+                              <strong>Estatus:</strong><Tag value={data.estatusContrato} severity={getSeverityEstatusContrato(data)}></Tag>
+                          </div>
+                      </div>
+                      <div className="grid grid-cols-2 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
+                          <Button className='p-button-info w-full' onClick={()=>showContratoPDF(data)}>Ver PDF</Button>
+                          <Button className='p-button-warning w-full' onClick={()=>showData(data)}>Más información</Button>
+                          <Button className='p-button-primary w-full' onClick={()=>editData(data)}>Editar</Button>
+                          <Button className='p-button-danger w-full' onClick={()=>deleteData(data)}>Eliminar</Button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      );
+  };
+
+    const listTemplate = (items) => {
+      if (!items || items.length === 0) return null;
+
+      let list = items.map((product, index) => {
+          return itemTemplate(product, index);
+      });
+
+      return <div className="grid grid-nogutter">{list}</div>;
+  };
     
     return (
       <div className="App p-10">
@@ -271,7 +349,11 @@ function Contratos() {
                     </div>
                 </div>
             ) : (
-                <BasicDataTable TableSchema={TableSchema} />
+                // <BasicDataTable TableSchema={TableSchema} />
+                <div className="card">
+                    {/* <DataView value={data} listTemplate={listTemplate} paginator rows={5} /> */}
+                    <DataView value={data} listTemplate={listTemplate} />
+                </div>
             )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
@@ -308,4 +390,4 @@ function Contratos() {
     );
 }
 
-export default Contratos
+export default ContratosInquilino

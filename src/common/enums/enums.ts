@@ -23,7 +23,7 @@ export enum EstatusHabitacion {
 }
 
 export enum EstatusPago {
-    APROBADO = "Activo",
+    APROBADO = "Aprobado",
     EN_PROCESO = "En Proceso",
     RECHAZADO = "Rechazado",
 }

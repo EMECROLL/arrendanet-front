@@ -63,11 +63,28 @@ export default function Navbar() {
 
         },
         {
+            label: 'Consultar Contratos',
+            icon: 'pi pi-hammer',
+            template: itemRenderer,
+            command: () => navigate('/consultar-contratos'),
+            authorizedRoles: [Roles.INQUILINO]
+            // authorizedRoles: [Roles.ADMINISTRADOR, Roles.INQUILINO]
+
+        },
+        {
             label: 'Pagos',
             icon: 'pi pi-receipt',
             template: itemRenderer,
             command: () => navigate('/pagos'),
             authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+        },
+        {
+            label: 'Consultar Pagos',
+            icon: 'pi pi-receipt',
+            template: itemRenderer,
+            command: () => navigate('/consultar-pagos'),
+            authorizedRoles: [Roles.INQUILINO]
+            // authorizedRoles: [Roles.ADMINISTRADOR, Roles.INQUILINO]
         },
         {
             label: 'Mantenimientos',
@@ -81,7 +98,8 @@ export default function Navbar() {
             icon: 'pi pi-wrench',
             template: itemRenderer,
             command: () => navigate('/solicitar-mantenimiento'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.INQUILINO]
+            // authorizedRoles: [Roles.ADMINISTRADOR,Roles.INQUILINO]
+            authorizedRoles: [Roles.INQUILINO]
         },
         {
             label: 'Chat',
