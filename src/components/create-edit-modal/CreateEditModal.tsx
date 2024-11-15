@@ -4,7 +4,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import React, { useEffect, useState } from 'react';
 
-function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data }) {
+function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data, columns }) {
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState({});
 
@@ -75,10 +75,10 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
         >
             <form className='p-5'>
                 {fieldGroups.map((group, groupIndex) => (
-                    <div className='grid grid-cols-2 gap-5 mb-5' key={groupIndex}>
+                    <div className={`grid grid-cols-${columns} gap-5 mb-5`} key={groupIndex}>
                         {group.map((field, index) => (
                             field.showField !== false &&
-                            <div className="card flex justify-content-center" style={{ width: '45%' }} key={index}>
+                            <div className={`card flex justify-content-center ${columns == 2 ? 'w-[45%]' : 'w-full' }`} key={index}>
                                 <div className="flex flex-column gap-2" style={{ width: '100%' }}>
                                     <label htmlFor={field.name}>{field.label}</label>
                                     {field.type === 'file' ? (

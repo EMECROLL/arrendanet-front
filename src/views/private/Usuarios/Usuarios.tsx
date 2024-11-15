@@ -11,6 +11,7 @@ import CreateEditModal from '../../../components/create-edit-modal/CreateEditMod
 import { EdificioService } from '../../../services/edificio/EdificioService';
 import { AccountService } from '../../../services/account/AccountService';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
+import { IPersona } from '../../../interfaces/persona/Persona';
 
 function Usuarios() {
     const [data, setData] = useState()
@@ -20,7 +21,7 @@ function Usuarios() {
     const [isEdit, setIsEdit] = useState(false)
     const [roles, setRoles] = useState()
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
-    const [selectedData, setSelectedData] = useState()
+    const [selectedData, setSelectedData] = useState<IPersona>()
     const toast = useRef(null);
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const accountService = new AccountService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
@@ -76,7 +77,7 @@ function Usuarios() {
           try {
               await accountService.delete(selectedData.idPersona);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Eliminado Exitosamente', life: 3000 });
+              toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Eliminado Exitosamente', life: 3000 });
           } catch (error) {
               toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el usuario', life: 3000 });
               console.error('Error al eliminar el usuario:', error);
@@ -182,7 +183,7 @@ function Usuarios() {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         } else {
-            if (!formData[field.name] || !formData[field.name].trim()) {
+            if (!formData[field.name] || (typeof (formData[field.name]) == 'string' ? (!formData[field.name].trim()) : null)) {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         }
@@ -209,7 +210,7 @@ function Usuarios() {
             return accountService.edit(formData.idPersona, formData).then((data) => {
               if(data.success){
                 loadData();
-                toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Editado Exitosamente', life: 3000 });
+                toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Editado Exitosamente', life: 3000 });
                 return { success: true };  
               }else{
                 toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
@@ -225,7 +226,7 @@ function Usuarios() {
           return accountService.create(newFormData).then((data) => {
               if(data.success){
                 loadData();
-                toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Creado Exitosamente', life: 3000 });
+                toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Creado Exitosamente', life: 3000 });
                 return { success: true };  
               }else{
                 toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
@@ -274,6 +275,7 @@ function Usuarios() {
             data={selectedData}
             setIsEdit={setIsEdit}
             isEdit={isEdit}
+            columns={2}
         />
 
       </div>

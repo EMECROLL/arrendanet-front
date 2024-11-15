@@ -91,8 +91,7 @@ export class BaseService {
             if (response.status === 204) {
                 return null;
             }
-
-            return await response.json();
+            return await response;
         } catch (error) {
             console.error('Error deleting data:', error);
             throw error;

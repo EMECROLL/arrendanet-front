@@ -16,7 +16,7 @@ function DeleteModal({showDeleteModal, setShowDeleteModal, data, deleteFunction,
     const deleteDataDialogFooter = (
         <React.Fragment>
             <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteDataDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteData} />
+            <Button label="Si" icon="pi pi-check" severity="danger" onClick={deleteData} />
         </React.Fragment>
     );
 
@@ -25,7 +25,7 @@ function DeleteModal({showDeleteModal, setShowDeleteModal, data, deleteFunction,
     visible={showDeleteModal} 
     style={{ width: '32rem' }} 
     breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
-    header="Confirm" 
+    header="Confirmar" 
     modal 
     footer={deleteDataDialogFooter} 
     onHide={hideDeleteDataDialog}>
@@ -33,7 +33,7 @@ function DeleteModal({showDeleteModal, setShowDeleteModal, data, deleteFunction,
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                     {data && (
                         <span>
-                            Are you sure you want to delete <b>{message}</b>?
+                            Estas seguro que quieres eliminar <b>{message}</b>?
                         </span>
                     )}
                 </div>
