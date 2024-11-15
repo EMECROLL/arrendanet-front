@@ -139,7 +139,7 @@ function Login() {
       <section className="hidden xl:block w-full sm:w-5/12 h-screen ml-auto">
         <img 
           className="w-full h-full object-cover rounded-l-3xl" 
-          src="/src/assets/images/login.jpg" 
+          src="/src/assets/images/login.webp" 
           alt="Cancún" 
         />
       </section>

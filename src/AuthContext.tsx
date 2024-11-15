@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
         };
 
         checkAuth();
-    },  [isAuthenticated, user]);
+    },  [isAuthenticated]);
 
     const login = async (credentials) => {
         try {            

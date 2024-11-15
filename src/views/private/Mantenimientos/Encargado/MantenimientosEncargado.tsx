@@ -123,8 +123,8 @@ function MantenimentosEncargado() {
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
-        { name: 'titulo', label: 'Titulo', type: 'text' },
-        { name: 'descripcion', label: 'Descripcion', type: 'text' },
+        { name: 'titulo', label: 'Título', type: 'text' },
+        { name: 'descripcion', label: 'Descripción', type: 'text' },
         { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
         { name: 'costo', label: 'Costo', type: 'number' },
         { name: 'idContrato', label: 'Contrato', type: 'text' },
