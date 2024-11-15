@@ -182,34 +182,42 @@ function MantenimentosInquilino() {
     const itemTemplate = (data, index) => {
       console.log(data)
       return (
-          <div className="col-12" key={data.id}>
+          <div className="col-12 shadow-xl rounded-xl" key={data.id}>
               <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
                   <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
                       <div className="flex flex-column align-items-center sm:align-items-start gap-3">
-                          <div className="text-2xl font-bold text-900">
+                          <div className="text-xs md:text-2xl font-bold text-900">
                             <span>Título: {formatDate(data.titulo)}</span>
                           </div>
                           <span className="flex align-items-center gap-2">
-                                  <p><strong>Descripción: </strong></p>
-                                  <span className="font-semibold">{data.descripcion }</span>
+                                  <p className='text-xs md:text-base'><strong>Descripción: </strong></p>
+                                  <span className="text-xs md:text-base font-semibold">{data.descripcion }</span>
                               </span>
-                          {/* <Rating value={product.rating} readOnly cancel={false}></Rating> */}
-                          <div className="flex align-items-center gap-3">
+                          <div className="hidden md:flex align-items-center gap-3">
                               <span className="flex align-items-center gap-2">
-                                  <p><strong>Monto: </strong></p>
-                                  <span className="font-semibold">{data.monto ?? 0 }</span>
+                                  <p className='text-xs md:text-base'><strong>Monto: </strong></p>
+                                  <span className="text-xs md:text-base font-semibold">{data.monto ?? 0 }</span>
                               </span>
                               <span className="flex align-items-center gap-2">
-                                  <p><strong>Contrato: </strong></p>
-                                  <span className="font-semibold">{data.idContrato}</span>
+                                  <p className='text-xs md:text-base'><strong>Contrato: </strong></p>
+                                  <span className="text-xs md:text-base font-semibold">{data.idContrato}</span>
                               </span>
-                              <strong>Estatus:</strong><Tag value={data.estatus} severity={getSeverityEstatusMantenimiento(data)}></Tag>
+                              <strong className='text-xs md:text-base'>Estatus:</strong><Tag value={data.estatus} severity={getSeverityEstatusMantenimiento(data)}></Tag>
                           </div>
                       </div>
-                      <div className="grid grid-cols-2 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                          <Button className='p-button-warning w-full' onClick={()=>showData(data)}>Más información</Button>
-                          <Button className='p-button-primary w-full' onClick={()=>editData(data)}>Editar</Button>
-                          <Button className='p-button-danger w-full' onClick={()=>deleteData(data)}>Eliminar</Button>
+                      <div className="flex md:grid grid-cols-4 md:grid-cols-1 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
+                          <Button className='p-button-warning w-full text-xs md:text-base' onClick={()=>showData(data)}>
+                            <i className="pi pi-info-circle flex md:hidden"></i>
+                            <span className="hidden md:flex">Más información</span>
+                          </Button>
+                          <Button className='p-button-primary w-full text-xs md:text-base' onClick={()=>editData(data)}>
+                            <i className="pi pi-pencil flex md:hidden"></i>
+                            <span className="hidden md:flex">Editar</span>
+                          </Button>
+                          <Button className='p-button-danger w-full text-xs md:text-base' onClick={()=>deleteData(data)}>
+                            <i className="pi pi-trash flex md:hidden"></i>
+                            <span className="hidden md:flex">Eliminar</span>
+                          </Button>
                       </div>
                   </div>
               </div>
@@ -230,19 +238,11 @@ function MantenimentosInquilino() {
     return (
       <div className="App p-10">
             <Toast ref={toast} />
-            {isMobile ? (
-                <div className="flex justify-center">
-                    <div className="flex flex-col p-button p-button-rounded p-button-primary">
-                        <img src={iconoGirarCelular} alt="Rotate Phone" />
-                        Rota tu teléfono para una mejor experiencia
-                    </div>
-                </div>
-            ) : (
-              <div className="card">
+            <div className="card">
                 {/* <DataView value={data} listTemplate={listTemplate} paginator rows={5} /> */}
+                <h1 className='ml-4'>Mantenimiento</h1>
                 <DataView value={data} listTemplate={listTemplate} />
-              </div>            
-            )}
+            </div>
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}

@@ -69,7 +69,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
         <Dialog
             visible={visible}
             header={isEdit ? `Editar ${formSchema.title}` : `Crear ${formSchema.title}`}
-            style={{ width: '50vw' }}
+            className='w-[90%] md:w-[50vw]'
             footer={dialogFooter}
             onHide={hideDialog}
         >

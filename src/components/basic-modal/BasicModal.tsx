@@ -24,13 +24,21 @@ export default function BasicModal({title, showDataModal, setShowDataModal, data
         <Dialog 
         visible={showDataModal} 
         header={title} 
-        style={{ width: '50vw' }} 
+        className='w-[90%] md:w-[50vw]'
         onHide={hideDeleteDataDialog}>
             {pdfUrl ? (
-                <div style={{ width: '100%', height: '550px' }}>
-                    <embed src={pdfUrl} width="100%" height="100%" type="application/pdf" />
-                </div>
-            ) : (
+                    <div className="flex flex-col items-center">
+                    <div className="w-full h-[550px] md:h-[700px]">
+                        <iframe
+                        src={pdfUrl}
+                        width="100%"
+                        height="100%"
+                        type="application/pdf"
+                        title="PDF Viewer"
+                        />
+                    </div>
+                    </div>
+                ) : (
                 data && (
                     Object.entries(data).map(([key, value], index) => {
                         if(combinedIgnoreColumns.includes(key)){
