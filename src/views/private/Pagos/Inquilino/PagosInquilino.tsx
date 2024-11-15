@@ -234,13 +234,13 @@ function PagosInquilino() {
       return (
           <div className="col-12 shadow-xl rounded-xl" key={data.id}>
               <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
-                  <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
-                      <div className="flex flex-column align-items-center sm:align-items-start gap-3">
+                  <div className="flex flex-column md:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                      <div className="self-start flex flex-column align-items-start gap-3">
                         <div className="text-xs md:text-2xl font-bold text-900">
                             <span>Fecha: {formatDate(data.fecha)}</span>
                           </div>
                           {/* <Rating value={product.rating} readOnly cancel={false}></Rating> */}
-                          <div className="hidden md:flex align-items-center gap-3">
+                          <div className="md:flex align-items-center gap-3">
                               <span className="flex align-items-center gap-2">
                                   <p className='text-xs md:text-base'><strong>Monto: </strong></p>
                                   <span className="text-xs md:text-base font-semibold">{data.monto}</span>
@@ -249,22 +249,22 @@ function PagosInquilino() {
                                   <p className='text-xs md:text-base'><strong>Contrato: </strong></p>
                                   <span className="text-xs md:text-base font-semibold">{data.idContrato}</span>
                               </span>
-                              <strong>Estatus:</strong><Tag value={data.estatusPago} severity={getSeverityEstatusPago(data)}></Tag>
+                              <strong className="text-xs md:text-base font-semibold">Estatus:</strong>
+                              <Tag className='ml-2 md:m-0' value={data.estatusPago} severity={getSeverityEstatusPago(data)}></Tag>
                           </div>
                       </div>
-                      <div className="flex md:grid grid-cols-4 md:grid-cols-1 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                          <Button className='p-button-warning w-full text-xs md:text-base' onClick={()=>showData(data)}>
-                            <i className="pi pi-info-circle flex md:hidden"></i>
-                            <span className="hidden md:flex">Más información</span>
+                      <div className="flex md:grid grid-cols-4 md:grid-cols-1 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 w-full md:w-auto">
+                          <Button className='p-button-warning w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>showData(data)}>
+                            <span className="flex">Más información</span>
                           </Button>
-                          <Button className='p-button-primary w-full text-xs md:text-base' onClick={()=>editData(data)}>
+                          {/* <Button className='p-button-primary w-full text-xs md:text-base' onClick={()=>editData(data)}>
                             <i className="pi pi-pencil flex md:hidden"></i>
                             <span className="hidden md:flex">Editar</span>
                           </Button>
                           <Button className='p-button-danger w-full text-xs md:text-base' onClick={()=>deleteData(data)}>
                             <i className="pi pi-trash flex md:hidden"></i>
                             <span className="hidden md:flex">Eliminar</span>
-                          </Button>
+                          </Button> */}
                       </div>
                   </div>
               </div>

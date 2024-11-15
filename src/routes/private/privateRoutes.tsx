@@ -15,13 +15,13 @@ import PagosInquilino from '../../views/private/Pagos/Inquilino/PagosInquilino';
 import ContratosInquilino from '../../views/private/Contratos/Inquilino/ContratosInquilino';
 
 const privateRoutes = [
-    <Route key="dashboard" path="/dashboard" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]} ><Dashboard /></ProtectedRoute>} />,
-    <Route key="usuarios" path="/usuarios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Usuarios /></ProtectedRoute>}  />,
+    <Route key="dashboard" path="/dashboard" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.INQUILINO, Roles.ENCARGADO]} ><Dashboard /></ProtectedRoute>} />,
+    <Route key="usuarios" path="/usuarios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]}><Usuarios /></ProtectedRoute>}  />,
     <Route key="edificios" path="/edificios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Edificios /></ProtectedRoute>}  />,
     <Route key="contratos" path="/contratos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Contratos /></ProtectedRoute>}  />,
     <Route key="consultar-contratos" path="/consultar-contratos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.INQUILINO]}><ContratosInquilino /></ProtectedRoute>}  />,
-    <Route key="habitaciones" path="/habitaciones" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Habitaciones /></ProtectedRoute>}  />,
-    <Route key="pagos" path="/pagos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Pagos /></ProtectedRoute>}  />,
+    <Route key="habitaciones" path="/habitaciones" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]}><Habitaciones /></ProtectedRoute>}  />,
+    <Route key="pagos" path="/pagos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]}><Pagos /></ProtectedRoute>}  />,
     <Route key="consultar-pagos" path="/consultar-pagos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.INQUILINO]}><PagosInquilino /></ProtectedRoute>}  />,
     <Route key="mantenimientos" path="/mantenimientos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.ENCARGADO]}><MantenimientosEncargado /></ProtectedRoute>}  />,
     <Route key="solicitar-mantenimiento" path="/solicitar-mantenimiento" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.INQUILINO]}><MantenimientosInquilino /></ProtectedRoute>}  />,

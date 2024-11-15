@@ -30,7 +30,7 @@ export default function Navbar() {
             icon: 'pi pi-chart-bar',
             template: itemRenderer,
             command: () => navigate('/dashboard'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]
 
         },
         {
@@ -45,14 +45,14 @@ export default function Navbar() {
             icon: 'pi pi-users',
             template: itemRenderer,
             command: () => navigate('/usuarios'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]
         },
         {
             label: 'Habitaciones',
             icon: 'pi pi-home',
             template: itemRenderer,
             command: () => navigate('/habitaciones'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]
         },
         {
             label: 'Contratos',
@@ -76,7 +76,7 @@ export default function Navbar() {
             icon: 'pi pi-receipt',
             template: itemRenderer,
             command: () => navigate('/pagos'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]
         },
         {
             label: 'Consultar Pagos',
@@ -98,8 +98,8 @@ export default function Navbar() {
             icon: 'pi pi-wrench',
             template: itemRenderer,
             command: () => navigate('/solicitar-mantenimiento'),
-            // authorizedRoles: [Roles.ADMINISTRADOR,Roles.INQUILINO]
             authorizedRoles: [Roles.INQUILINO]
+            // authorizedRoles: [Roles.ADMINISTRADOR,Roles.INQUILINO]
         },
         {
             label: 'Chat',
