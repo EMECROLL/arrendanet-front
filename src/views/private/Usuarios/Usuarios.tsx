@@ -210,7 +210,7 @@ function Usuarios() {
             return accountService.edit(formData.idPersona, formData).then((data) => {
               if(data.success){
                 loadData();
-                toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Editado Exitosamente', life: 3000 });
+                toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Editado Exitosamente', life: 3000 });
                 return { success: true };  
               }else{
                 toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
@@ -226,7 +226,7 @@ function Usuarios() {
           return accountService.create(newFormData).then((data) => {
               if(data.success){
                 loadData();
-                toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Usuario Creado Exitosamente', life: 3000 });
+                toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Creado Exitosamente', life: 3000 });
                 return { success: true };  
               }else{
                 toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });

@@ -47,7 +47,7 @@ export class BaseService {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return await response;
+            return await response.json();
         } catch (error) {
             console.error('Error creating data:', error);
             throw error;
@@ -70,7 +70,7 @@ export class BaseService {
     
             const contentType = response.headers.get('Content-Type');
             if (contentType && contentType.includes('application/json')) {
-                return await response;
+                return await response.json();
             } else {
                 return null;
             }
