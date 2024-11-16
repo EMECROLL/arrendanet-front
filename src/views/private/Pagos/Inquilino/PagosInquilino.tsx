@@ -17,6 +17,7 @@ import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
 import { DataView } from 'primereact/dataview';
 import { Tag } from 'primereact/tag';
+import { useAuth } from '../../../../AuthContext';
 
 function PagosInquilino() {
     const [data, setData] = useState()
@@ -32,6 +33,7 @@ function PagosInquilino() {
     const estatusPagoList = Object.values(EstatusPago);
     const [isMobile, setIsMobile] = useState(false);
     const ignoreColumns = ['idContrato']
+    const { token } = useAuth();
 
 
     useEffect(() => {  
@@ -49,8 +51,8 @@ function PagosInquilino() {
     
     function loadData(){
       getContratos();
-      pagoService.getAll().then((data) => {
-        const updatedData = data.map((element) => ({
+      pagoService.getAllByRol(token).then((data) => {
+        const updatedData = data.data.map((element) => ({
           ...element,
           estatusPago: estatusPagoList[element.estatusPago],
         }));
@@ -148,7 +150,7 @@ function PagosInquilino() {
         { name: 'monto', label: 'Monto', type: 'number' },
         { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, // ? Me funciona cuando esta en enum false, eso no deberia ser
         { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
-        { name: 'id', label: 'id', type: 'number', showField: false},
+        { name: 'id', label: 'id', type: 'number', hiddeField: true},
       ]
     }
   

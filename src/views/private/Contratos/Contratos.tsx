@@ -14,6 +14,7 @@ import { HabitacionService } from '../../../services/habitacion/HabitacionServic
 import { PersonaService } from '../../../services/persona/PersonaService';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 import { IContrato } from '../../../interfaces/contrato/Contrato';
+import { useAuth } from '../../../AuthContext';
 
 function Contratos() {
     const url = import.meta.env.VITE_BACKEND_URL;
@@ -35,6 +36,7 @@ function Contratos() {
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const ignoreColumns = ['idInquilino', 'idHabitacion', 'idInquilino', 'rutaContrato']
     const [isMobile, setIsMobile] = useState(false);
+    const { token } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -64,8 +66,8 @@ function Contratos() {
       }, {});
 
       // ? Aqui hago el cambio de un digito a un enum
-      contratoService.getAll().then((data) => {
-        const updatedData = data.map((element) => ({
+      contratoService.getAllByRol(token).then((data) => {
+        const updatedData = data.data.map((element) => ({
           ...element,
           inquilino: inquilinosMap[element.idInquilino].nombre,
           habitacion: habitacionesMap[element.idHabitacion].numeroHabitacion,
@@ -255,7 +257,7 @@ function Contratos() {
         { name: 'contratoPDF', label: 'Contrato', type: 'file' },
         { name: 'idInquilino', label: 'Inquilino', type: 'select', isEndpoint: true, endpointData: inquilinos, valueField:'id', labelField:'nombre'},
         { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: habitaciones, valueField:'id', labelField:'numeroHabitacion'},
-        { name: 'id', label: 'id', type: 'number', showField: false},
+        { name: 'id', label: 'id', type: 'number', hiddeField: true},
 
       ]
     }

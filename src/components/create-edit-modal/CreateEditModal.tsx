@@ -10,7 +10,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
 
     useEffect(() => {
         const initialFormData = formSchema.fields.reduce((acc, field) => {
-            let value = isEdit && data ? data[field.name] : field.value;
+            let value = isEdit && data ? data[field.name] : (field.defaultValue ?? field.value);
             
             if (field.isEnum && (value === undefined || value === '')) {
                 value = 0;
@@ -77,10 +77,9 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                 {fieldGroups.map((group, groupIndex) => (
                     <div className={`grid grid-cols-${columns} gap-5 mb-5`} key={groupIndex}>
                         {group.map((field, index) => (
-                            field.showField !== false &&
                             <div className={`card flex justify-content-center ${columns == 2 ? 'w-[45%]' : 'w-full' }`} key={index}>
                                 <div className="flex flex-column gap-2" style={{ width: '100%' }}>
-                                    <label htmlFor={field.name}>{field.label}</label>
+                                    <label htmlFor={field.name} className={field.hiddeField ? 'hidden' :''}>{field.label}</label>
                                     {field.type === 'file' ? (
                                         <input
                                             disabled={field.disableField}
@@ -120,6 +119,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                         />
                                     ) : (
                                         <InputText
+                                            hidden={field.hiddeField}
                                             disabled={field.disableField}
                                             id={field.name}
                                             aria-describedby={`${field.name}-help`}

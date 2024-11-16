@@ -12,6 +12,7 @@ import CreateEditModal from '../../../components/create-edit-modal/CreateEditMod
 import { EdificioService } from '../../../services/edificio/EdificioService';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 import { IHabitacion } from '../../../interfaces/habitacion/Habitacion';
+import { useAuth } from '../../../AuthContext';
 
 function Habitaciones() {
     const [data, setData] = useState()
@@ -27,6 +28,7 @@ function Habitaciones() {
     const estatusHabitacionList = Object.values(EstatusHabitacion)
     const ignoreColumns = ['idHabitacion', 'idEdificio']
     const [isMobile, setIsMobile] = useState(false);
+    const { token } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -49,8 +51,8 @@ function Habitaciones() {
         return acc;
       }, {});
 
-      habitacionService.getAll().then((data) => {
-        const updatedData = data.map((element) => ({
+      habitacionService.getAllByRol(token).then((data) => {
+        const updatedData = data.data.map((element) => ({
           ...element,
           edificio: edificiosMap[element.idEdificio].direccion,
           estatusHabitacion: estatusHabitacionList[element.estatusHabitacion],
@@ -149,7 +151,7 @@ function Habitaciones() {
         { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos', type: 'number' },
         { name: 'estatusHabitacion', label: 'Estado de la habitación', type: 'select', isEnum: true, listEnum: estatusHabitacionList },
         { name: 'idEdificio', label: 'Edificio', type: 'select', isEndpoint: true, endpointData: edificios, valueField:'id', labelField: 'direccion'  },
-        { name: 'id', label: 'id', type: 'number', showField: false},
+        { name: 'id', label: 'id', type: 'number', hiddeField: true},
       ]
     }
 

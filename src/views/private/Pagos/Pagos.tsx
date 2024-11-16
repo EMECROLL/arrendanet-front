@@ -13,6 +13,7 @@ import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import { ContratoService } from '../../../services/contrato/ContratoService';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
+import { useAuth } from '../../../AuthContext';
 
 function Pagos() {
     const [data, setData] = useState()
@@ -28,6 +29,7 @@ function Pagos() {
     const estatusPagoList = Object.values(EstatusPago);
     const [isMobile, setIsMobile] = useState(false);
     const ignoreColumns = ['idContrato']
+    const { token } = useAuth();
 
 
     useEffect(() => {  
@@ -45,8 +47,11 @@ function Pagos() {
     
     function loadData(){
       getContratos();
-      pagoService.getAll().then((data) => {
-        const updatedData = data.map((element) => ({
+      pagoService.getAllByRol(token).then((data) => {
+        console.log('====================================');
+        console.log(data.data);
+        console.log('====================================');
+        const updatedData = data.data.map((element) => ({
           ...element,
           estatusPago: estatusPagoList[element.estatusPago],
         }));
@@ -144,7 +149,7 @@ function Pagos() {
         { name: 'monto', label: 'Monto', type: 'number' },
         { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, // ? Me funciona cuando esta en enum false, eso no deberia ser
         { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
-        { name: 'id', label: 'id', type: 'number', showField: false},
+        { name: 'id', label: 'id', type: 'number', hiddeField: true},
       ]
     }
   

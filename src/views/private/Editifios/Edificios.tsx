@@ -11,6 +11,7 @@ import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 import { IEdificio } from '../../../interfaces/edificio/Edificio';
+import { useAuth } from '../../../AuthContext';
 
 function Edificios() {
     const [data, setData] = useState()
@@ -22,6 +23,7 @@ function Edificios() {
     const toast = useRef(null);
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
+    const { token } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -37,8 +39,8 @@ function Edificios() {
     };
     
     function loadData(){
-      edificioService.getAll().then((data) => {
-        setData(data);
+      edificioService.getAllByRol(token).then((data) => {
+        setData(data.data);
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
@@ -111,7 +113,7 @@ function Edificios() {
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
-        { name: 'id', label: 'Id', type: 'number', showField:false},
+        { name: 'id', label: 'Id', type: 'number', hiddeField: true},
         { name: 'direccion', label: 'Dirección', type: 'text' },
         { name: 'contacto', label: 'Contacto (Telefóno o Correo electrónico)', type: 'text' },
       ]
@@ -166,9 +168,6 @@ function Edificios() {
               });
       }
     }
-  
-  
-  
   
     return (
       <div className="App p-10">

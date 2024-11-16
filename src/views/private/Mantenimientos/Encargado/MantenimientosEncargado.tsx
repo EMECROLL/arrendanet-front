@@ -24,7 +24,7 @@ function MantenimentosEncargado() {
     const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
     const estatusMantenimientoList = Object.values(EstatusMantenimiento);
-    const { userRole } = useAuth();
+    const { userRole, token } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -40,8 +40,8 @@ function MantenimentosEncargado() {
     };
     
     function loadData(){
-      mantenimientoService.getAll().then((data) => {
-        const updatedData = data.map((element) => ({
+      mantenimientoService.getAllByRol(token).then((data) => {
+        const updatedData = data.data.map((element) => ({
           ...element,
           estatus: estatusMantenimientoList[element.estatus],
         }));
@@ -63,13 +63,13 @@ function MantenimentosEncargado() {
           try {
               await edificioService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Eliminado Exitosamente', life: 3000 });
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Eliminado Exitosamente', life: 3000 });
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });
-              console.error('Error al eliminar a la persona:', error);
+              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el mantenimiento', life: 3000 });
+              console.error('Error al eliminar a el mantenimiento:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });
+          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun mantenimiento para eliminar', life: 3000 });
       }
     }
 
@@ -136,7 +136,7 @@ function MantenimentosEncargado() {
         { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
         { name: 'costo', label: 'Costo', type: 'number' },
         { name: 'idContrato', label: 'Contrato', type: 'text' },
-        { name: 'id', label: 'Id', type: 'number', showField:false},
+        { name: 'id', label: 'Id', type: 'number', hiddeField: true},
 
       ]
     }
@@ -145,7 +145,7 @@ function MantenimentosEncargado() {
         if (isEdit) {
             mantenimientoService.edit(formData.id, formData).then(() => {
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Editado Exitosamente', life: 3000 });
             }).catch((error) => {
                 console.error('Error fetching edificios:', error);
             })
@@ -153,9 +153,9 @@ function MantenimentosEncargado() {
           const newFormData = { ...formData, id: 0 };
           mantenimientoService.create(newFormData).then((data) => {
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
+              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Creado Exitosamente', life: 3000 });
           }).catch((error) => {
-            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el edificio', life: 3000 });
+            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el mantenimiento', life: 3000 });
               console.error('Error al crear:', error);
           });
         }

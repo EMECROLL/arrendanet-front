@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [token, setToke] = useState(null);
     const accountService = new AccountService();
     const navigate = useNavigate();
 
@@ -28,7 +29,8 @@ export const AuthProvider = ({ children }) => {
             // console.log(encryptedToken);
 
             if (encryptedToken) {
-                const token = decryptJWT(encryptedToken);                
+                const token = decryptJWT(encryptedToken);
+                setToke(token);                
                 const decoded = jwtDecode(token);                
                 const response = await accountService.validateToken(token);
                 
@@ -53,6 +55,7 @@ export const AuthProvider = ({ children }) => {
             
             if (response && response.success) {
                 const token = response.token;
+                setToke(token);
                 const encryptedToken = encryptJWT(token);
                 localStorage.setItem('token', encryptedToken);
                 setIsAuthenticated(true);
@@ -85,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     const userRole = user ? user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] : null;
         
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, loading, user, userRole}}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, loading, user, userRole, token}}>
             {children}
         </AuthContext.Provider>
     );

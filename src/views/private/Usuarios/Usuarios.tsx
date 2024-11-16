@@ -29,7 +29,7 @@ function Usuarios() {
     const accountService = new AccountService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const ignoreColumns = ['idPersona', 'idUsuario', 'idEdificio', 'idRol', 'contacto']
     const [isMobile, setIsMobile] = useState(false);
-    const { userRole } = useAuth();
+    const { userRole, token } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -63,9 +63,9 @@ function Usuarios() {
           console.error('Error fetching roles:', error);
         });
 
-      accountService.getAll().then((data) => {
+      accountService.getAllAccounts(token).then((data) => {
         if(data.success){
-          console.log(data.data);
+          // console.log(data.data);
           setData(data.data);
         }else{
           toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener a los usuarios', life: 3000 });
@@ -172,7 +172,7 @@ function Usuarios() {
         { name: 'numeroDeTelefono', label: 'Número de Teléfono', type: 'text'},
         { name: 'idEdificio', label: 'Edificio', type: 'select', isEndpoint: true, endpointData: edificios, labelField: 'direccion', valueField: 'id'},
         { name: 'idRol', label: 'Rol', type: 'select', isEndpoint: true, endpointData: roles, labelField: 'name', valueField: 'id'},
-        { name: 'idPersona', label: 'idPersona', type: 'number', showField: false },
+        { name: 'idPersona', label: 'idPersona', type: 'number', hiddeField: true},
 
       ]
     }
