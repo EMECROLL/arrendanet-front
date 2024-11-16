@@ -12,6 +12,8 @@ import { EdificioService } from '../../../services/edificio/EdificioService';
 import { AccountService } from '../../../services/account/AccountService';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 import { IPersona } from '../../../interfaces/persona/Persona';
+import { useAuth } from '../../../AuthContext';
+import { Roles } from '../../../common/enums/enums';
 
 function Usuarios() {
     const [data, setData] = useState()
@@ -27,6 +29,7 @@ function Usuarios() {
     const accountService = new AccountService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const ignoreColumns = ['idPersona', 'idUsuario', 'idEdificio', 'idRol', 'contacto']
     const [isMobile, setIsMobile] = useState(false);
+    const { userRole } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -43,11 +46,22 @@ function Usuarios() {
     
     function loadData(){
       getEdificios();
-      accountService.getAllRoles().then((data) => {
-        setRoles(data);
-      }).catch((error) => {
-          console.error('Error fetching personas:', error);
-      });
+
+      accountService.getAllRoles()
+        .then((data) => {
+          let filteredRoles = data;
+    
+          if (userRole === Roles.DUEÑO) {
+            filteredRoles = data.filter((item) => ![Roles.ADMINISTRADOR, Roles.DUEÑO].includes(item.name));
+          } else if (userRole === Roles.ENCARGADO) {
+            filteredRoles = data.filter((item) => ![Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO].includes(item.name));
+          }
+    
+          setRoles(filteredRoles);
+        })
+        .catch((error) => {
+          console.error('Error fetching roles:', error);
+        });
 
       accountService.getAll().then((data) => {
         if(data.success){
@@ -172,8 +186,8 @@ function Usuarios() {
         { name: 'apellidoPaterno', label: 'Apellido Paterno' },
         { name: 'apellidoMaterno', label: 'Apellido Materno' },
         { name: 'email', label: 'Correo Electrónico' },
-        { name: 'password', label: 'Password' },
-        { name: 'confirmPassword', label: 'Confirmar Password' },
+        // { name: 'password', label: 'Password' },
+        // { name: 'confirmPassword', label: 'Confirmar Password' },
         { name: 'numeroDeTelefono', label: 'Número de Teléfono' },
       ];
 

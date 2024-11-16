@@ -8,6 +8,8 @@ export interface IDataFormField {
     label: string,
     type: 'date' | 'text' | 'password' | 'number' | 'select' | 'file',
     typeFile?: string, 
+    disableField?: boolean,
+    defaultValue?: string,
     showField?: boolean,
     helperText?: string,
     required?: boolean,

@@ -7,12 +7,13 @@ import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
 import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
-import { EstatusMantenimiento } from '../../../../common/enums/enums';
+import { EstatusMantenimiento, Roles } from '../../../../common/enums/enums';
 import { MantenimientoService } from '../../../../services/mantenimiento/MantenimientoService';
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
 import { DataView } from 'primereact/dataview';
 import { Tag } from 'primereact/tag';
+import { useAuth } from '../../../../AuthContext';
 
 function MantenimentosInquilino() {
     const [data, setData] = useState()
@@ -25,6 +26,7 @@ function MantenimentosInquilino() {
     const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
     const estatusMantenimientoList = Object.values(EstatusMantenimiento);
+    const { userRole } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -122,14 +124,20 @@ function MantenimentosInquilino() {
       }
     }
 
+    let filteredEstatusMantenimientoList = estatusMantenimientoList;
+
+    if (userRole === Roles.INQUILINO) {
+      filteredEstatusMantenimientoList = estatusMantenimientoList.filter((item) => ![EstatusMantenimiento.EN_PROCESO, EstatusMantenimiento.FINALIZADO].includes(item));
+    }
+
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
         { name: 'titulo', label: 'Título', type: 'text' },
         { name: 'descripcion', label: 'Descripción', type: 'text' },
-        { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
-        { name: 'costo', label: 'Costo', type: 'number' },
-        { name: 'idContrato', label: 'Contrato', type: 'text' },
+        { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: filteredEstatusMantenimientoList },
+        { name: 'costo', label: 'Costo', type: 'number', showField: (!userRole === Roles.INQUILINO)},
+        { name: 'idContrato', label: 'Contrato', type: 'select' },
         { name: 'id', label: 'Id', type: 'number', showField:false},
 
       ]
@@ -210,14 +218,14 @@ function MantenimentosInquilino() {
                           <Button className='p-button-warning w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>showData(data)}>
                             <span className="flex">Más información</span>
                           </Button>
-                          {/* <Button className='p-button-primary w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>editData(data)}>
+                          <Button className='p-button-primary w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>editData(data)}>
                             <i className="pi pi-pencil flex md:hidden"></i>
                             <span className="hidden md:flex">Editar</span>
                           </Button>
                           <Button className='p-button-danger w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>deleteData(data)}>
                             <i className="pi pi-trash flex md:hidden"></i>
                             <span className="hidden md:flex">Eliminar</span>
-                          </Button> */}
+                          </Button>
                       </div>
                   </div>
               </div>
@@ -240,7 +248,10 @@ function MantenimentosInquilino() {
             <Toast ref={toast} />
             <div className="card">
                 {/* <DataView value={data} listTemplate={listTemplate} paginator rows={5} /> */}
-                <h1 className='ml-4'>Mantenimiento</h1>
+                <div className='flex justify-between items-center'>
+                  <h1 className='ml-4'>Mantenimiento</h1>
+                  <Button className='h-fit mr-4' label="Crear" icon="pi pi-plus" severity="success" onClick={() => setShowCreateEditModal(true)}></Button>
+                </div>
                 <DataView value={data} listTemplate={listTemplate} />
             </div>
         <DeleteModal 

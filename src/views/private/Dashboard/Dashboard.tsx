@@ -1,10 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Chart } from 'primereact/chart';
+import { useAuth } from '../../../AuthContext';
+import { Roles } from '../../../common/enums/enums';
 
 export default function Dashboard() {
     const [chartData, setChartData] = useState({});
     const [chartOptions, setChartOptions] = useState({});
+    const { user, userRole } = useAuth();
 
     useEffect(() => {
         const data = {
@@ -43,9 +46,11 @@ export default function Dashboard() {
 
     return (
         <div className="card grid grid-cols-3 justify-center p-10">
+
             <main className="p-10 w-full font-Inter">
                 <section className="mb-10">
-                    <h1 className="text-2xl font-semibold text-[#05386B] mb-4">Dashboard de Administrador</h1>
+                    <h1 className="text-2xl font-semibold text-[#05386B] mb-4">Dashboard de {userRole == "Admin" ? "Administrador" : userRole}
+                    </h1>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="bg-white shadow-lg border p-5 rounded-lg">
                             <h2 className="text-lg font-bold text-[#026670]">Total de Usuarios</h2>

@@ -83,6 +83,8 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                     <label htmlFor={field.name}>{field.label}</label>
                                     {field.type === 'file' ? (
                                         <input
+                                            disabled={field.disableField}
+                                            defaultValue={!isEdit ? field.defaultValue : ''}
                                             id={field.name}
                                             type="file"
                                             onChange={(e) => handleChange(e, field)}
@@ -90,6 +92,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                         />
                                     ) : field.isEnum ? (
                                         <Dropdown
+                                        disabled={field.disableField}
                                         id={field.name}
                                         value={formData[field.name] !== undefined ? Number(formData[field.name]) : ''}
                                         options={field.listEnum.map((item, idx) => ({
@@ -104,8 +107,9 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                       
                                     ) : field.isEndpoint && field.endpointData ? (
                                         <Dropdown
+                                            disabled={field.disableField}
                                             id={field.name}
-                                            value={formData[field.name] || ''}
+                                            value={formData[field.name] || (field.defaultValue ?? '')}
                                             options={field.endpointData.map(item => ({
                                                 label: item[field.labelField],
                                                 value: item[field.valueField]
@@ -116,9 +120,10 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                         />
                                     ) : (
                                         <InputText
+                                            disabled={field.disableField}
                                             id={field.name}
                                             aria-describedby={`${field.name}-help`}
-                                            value={formData[field.name] || ''}
+                                            value={formData[field.name] || (field.defaultValue ?? '')}
                                             onChange={(e) => handleChange(e, field)}
                                             type={field.type || 'text'}
                                             min={field.min}

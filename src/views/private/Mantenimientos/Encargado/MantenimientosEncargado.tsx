@@ -9,8 +9,9 @@ import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
 import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
-import { EstatusMantenimiento } from '../../../../common/enums/enums';
+import { EstatusMantenimiento, Roles } from '../../../../common/enums/enums';
 import { MantenimientoService } from '../../../../services/mantenimiento/MantenimientoService';
+import { useAuth } from '../../../../AuthContext';
 
 function MantenimentosEncargado() {
     const [data, setData] = useState()
@@ -23,6 +24,7 @@ function MantenimentosEncargado() {
     const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
     const estatusMantenimientoList = Object.values(EstatusMantenimiento);
+    const { userRole } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -120,6 +122,12 @@ function MantenimentosEncargado() {
       }
     }
 
+    // let filteredEstatusMantenimientoList = estatusMantenimientoList;
+
+    // if (userRole === Roles.INQUILINO) {
+    //   filteredEstatusMantenimientoList = estatusMantenimientoList.filter((item) => ![EstatusMantenimiento.EN_PROCESO, EstatusMantenimiento.FINALIZADO].includes(item));
+    // }
+
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
@@ -164,7 +172,7 @@ function MantenimentosEncargado() {
                     </div>
                 </div>
             ) : (
-                <BasicDataTable TableSchema={TableSchema} />
+              <BasicDataTable TableSchema={TableSchema} />
             )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
