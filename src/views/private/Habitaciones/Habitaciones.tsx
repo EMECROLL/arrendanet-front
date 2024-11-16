@@ -102,7 +102,7 @@ function Habitaciones() {
       setSelectedData(rowData)
     }
   
-    const filtersName: string[] = ['numeroHabitacion', 'capacidadInquilinos', 'estatusHabitacion', 'idEdificio'];
+    const filtersName: string[] = ['numeroHabitacion', 'capacidadInquilinos', 'estatusHabitacion', 'edificio'];
     const TableSchema: ITableSchema = {
       Configuration: {
         title:'Habitaciones',
@@ -225,7 +225,7 @@ function Habitaciones() {
         message={`habitación número ${selectedData?.numeroHabitacion}`}
         ></DeleteModal>
          <BasicModal
-        title="Habticación"
+        title="Habitación"
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}

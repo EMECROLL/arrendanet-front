@@ -120,12 +120,28 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
         import('jspdf').then((jsPDF) => {
             import('jspdf-autotable').then(() => {
                 const doc = new jsPDF.default();
-
-                doc.autoTable(exportColumns, TableSchema.Data);
+    
+                const formattedData = TableSchema.Data.map((row) => {
+                    return Object.fromEntries(
+                        Object.entries(row).map(([key, value]) => {
+                            if (key.toLowerCase().includes('fecha') || key.toLowerCase().includes('date')) {
+                                return [key, formatDate(value)];
+                            }
+                            if ((key.toLowerCase().includes('pago') && !key.toLowerCase().includes('estatus')) || (key.toLowerCase().includes('monto') && !key.toLowerCase().includes('estatus')) || (key.toLowerCase().includes('costo') && !key.toLowerCase().includes('estatus'))) {
+                                return [key, `$ ${value}`]; 
+                            }
+                            return [key, value];
+                        })
+                    );
+                });
+    
+                doc.autoTable(exportColumns, formattedData);
                 doc.save(`${TableSchema.Configuration.title.toLocaleLowerCase()}.pdf`);
             });
         });
     };
+    
+
 
     const exportExcel = () => {
         import('xlsx').then((xlsx) => {

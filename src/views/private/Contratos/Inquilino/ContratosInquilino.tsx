@@ -154,7 +154,7 @@ function ContratosInquilino() {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
         [filtersName[0]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         [filtersName[1]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        [filtersName[2]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        [filtersName[2]]: { value: null, matchMode: FilterMatchMode.EQUALS },
         [filtersName[3]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         [filtersName[4]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
       },

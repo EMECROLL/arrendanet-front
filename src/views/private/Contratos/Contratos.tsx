@@ -34,7 +34,7 @@ function Contratos() {
     const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const personaService = new PersonaService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
-    const ignoreColumns = ['idInquilino', 'idHabitacion', 'idInquilino', 'rutaContrato']
+    const ignoreColumns = ['idInquilino', 'idHabitacion', 'idInquilino', 'rutaContrato', 'duracion']
     const [isMobile, setIsMobile] = useState(false);
     const { token } = useAuth();
 
@@ -67,6 +67,7 @@ function Contratos() {
 
       // ? Aqui hago el cambio de un digito a un enum
       contratoService.getAllByRol(token).then((data) => {
+      
         const updatedData = data.data.map((element) => ({
           ...element,
           inquilino: inquilinosMap[element.idInquilino].nombre,
@@ -131,7 +132,9 @@ function Contratos() {
 
 
   
-    const filtersName: string[] = ['fechaInicio', 'fechaFin', 'estatusContrato', 'duracion', 'inquilino'];
+    const filtersName: string[] = ['id', 'fechaInicio', 'fechaFin', 'estatusContrato', 
+      // 'duracion', 
+      'inquilino'];
     const TableSchema: ITableSchema = {
       Configuration: {
         title:'Contratos',
@@ -140,10 +143,11 @@ function Contratos() {
         globalFilterFields: filtersName,
       },
       Columns: [
+        { header: 'Contrato', field: 'id'},
         { header: 'Fecha Inicio', field: 'fechaInicio', isDate: true},
         { header: 'Fecha Fin', field: 'fechaFin', isDate: true},
-        { header: 'Estatus Contrato', field: 'estatusContrato', filterType:'dropdown'},
-        { header: 'Duración', field: 'duracion'},
+        { header: 'Estatus Contrato', field: 'estatusContrato', filterType:'dropdown', showFilterMenu: false},
+        // { header: 'Duración', field: 'duracion'},
         { header: 'Inquilino', field: 'inquilino'},
       ],
       Filters: {
@@ -151,8 +155,9 @@ function Contratos() {
         [filtersName[0]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         [filtersName[1]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         [filtersName[2]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        [filtersName[3]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        [filtersName[3]]: { value: null, matchMode: FilterMatchMode.EQUALS },
         [filtersName[4]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        // [filtersName[5]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
       },
       Data: data,
       Actions:[
@@ -252,12 +257,13 @@ function Contratos() {
         { name: 'fechaFin', label: 'Fecha Fin', type: 'date'},
         { name: 'estatusContrato', label: 'Estatus Contrato', type: 'select', isEnum: true, listEnum: estatusContratoList },
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
-        { name: 'duracion', label: 'Duración', type: 'number', min: 0},
         { name: 'monto', label: 'Monto', type: 'number' },
         { name: 'contratoPDF', label: 'Contrato', type: 'file' },
         { name: 'idInquilino', label: 'Inquilino', type: 'select', isEndpoint: true, endpointData: inquilinos, valueField:'id', labelField:'nombre'},
         { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: habitaciones, valueField:'id', labelField:'numeroHabitacion'},
         { name: 'id', label: 'id', type: 'number', hiddeField: true},
+        { name: 'duracion', label: 'Duración', type: 'number', min: 0, defaultValue:0, hiddeField: true},
+
 
       ]
     }

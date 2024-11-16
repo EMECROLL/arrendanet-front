@@ -120,9 +120,9 @@ function Pagos() {
       },
       Columns: [
         { header: 'Fecha', field: 'fecha', isDate: true},
-        { header: 'Monto', field: 'monto'},
-        { header: 'Estatus Pago', field: 'estatusPago', filterType: 'multiSelect'},
-        { header: 'Contrato', field: 'idContrato'},
+        { header: 'Monto', field: 'monto', body: ((rowData) => <div>${rowData.monto}</div>) },
+        { header: 'Estatus Pago', field: 'estatusPago', filterType: 'multiSelect', showFilterMenu: false},
+        { header: 'Contrato', field: `idContrato`},
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -158,9 +158,7 @@ function Pagos() {
       const errors = {};
       const fieldsToValidate = [
         { name: 'fecha', label: 'Fecha' },
-        { name: 'monto', label: 'Monto' },
         { name: 'estatusPago', label: 'Estatus Pago', isEnum: true }, // ? Me funciona cuando esta en enum false, eso no deberia ser
-        { name: 'idContrato', label: 'Contrato' },
       ];
 
       fieldsToValidate.forEach(field => {
