@@ -32,6 +32,13 @@ export default function Ayuda() {
     setTimeout(() => {
       setCargando(false);
       setVisible(true);
+      setFormData({
+        nombre: '',
+        correo: '',
+        telefono: '',
+        asunto: '',
+        mensaje: '',
+      });
     }, 2000);
   };
 

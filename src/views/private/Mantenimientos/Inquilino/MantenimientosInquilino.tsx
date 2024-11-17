@@ -14,10 +14,12 @@ import { classNames } from 'primereact/utils';
 import { DataView } from 'primereact/dataview';
 import { Tag } from 'primereact/tag';
 import { useAuth } from '../../../../AuthContext';
+import { ContratoService } from '../../../../services/contrato/ContratoService';
 
 function MantenimentosInquilino() {
     const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [contratos, setContratos] = useState();
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
@@ -30,6 +32,7 @@ function MantenimentosInquilino() {
     const tipoContratoList = Object.values(TipoContrato);
     const { userRole, token } = useAuth();
     const ignoreColumns = ['idContrato',"rutaContrato", "idInquilino", "idHabitacion", 'duracion', 'capacidadInquilinos', 'idEdificio', 'estatusHabitacion', 'edificio', 'tipoContrato', 'costo', 'monto', 'inquilino', ]
+    const contratoService = new ContratoService(); 
 
     useEffect(() => {  
       loadData();
@@ -45,6 +48,7 @@ function MantenimentosInquilino() {
     };
     
     function loadData(){
+      getContratos();
       mantenimientoService.getAllByRol(token).then((data) => {
         const updatedData = data.data.map((element) => ({
           ...element,
@@ -54,6 +58,16 @@ function MantenimentosInquilino() {
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
+    }
+
+    async function getContratos(){
+      const response = await contratoService.getAllByRol(token);
+      try {        
+        setContratos(response.data)
+        return response.data;
+      } catch (error) {
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });
+      }
     }
 
     // ? Función para abrir modal de eliminar
@@ -159,7 +173,7 @@ function MantenimentosInquilino() {
         { name: 'titulo', label: 'Título', type: 'text' },
         { name: 'descripcion', label: 'Descripción', type: 'text' },
         { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: filteredEstatusMantenimientoList },
-        { name: 'idContrato', label: 'Contrato', type: 'select' },
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id' },
         { name: 'costo', label: 'Costo', type: 'number', hiddeField: (userRole === Roles.INQUILINO), defaultValue: 0},
         { name: 'id', label: 'Id', type: 'number', hiddeField:true},
 
