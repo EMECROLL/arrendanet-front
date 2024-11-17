@@ -199,8 +199,6 @@ function Contratos() {
           
       if (isEdit) {
         return contratoService.updateContrato(formData.id, formData).then((data) => {
-          console.log(data);
-          
           loadData();
           toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Editado Exitosamente', life: 3000 });
           return { success: true };
@@ -211,8 +209,6 @@ function Contratos() {
       } else {
         const newFormData = { ...formData, id: 0 };
         return contratoService.createContrato(newFormData).then((data) => {
-          console.log(data);
-
             loadData();
             toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Creado Exitosamente', life: 3000 });
             return { success: true };

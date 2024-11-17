@@ -16,7 +16,7 @@ import { Tag } from 'primereact/tag';
 import { useAuth } from '../../../../AuthContext';
 
 function MantenimentosInquilino() {
-    const [data, setData] = useState()
+    const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -29,7 +29,7 @@ function MantenimentosInquilino() {
     const estatusContratoList = Object.values(EstatusContrato);
     const tipoContratoList = Object.values(TipoContrato);
     const { userRole, token } = useAuth();
-    const ignoreColumns = ['idContrato',"rutaContrato", "idInquilino", "idHabitacion", 'duracion', 'capacidadInquilinos', 'idEdificio', 'estatusHabitacion', 'edificio', 'tipoContrato', 'monto', 'inquilino', ]
+    const ignoreColumns = ['idContrato',"rutaContrato", "idInquilino", "idHabitacion", 'duracion', 'capacidadInquilinos', 'idEdificio', 'estatusHabitacion', 'edificio', 'tipoContrato', 'costo', 'monto', 'inquilino', ]
 
     useEffect(() => {  
       loadData();
@@ -199,7 +199,7 @@ function MantenimentosInquilino() {
           case 'Finalizado':
               return 'success';
 
-          case 'En proceso':
+          case 'En Proceso':
               return 'warning';
 
           case 'Pendiente':
@@ -210,6 +210,9 @@ function MantenimentosInquilino() {
   };
 
     const itemTemplate = (data, index) => {
+      console.log('====================================');
+        console.log(data);
+        console.log('====================================');
       return (
           <div className="col-12 shadow-xl rounded-xl" key={data.id}>
               <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
@@ -223,10 +226,10 @@ function MantenimentosInquilino() {
                                   <span className="text-xs md:text-base font-semibold">{data.descripcion }</span>
                               </span>
                               <div className="md:flex align-items-center gap-3">
-                              <span className="flex align-items-center gap-2">
+                              {/* <span className="flex align-items-center gap-2">
                                   <p className='text-xs md:text-base'><strong>Monto: </strong></p>
-                                  <span className="text-xs md:text-base font-semibold">{data.monto ?? 0 }</span>
-                              </span>
+                                  <span className="text-xs md:text-base font-semibold">${data.costo ?? 0 }</span>
+                              </span> */}
                               <span className="flex align-items-center gap-2">
                                   <p className='text-xs md:text-base'><strong>Contrato: </strong></p>
                                   <span className="text-xs md:text-base font-semibold">{data.idContrato}</span>
@@ -235,17 +238,15 @@ function MantenimentosInquilino() {
                               <Tag className='ml-2 md:m-0' value={data.estatus} severity={getSeverityEstatusMantenimiento(data)}></Tag>
                           </div>
                       </div>
-                      <div className="flex md:grid grid-cols-4 md:grid-cols-1 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 w-full md:w-auto">
+                      <div className="flex flex-col md:grid grid-cols-4 md:grid-cols-1 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 w-full md:w-auto">
                           <Button className='p-button-warning w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>showData(data)}>
                             <span className="flex">Más información</span>
                           </Button>
                           <Button className='p-button-primary w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>editData(data)}>
-                            <i className="pi pi-pencil flex md:hidden"></i>
-                            <span className="hidden md:flex">Editar</span>
+                            <span className="flex">Editar</span>
                           </Button>
                           <Button className='p-button-danger w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>deleteData(data)}>
-                            <i className="pi pi-trash flex md:hidden"></i>
-                            <span className="hidden md:flex">Eliminar</span>
+                            <span className="flex">Eliminar</span>
                           </Button>
                       </div>
                   </div>
@@ -263,24 +264,24 @@ function MantenimentosInquilino() {
 
       return <div className="grid grid-nogutter">{list}</div>;
   };
-  
+
     return (
       <div className="App p-10">
             <Toast ref={toast} />
             <div className="card">
                 {/* <DataView value={data} listTemplate={listTemplate} paginator rows={5} /> */}
-                <div className='flex justify-between items-center'>
-                  <h1 className='ml-4'>Mantenimiento</h1>
-                  <Button className='h-fit mr-4' label="Crear" icon="pi pi-plus" severity="success" onClick={() => setShowCreateEditModal(true)}></Button>
+                <div className='flex flex-col md:flex-row justify-center md:justify-between items-center'>
+                  <h1 className='md:ml-4'>Mantenimiento</h1>
+                  <Button className='h-fit md:mr-4 w-10/12 md:w-fit' label="Crear" icon="pi pi-plus" severity="success" onClick={() => setShowCreateEditModal(true)}></Button>
                 </div>
-                <DataView value={data} listTemplate={listTemplate} />
+                <DataView value={data} listTemplate={listTemplate} paginator rows={5}/>
             </div>
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
         data={selectedData}
         deleteFunction={deleteFunction}
-        message={selectedData?.nombre}
+        message={`el mantenimiento "${selectedData?.titulo}"`}
         ></DeleteModal>
         <BasicModal
         title="Mantenimientos"

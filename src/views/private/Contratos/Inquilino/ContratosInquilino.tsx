@@ -22,7 +22,7 @@ import { useAuth } from '../../../../AuthContext';
 
 function ContratosInquilino() {
     const url = import.meta.env.VITE_BACKEND_URL;
-    const [data, setData] = useState()
+    const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [showContratoPDFModal, setShowContratoPDFModal] = useState(false)
@@ -284,6 +284,7 @@ function ContratosInquilino() {
 
 
     const itemTemplate = (data, index) => {
+
       return (
           <div className="col-12 shadow-xl rounded-xl" key={data.id}>
               <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
@@ -335,19 +336,20 @@ function ContratosInquilino() {
       if (!items || items.length === 0) return null;
 
       let list = items.map((product, index) => {
+        
           return itemTemplate(product, index);
       });
 
       return <div className="grid grid-nogutter">{list}</div>;
   };
-    
+
     return (
       <div className="App p-10">
             <Toast ref={toast} />
             <div className="card">
                 {/* <DataView value={data} listTemplate={listTemplate} paginator rows={5} /> */}
                 <h1 className='ml-4'>Contratos</h1>
-                <DataView value={data} listTemplate={listTemplate}/>
+                <DataView value={data} listTemplate={listTemplate} paginator rows={5}/>
             </div>
         <DeleteModal 
         showDeleteModal={showDeleteModal} 

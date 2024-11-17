@@ -9,6 +9,16 @@
     margin-left: 0;
 }
 
+.p-menuitem-content{
+    padding: 5px;
+}
+.active-menu-item {
+    background-color: #0095f86c; 
+    border-radius: 50px;
+    color: white;
+    /* border-bottom: 1px solid white; */
+}
+
 @media (max-width: 970px) { 
     .p-menubar {
         justify-content: flex-start; 

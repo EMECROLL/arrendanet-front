@@ -185,20 +185,24 @@ function MantenimentosEncargado() {
 
     function CreateEdit(formData) {
         if (isEdit) {
-            mantenimientoService.edit(formData.id, formData).then(() => {
+            return mantenimientoService.edit(formData.id, formData).then(() => {
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Editado Exitosamente', life: 3000 });
+              return { success: true };
             }).catch((error) => {
                 console.error('Error fetching edificios:', error);
+                return { success: false, errors: { general: 'Error al editar el mantenimiento.' } };
             })
         } else {
           const newFormData = { ...formData, id: 0 };
-          mantenimientoService.create(newFormData).then((data) => {
+          return mantenimientoService.create(newFormData).then((data) => {
               loadData();
               toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Creado Exitosamente', life: 3000 });
+              return { success: true };
           }).catch((error) => {
             toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el mantenimiento', life: 3000 });
               console.error('Error al crear:', error);
+              return { success: false, errors: { general: 'Error al crear el mantenimiento.' } };
           });
         }
     }
@@ -221,7 +225,7 @@ function MantenimentosEncargado() {
         setShowDeleteModal={setShowDeleteModal}
         data={selectedData}
         deleteFunction={deleteFunction}
-        message={selectedData?.nombre}
+        message={`el mantenimiento "${selectedData?.titulo}"`}
         ></DeleteModal>
         <BasicModal
         title="Mantenimientos"

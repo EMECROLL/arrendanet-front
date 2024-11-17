@@ -107,7 +107,7 @@ export default function SobreNostros() {
             <Fieldset legend={legendTemplate("Kevin Bello", "Kevin.png")} className="md:w-72 lg:w-96 pt-0">
               <h1 className="m-0 text-lg lg:text-xl font-semibold">CEO</h1>
               <p className="m-0">
-                Con más de 10 años de experiencia en tecnología, Carlos lidera con visión y pasión, siempre buscando nuevas formas de innovar.
+                Con más de 10 años de experiencia en tecnología, Kevin lidera con visión y pasión, siempre buscando nuevas formas de innovar.
               </p>
             </Fieldset>
           </div>

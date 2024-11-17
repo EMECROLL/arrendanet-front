@@ -29,7 +29,7 @@ function DeleteModal({showDeleteModal, setShowDeleteModal, data, deleteFunction,
     modal 
     footer={deleteDataDialogFooter} 
     onHide={hideDeleteDataDialog}>
-                <div className="confirmation-content">
+                <div className="confirmation-content flex">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                     {data && (
                         <span>

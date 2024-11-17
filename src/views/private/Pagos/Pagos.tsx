@@ -219,7 +219,7 @@ function Pagos() {
         setShowDeleteModal={setShowDeleteModal}
         data={selectedData}
         deleteFunction={deleteFunction}
-        message={selectedData?.nombre}
+        message={'este pago'}
         ></DeleteModal>
         <BasicModal
         title="Pago"

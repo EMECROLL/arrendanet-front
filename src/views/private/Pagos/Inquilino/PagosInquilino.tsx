@@ -20,7 +20,7 @@ import { Tag } from 'primereact/tag';
 import { useAuth } from '../../../../AuthContext';
 
 function PagosInquilino() {
-    const [data, setData] = useState()
+    const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -243,7 +243,7 @@ function PagosInquilino() {
                           <div className="md:flex align-items-center gap-3">
                               <span className="flex align-items-center gap-2">
                                   <p className='text-xs md:text-base'><strong>Monto: </strong></p>
-                                  <span className="text-xs md:text-base font-semibold">{data.monto}</span>
+                                  <span className="text-xs md:text-base font-semibold">$ {data.monto}</span>
                               </span>
                               <span className="flex align-items-center gap-2">
                                   <p className='text-xs md:text-base'><strong>Contrato: </strong></p>
@@ -288,7 +288,7 @@ function PagosInquilino() {
             <Toast ref={toast} />
               <div className="card">
                 <h1 className='ml-4'>Pagos</h1>
-                <DataView value={data} listTemplate={listTemplate} />
+                <DataView value={data} listTemplate={listTemplate} paginator rows={5}/>
               </div>
         <DeleteModal 
         showDeleteModal={showDeleteModal} 

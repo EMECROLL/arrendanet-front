@@ -62,7 +62,7 @@ export default function Ayuda() {
 
               <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
-                  <InputText style={{width: '100%'}} id="correo" type="email" value={formData.correo} onChange={handleChange} />
+                  <InputText style={{width: '100%'}} id="correo" name="correo" type="email" value={formData.correo} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="correo">
                     Correo electrónico
                   </label>
@@ -75,6 +75,7 @@ export default function Ayuda() {
                     className="w-full"
                     id="telefono"
                     type="tel"
+                    name="telefono" 
                     value={formData.telefono}
                     onChange={handleChange}
                   />
@@ -86,7 +87,7 @@ export default function Ayuda() {
 
               <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
-                  <InputText className="w-full" id="asunto" type="tel" value={formData.asunto} onChange={handleChange} />
+                  <InputText className="w-full" id="asunto" type="tel" name="asunto" value={formData.asunto} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="asunto">
                     Asunto (Motivo de contacto)
                   </label>
@@ -95,7 +96,7 @@ export default function Ayuda() {
 
               <div className="flex flex-col mx-auto w-full">
                 <FloatLabel>
-                  <InputTextarea className="w-full" id="mensaje" value={formData.mensaje} onChange={handleChange} />
+                  <InputTextarea className="w-full" id="mensaje" name="mensaje" value={formData.mensaje} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="mensaje">
                     Mensaje
                   </label>
@@ -133,7 +134,7 @@ export default function Ayuda() {
           </h2>
           <div className="flex justify-center flex-col mx-auto">
             <h1 className="font-semibold text-base">Dirección: <span className="font-normal">Carretera Cancún-Aeropuerto, S.M 299-Km. 11.5, 77565 Q.R.</span></h1>
-            <h1 className="font-semibold text-base">Teléfono: <span className="font-normal">998XXXXXXX.</span></h1>
+            <h1 className="font-semibold text-base">Teléfono: <span className="font-normal">9984114421.</span></h1>
             <h1 className="font-semibold text-base">Correo Electrónico: <span className="font-normal">TirandoScript@gmail.com</span></h1>
             <h1 className="font-semibold text-base">Horario de Atención:
               <span className="font-normal">Lunes a Viernes: 9:00 AM - 6:00 PM Sábados: 10:00 AM - 2:00 PM</span>
