@@ -38,7 +38,7 @@ function ContratosInquilino() {
     const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const personaService = new PersonaService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
-    const ignoreColumns = ['idInquilino', 'idHabitacion', 'idInquilino', 'rutaContrato']
+    const ignoreColumns = ['idInquilino', 'idHabitacion', 'idInquilino', 'rutaContrato', 'duracion']
     const [isMobile, setIsMobile] = useState(false);
     const { token } = useAuth();
 
@@ -109,7 +109,6 @@ function ContratosInquilino() {
 
     // ? Función para abrir modal para editar
     function editData(rowData) {
-      console.log(rowData);
       getHabitaciones();
       setShowCreateEditModal(true);
       setIsEdit(true);
@@ -179,11 +178,7 @@ function ContratosInquilino() {
         { name: 'fechaFin', label: 'Fecha Fin'},
         { name: 'estatusContrato', label: 'Estatus Contrato', isEnum: true},
         { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true},
-        // { name: 'duracion', label: 'Duración'},
-        // { name: 'monto', label: 'Monto' },
-        // { name: 'contratoPDF', label: 'Contrato'},
-        // { name: 'idInquilino', label: 'Inquilino'},
-        // { name: 'idHabitacion', label: 'Habitación'},
+
       ];
 
       fieldsToValidate.forEach(field => {
@@ -204,7 +199,6 @@ function ContratosInquilino() {
           
       if (isEdit) {
         return contratoService.updateContrato(formData.id, formData).then((data) => {
-          console.log(data);
           
           loadData();
           toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Editado Exitosamente', life: 3000 });
@@ -216,7 +210,6 @@ function ContratosInquilino() {
       } else {
         const newFormData = { ...formData, id: 0 };
         return contratoService.createContrato(newFormData).then((data) => {
-          console.log(data);
 
             loadData();
             toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Creado Exitosamente', life: 3000 });
@@ -273,8 +266,7 @@ function ContratosInquilino() {
     };
 
     const getSeverityEstatusContrato = (data) => {
-      console.log(data);
-      
+
       switch (data.estatusContrato) {
           case 'Activo':
               return 'success';
@@ -292,7 +284,6 @@ function ContratosInquilino() {
 
 
     const itemTemplate = (data, index) => {
-      console.log(data)
       return (
           <div className="col-12 shadow-xl rounded-xl" key={data.id}>
               <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>

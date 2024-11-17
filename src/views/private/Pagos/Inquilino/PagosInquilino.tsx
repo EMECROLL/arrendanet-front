@@ -63,10 +63,10 @@ function PagosInquilino() {
     }
 
     async function getContratos(){
-      const response = await contratoService.getAll();
+      const response = await contratoService.getAllByRol(token);
       try {        
-        setContratos(response)
-        return response;
+        setContratos(response.data)
+        return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
       }
@@ -232,7 +232,6 @@ function PagosInquilino() {
 
 
     const itemTemplate = (data, index) => {
-      console.log(data)
       return (
           <div className="col-12 shadow-xl rounded-xl" key={data.id}>
               <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
@@ -241,7 +240,6 @@ function PagosInquilino() {
                         <div className="text-xs md:text-2xl font-bold text-900">
                             <span>Fecha: {formatDate(data.fecha)}</span>
                           </div>
-                          {/* <Rating value={product.rating} readOnly cancel={false}></Rating> */}
                           <div className="md:flex align-items-center gap-3">
                               <span className="flex align-items-center gap-2">
                                   <p className='text-xs md:text-base'><strong>Monto: </strong></p>
@@ -289,7 +287,6 @@ function PagosInquilino() {
       <div className="App p-10">
             <Toast ref={toast} />
               <div className="card">
-                {/* <DataView value={data} listTemplate={listTemplate} paginator rows={5} /> */}
                 <h1 className='ml-4'>Pagos</h1>
                 <DataView value={data} listTemplate={listTemplate} />
               </div>

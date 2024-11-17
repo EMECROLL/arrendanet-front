@@ -7,7 +7,7 @@ import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
 import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
-import { EstatusMantenimiento, Roles } from '../../../../common/enums/enums';
+import { EstatusContrato, EstatusMantenimiento, Roles, TipoContrato } from '../../../../common/enums/enums';
 import { MantenimientoService } from '../../../../services/mantenimiento/MantenimientoService';
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
@@ -26,7 +26,10 @@ function MantenimentosInquilino() {
     const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
     const estatusMantenimientoList = Object.values(EstatusMantenimiento);
+    const estatusContratoList = Object.values(EstatusContrato);
+    const tipoContratoList = Object.values(TipoContrato);
     const { userRole, token } = useAuth();
+    const ignoreColumns = ['idContrato',"rutaContrato", "idInquilino", "idHabitacion", 'duracion', 'capacidadInquilinos', 'idEdificio', 'estatusHabitacion', 'edificio', 'tipoContrato', 'monto', 'inquilino', ]
 
     useEffect(() => {  
       loadData();
@@ -89,9 +92,29 @@ function MantenimentosInquilino() {
     // ? Función para cargar modal con datos
     function showData(rowData) {
       setShowDataModal(true);
-      setSelectedData(rowData)
-    }
+      const estatusContratoValue = rowData.contrato?.estatusContrato;
   
+      const estatusContratoFinal = estatusContratoList[estatusContratoValue] 
+          ? estatusContratoList[estatusContratoValue] 
+          : estatusContratoList[0]; 
+
+      const tipoContratoValue = rowData.contrato?.tipoContrato;
+  
+      const tipoContratoFinal = tipoContratoList[tipoContratoValue] 
+          ? tipoContratoList[tipoContratoValue] 
+          : tipoContratoList[0]; 
+  
+      const rowDataModified = {
+          ...rowData,
+          contrato: rowData.contrato ? {
+              ...rowData.contrato,
+              estatusContrato: estatusContratoFinal,
+              tipoContrato: tipoContratoFinal 
+          } : rowData.contrato
+      };
+    
+      setSelectedData(rowDataModified);
+  }
   
     const filtersName: string[] = ['titulo', 'descripcion', 'estatus', 'costo', 'idContrato'];
     const TableSchema: ITableSchema = {
@@ -264,6 +287,7 @@ function MantenimentosInquilino() {
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
+        ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}

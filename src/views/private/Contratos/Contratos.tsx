@@ -67,7 +67,6 @@ function Contratos() {
 
       // ? Aqui hago el cambio de un digito a un enum
       contratoService.getAllByRol(token).then((data) => {
-      
         const updatedData = data.data.map((element) => ({
           ...element,
           inquilino: inquilinosMap[element.idInquilino].nombre,
@@ -179,12 +178,7 @@ function Contratos() {
         { name: 'fechaInicio', label: 'Fecha Inicio'},
         { name: 'fechaFin', label: 'Fecha Fin'},
         { name: 'estatusContrato', label: 'Estatus Contrato', isEnum: true},
-        { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true},
-        // { name: 'duracion', label: 'Duración'},
-        // { name: 'monto', label: 'Monto' },
-        // { name: 'contratoPDF', label: 'Contrato'},
-        // { name: 'idInquilino', label: 'Inquilino'},
-        // { name: 'idHabitacion', label: 'Habitación'},
+        { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true}
       ];
 
       fieldsToValidate.forEach(field => {
@@ -231,20 +225,20 @@ function Contratos() {
     }
 
     async function getInquilinos(){
-      const response = await personaService.getAll();
+      const response = await personaService.getAllByRol(token);
       try {
-        setInquilinos(response)
-        return response;
+        setInquilinos(response.data)
+        return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
       }
     }
 
     async function getHabitaciones(){
-      const response = await habitacionService.getAll();
+      const response = await habitacionService.getAllByRol(token);
       try {
-        setHabitaciones(response)
-        return response;
+        setHabitaciones(response.data)
+        return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
       }

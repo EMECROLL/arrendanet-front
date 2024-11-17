@@ -17,7 +17,7 @@ import ContratosInquilino from '../../views/private/Contratos/Inquilino/Contrato
 const privateRoutes = [
     <Route key="dashboard" path="/dashboard" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.INQUILINO, Roles.ENCARGADO]} ><Dashboard /></ProtectedRoute>} />,
     <Route key="usuarios" path="/usuarios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]}><Usuarios /></ProtectedRoute>}  />,
-    <Route key="edificios" path="/edificios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Edificios /></ProtectedRoute>}  />,
+    <Route key="edificios" path="/edificios" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR]}><Edificios /></ProtectedRoute>}  />,
     <Route key="contratos" path="/contratos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO]}><Contratos /></ProtectedRoute>}  />,
     <Route key="consultar-contratos" path="/consultar-contratos" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.INQUILINO]}><ContratosInquilino /></ProtectedRoute>}  />,
     <Route key="habitaciones" path="/habitaciones" element={<ProtectedRoute requiredRole={[Roles.ADMINISTRADOR, Roles.DUEÑO, Roles.ENCARGADO]}><Habitaciones /></ProtectedRoute>}  />,

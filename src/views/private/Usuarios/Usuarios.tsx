@@ -151,10 +151,10 @@ function Usuarios() {
     }
 
     async function getEdificios(){
-      const response = await edificioService.getAll();
+      const response = await edificioService.getAllByRol(token);
       try {
-        setEdificios(response)
-        return response;
+        setEdificios(response.data)
+        return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los edificios', life: 3000 });
       }

@@ -135,10 +135,10 @@ function Habitaciones() {
     }
 
     async function getEdificios(){
-      const response = await edificioService.getAll();
+      const response = await edificioService.getAllByRol(token);
       try {
-        setEdificios(response)
-        return response;
+        setEdificios(response.data)
+        return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
       }

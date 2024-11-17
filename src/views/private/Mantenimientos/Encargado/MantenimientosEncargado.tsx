@@ -59,10 +59,10 @@ function MantenimentosEncargado() {
     }
 
     async function getContratos(){
-      const response = await contratoService.getAll();
+      const response = await contratoService.getAllByRol(token);
       try {        
-        setContratos(response)
-        return response;
+        setContratos(response.data)
+        return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });
       }

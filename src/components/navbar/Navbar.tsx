@@ -38,7 +38,8 @@ export default function Navbar() {
             icon: 'pi pi-building',
             template: itemRenderer,
             command: () => navigate('/edificios'),
-            authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
+            authorizedRoles: [Roles.ADMINISTRADOR]
+            // authorizedRoles: [Roles.ADMINISTRADOR, Roles.DUEÑO]
         },
         {
             label: 'Usuarios',
