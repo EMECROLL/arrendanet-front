@@ -178,8 +178,6 @@ function Usuarios() {
     }
 
     function CreateEdit(formData) {
-      console.log(formData);
-      
       const errors = {};
       const fieldsToValidate = [
         { name: 'nombre', label: 'Nombre' },

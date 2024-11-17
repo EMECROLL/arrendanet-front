@@ -3,7 +3,8 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import React, { useEffect, useState } from 'react';
-
+import { Password } from 'primereact/password';
+import './CreateEditModal.css'
 function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data, columns }) {
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState({});
@@ -117,7 +118,23 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                             placeholder={`Seleccione ${field.label}`}
                                             className={errors[field.name] ? 'p-invalid' : ''}
                                         />
-                                    ) : (
+                                    ) 
+                                    : field.type == 'password' ? (
+                                        <Password
+                                            toggleMask
+                                            hidden={field.hiddeField}
+                                            disabled={field.disableField}
+                                            id={field.name}
+                                            aria-describedby={`${field.name}-help`}
+                                            value={formData[field.name] || (field.defaultValue ?? '')}
+                                            onChange={(e) => handleChange(e, field)}
+                                            type={field.type || 'text'}
+                                            min={field.min}
+                                            max={field.max}
+                                            className={`w-full ${errors[field.name] ? 'p-invalid' : ''}`} // Asegúrate de incluir w-full
+                                            />
+                                    )
+                                    : (
                                         <InputText
                                             hidden={field.hiddeField}
                                             disabled={field.disableField}

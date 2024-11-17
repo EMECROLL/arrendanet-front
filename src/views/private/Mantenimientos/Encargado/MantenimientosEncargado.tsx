@@ -12,9 +12,12 @@ import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
 import { EstatusContrato, EstatusMantenimiento, Roles, TipoContrato } from '../../../../common/enums/enums';
 import { MantenimientoService } from '../../../../services/mantenimiento/MantenimientoService';
 import { useAuth } from '../../../../AuthContext';
+import { ContratoService } from '../../../../services/contrato/ContratoService';
 
 function MantenimentosEncargado() {
     const [data, setData] = useState()
+    const [contratos, setContratos] = useState();
+    const contratoService = new ContratoService(); 
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -42,6 +45,7 @@ function MantenimentosEncargado() {
     };
     
     function loadData(){
+      getContratos();
       mantenimientoService.getAllByRol(token).then((data) => {
         const updatedData = data.data.map((element) => ({
           ...element,
@@ -51,6 +55,17 @@ function MantenimentosEncargado() {
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
+      
+    }
+
+    async function getContratos(){
+      const response = await contratoService.getAll();
+      try {        
+        setContratos(response)
+        return response;
+      } catch (error) {
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });
+      }
     }
 
     // ? Función para abrir modal de eliminar
@@ -89,9 +104,6 @@ function MantenimentosEncargado() {
     // ? Función para cargar modal con datos
     function showData(rowData) {
       setShowDataModal(true);
-      console.log('====================================');
-      console.log(rowData);
-      console.log('====================================');
       const estatusContratoValue = rowData.contrato?.estatusContrato;
   
       const estatusContratoFinal = estatusContratoList[estatusContratoValue] 
@@ -165,7 +177,7 @@ function MantenimentosEncargado() {
         { name: 'descripcion', label: 'Descripción', type: 'text' },
         { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
         { name: 'costo', label: 'Costo', type: 'number' },
-        { name: 'idContrato', label: 'Contrato', type: 'text' },
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id' },
         { name: 'id', label: 'Id', type: 'number', hiddeField: true},
 
       ]

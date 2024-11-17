@@ -48,9 +48,6 @@ function Pagos() {
     function loadData(){
       getContratos();
       pagoService.getAllByRol(token).then((data) => {
-        console.log('====================================');
-        console.log(data.data);
-        console.log('====================================');
         const updatedData = data.data.map((element) => ({
           ...element,
           estatusPago: estatusPagoList[element.estatusPago],
@@ -67,7 +64,7 @@ function Pagos() {
         setContratos(response)
         return response;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });
       }
     }
 

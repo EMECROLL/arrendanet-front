@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Password } from 'primereact/password';
 import './CustomLogin.css';
+import { jwtDecode } from 'jwt-decode';
 
 function Login() {
   const navigate = useNavigate();
@@ -57,7 +58,8 @@ function Login() {
         setErrors({ ...newErrors, user: 'Error con el usuario o contraseña' });
       } else {
         setCredentials({ email: '', password: '', rememberMe: false });
-        navigate('/dashboard');
+        const decoded = jwtDecode(response.token);    
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] == "Inquilino" ? navigate('/consultar-contratos') : navigate('/dashboard');
       }
     } catch (error) {
       console.error("Login error:", error);
