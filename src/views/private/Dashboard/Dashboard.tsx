@@ -104,7 +104,7 @@ export default function Dashboard() {
 
 
     return (
-        <div className="card grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center p-10">
+        <div className="card grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center p-10 m-0">
             <main className="p-10 w-full font-Inter">
                 <section className="mb-10">
                     <h1 className="text-2xl font-semibold text-[#05386B] mb-4">

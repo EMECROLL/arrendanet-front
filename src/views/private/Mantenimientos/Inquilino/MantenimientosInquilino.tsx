@@ -20,6 +20,7 @@ function MantenimentosInquilino() {
     const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [contratos, setContratos] = useState();
+    const [contratosActivos, setContratosActivos] = useState();
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
@@ -64,6 +65,12 @@ function MantenimentosInquilino() {
       const response = await contratoService.getAllByRol(token);
       try {        
         setContratos(response.data)
+        const contratosFiltrados = response.data.filter((contrato)=>{ 
+          if (contrato.estatusContrato == Object.values(EstatusContrato).indexOf(EstatusContrato.ACTIVO)){
+            return contrato
+          }
+          })
+        setContratosActivos(contratosFiltrados);
         return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });
@@ -173,7 +180,7 @@ function MantenimentosInquilino() {
         { name: 'titulo', label: 'Título', type: 'text' },
         { name: 'descripcion', label: 'Descripción', type: 'text' },
         { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: filteredEstatusMantenimientoList },
-        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id' },
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: isEdit ? contratos : contratosActivos, labelField: 'id', valueField: 'id' },
         { name: 'costo', label: 'Costo', type: 'number', hiddeField: (userRole === Roles.INQUILINO), defaultValue: 0},
         { name: 'id', label: 'Id', type: 'number', hiddeField:true},
 
@@ -224,9 +231,6 @@ function MantenimentosInquilino() {
   };
 
     const itemTemplate = (data, index) => {
-      console.log('====================================');
-        console.log(data);
-        console.log('====================================');
       return (
           <div className="col-12 shadow-xl rounded-xl" key={data.id}>
               <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>

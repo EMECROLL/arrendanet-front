@@ -17,6 +17,7 @@ import { ContratoService } from '../../../../services/contrato/ContratoService';
 function MantenimentosEncargado() {
     const [data, setData] = useState()
     const [contratos, setContratos] = useState();
+    const [contratosActivos, setContratosActivos] = useState();
     const contratoService = new ContratoService(); 
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
@@ -52,6 +53,7 @@ function MantenimentosEncargado() {
           estatus: estatusMantenimientoList[element.estatus],
         }));
         setData(updatedData);
+        
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
@@ -62,6 +64,12 @@ function MantenimentosEncargado() {
       const response = await contratoService.getAllByRol(token);
       try {        
         setContratos(response.data)
+        const contratosFiltrados = response.data.filter((contrato)=>{ 
+          if (contrato.estatusContrato == Object.values(EstatusContrato).indexOf(EstatusContrato.ACTIVO)){
+            return contrato
+          }
+          })
+        setContratosActivos(contratosFiltrados);
         return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });
@@ -177,7 +185,7 @@ function MantenimentosEncargado() {
         { name: 'descripcion', label: 'Descripción', type: 'text' },
         { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
         { name: 'costo', label: 'Costo', type: 'number' },
-        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id' },
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: isEdit ? contratos : contratosActivos , labelField: 'id', valueField: 'id' },
         { name: 'id', label: 'Id', type: 'number', hiddeField: true},
 
       ]

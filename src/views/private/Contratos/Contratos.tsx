@@ -7,7 +7,7 @@ import DeleteModal from '../../../components/delete-modal/DeleteModal';
 // import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
 import { ContratoService } from '../../../services/contrato/ContratoService';
 import BasicModal from '../../../components/basic-modal/BasicModal';
-import { EstatusContrato, TipoContrato } from '../../../common/enums/enums';
+import { EstatusContrato, EstatusHabitacion, TipoContrato } from '../../../common/enums/enums';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import { HabitacionService } from '../../../services/habitacion/HabitacionService';
@@ -30,6 +30,7 @@ function Contratos() {
     const tipoContratoList = Object.values(TipoContrato);
     const [inquilinos, setInquilinos] = useState()
     const [habitaciones, setHabitaciones] = useState()
+    const [habitacionesDisponibles, setHabitacionesDisponibles] = useState()
 
     const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const personaService = new PersonaService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
@@ -234,6 +235,12 @@ function Contratos() {
       const response = await habitacionService.getAllByRol(token);
       try {
         setHabitaciones(response.data)
+        const habitacionesFiltradas = response.data.filter((habitacion)=>{ 
+          if (habitacion.estatusHabitacion == Object.values(EstatusHabitacion).indexOf(EstatusHabitacion.DISPONIBLE)){
+            return habitacion
+          }
+          })
+        setHabitacionesDisponibles(habitacionesFiltradas);
         return response.data;
       } catch (error) {
         toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
@@ -250,7 +257,7 @@ function Contratos() {
         { name: 'monto', label: 'Monto', type: 'number' },
         { name: 'contratoPDF', label: 'Contrato', type: 'file' },
         { name: 'idInquilino', label: 'Inquilino', type: 'select', isEndpoint: true, endpointData: inquilinos, valueField:'id', labelField:'nombre'},
-        { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: habitaciones, valueField:'id', labelField:'numeroHabitacion'},
+        { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: isEdit ? habitaciones : habitacionesDisponibles, valueField:'id', labelField:'numeroHabitacion'},
         { name: 'id', label: 'id', type: 'number', hiddeField: true},
         { name: 'duracion', label: 'Duración', type: 'number', min: 0, defaultValue:0, hiddeField: true},
 
@@ -292,7 +299,6 @@ function Contratos() {
         ignoreColumns={ignoreColumns}
         pdfUrl={`${url}${selectedData?.rutaContrato}`}
         ></BasicModal>
-
         <CreateEditModal
             visible={showCreateEditModal}
             setVisible={setShowCreateEditModal}

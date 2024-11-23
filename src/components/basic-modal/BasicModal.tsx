@@ -1,6 +1,6 @@
 import { Dialog } from 'primereact/dialog';
 
-export default function BasicModal({ title, showDataModal, setShowDataModal, data, ignoreColumns = [], pdfUrl }) {
+export default function BasicModal({ title, showDataModal, setShowDataModal, data, ignoreColumns = [], pdfUrl = null }) {
 
     const hideDeleteDataDialog = () => {
         setShowDataModal(false);
@@ -76,7 +76,7 @@ export default function BasicModal({ title, showDataModal, setShowDataModal, dat
             className='w-[90%] md:w-[50vw]'
             onHide={hideDeleteDataDialog}
         >
-            {pdfUrl ? (
+            {pdfUrl != null ? (
                 <div className="flex flex-col items-center">
                     <div className="w-full h-[550px] md:h-[700px]">
                         <iframe
