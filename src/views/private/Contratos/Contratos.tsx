@@ -181,6 +181,14 @@ function Contratos() {
         { name: 'estatusContrato', label: 'Estatus Contrato', isEnum: true},
         { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true}
       ];
+      
+      if(!isEdit){
+        fieldsToValidate.push(
+          { name: 'contratoPDF', label: 'Contrato' },
+          { name: 'idInquilino', label: 'Inquilino' },
+          { name: 'idHabitacion', label: 'Habitación' },
+        )
+      }
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
@@ -254,7 +262,7 @@ function Contratos() {
         { name: 'fechaFin', label: 'Fecha Fin', type: 'date'},
         { name: 'estatusContrato', label: 'Estatus Contrato', type: 'select', isEnum: true, listEnum: estatusContratoList },
         { name: 'tipoContrato', label: 'Tipo Contrato', type: 'select', isEnum: true, listEnum: tipoContratoList },
-        { name: 'monto', label: 'Monto', type: 'number' },
+        { name: 'monto', label: 'Monto', type: 'number', defaultValue: 0, min: 0 },
         { name: 'contratoPDF', label: 'Contrato', type: 'file' },
         { name: 'idInquilino', label: 'Inquilino', type: 'select', isEndpoint: true, endpointData: inquilinos, valueField:'id', labelField:'nombre'},
         { name: 'idHabitacion', label: 'Habitación', type: 'select', isEndpoint: true, endpointData: isEdit ? habitaciones : habitacionesDisponibles, valueField:'id', labelField:'numeroHabitacion'},

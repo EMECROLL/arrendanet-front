@@ -184,14 +184,39 @@ function MantenimentosEncargado() {
         { name: 'titulo', label: 'Título', type: 'text' },
         { name: 'descripcion', label: 'Descripción', type: 'text' },
         { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
-        { name: 'costo', label: 'Costo', type: 'number' },
+        { name: 'costo', label: 'Costo', type: 'number', defaultValue: 0, min: 0},
         { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: isEdit ? contratos : contratosActivos , labelField: 'id', valueField: 'id' },
         { name: 'id', label: 'Id', type: 'number', hiddeField: true},
+
 
       ]
     }
 
     function CreateEdit(formData) {
+
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'titulo', label: 'Título'},
+        { name: 'descripcion', label: 'Descripción'},
+        { name: 'estatus', label: 'Estatus', isEnum: true},
+        { name: 'idContrato', label: 'Contrato' },
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum) {
+            if (formData[field.name] === undefined || formData[field.name] === null) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        } else {
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        }
+      });
+
+      if (Object.keys(errors).length > 0) {
+        return Promise.resolve({ success: false, errors });
+      }
         if (isEdit) {
             return mantenimientoService.edit(formData.id, formData).then(() => {
               loadData();

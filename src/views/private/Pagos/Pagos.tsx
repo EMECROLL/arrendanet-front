@@ -143,8 +143,8 @@ function Pagos() {
       title: TableSchema.Configuration.title,
       fields: [
         { name: 'fecha', label: 'Fecha', type: 'date' },
-        { name: 'monto', label: 'Monto', type: 'number' },
-        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, // ? Me funciona cuando esta en enum false, eso no deberia ser
+        { name: 'monto', label: 'Monto', type: 'number', defaultValue: 0, min: 0},
+        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, 
         { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
         { name: 'id', label: 'id', type: 'number', hiddeField: true},
       ]
@@ -155,8 +155,11 @@ function Pagos() {
       const errors = {};
       const fieldsToValidate = [
         { name: 'fecha', label: 'Fecha' },
-        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true }, // ? Me funciona cuando esta en enum false, eso no deberia ser
+        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true }, 
+        { name: 'idContrato', label: 'Contrato' },
       ];
+
+      
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
@@ -229,6 +232,7 @@ function Pagos() {
         ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
+            columns={1}
             visible={showCreateEditModal}
             setVisible={setShowCreateEditModal}
             formSchema={formSchema}

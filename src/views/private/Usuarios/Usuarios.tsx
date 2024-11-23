@@ -184,10 +184,17 @@ function Usuarios() {
         { name: 'apellidoPaterno', label: 'Apellido Paterno' },
         { name: 'apellidoMaterno', label: 'Apellido Materno' },
         { name: 'email', label: 'Correo Electrónico' },
-        // { name: 'password', label: 'Password' },
-        // { name: 'confirmPassword', label: 'Confirmar Password' },
         { name: 'numeroDeTelefono', label: 'Número de Teléfono' },
+        { name: 'idEdificio', label: 'Edificio' },
+        { name: 'idRol', label: 'Rol' },
       ];
+
+      if(!isEdit){
+        fieldsToValidate.push(
+          { name: 'password', label: 'Password' },
+          { name: 'confirmPassword', label: 'Confirmar Password' }
+        )
+      }
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
