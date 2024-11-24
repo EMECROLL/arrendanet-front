@@ -40,7 +40,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
             <div className="flex justify-content-end">
                 <IconField iconPosition="left">
                     <InputIcon className="pi pi-search" />
-                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Buscar por palabra clave" />
                 </IconField>
             </div>
         );
@@ -50,7 +50,6 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
         const uniqueValues = new Set();
     
         if (!TableSchema || !TableSchema.Data) {
-            console.error('TableSchema or TableSchema.Data is undefined');
             return [];
         }
         
@@ -82,7 +81,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
                 onChange={(e) => { 
                     options.filterApplyCallback(isEnum ? enumList.indexOf(e.value).toString() : e.value) 
                 }}
-                placeholder="Select One"
+                placeholder="Seleccionar uno"
                 optionLabel="name"
                 className="p-column-filter"
                 showClear
@@ -121,12 +120,28 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
         import('jspdf').then((jsPDF) => {
             import('jspdf-autotable').then(() => {
                 const doc = new jsPDF.default();
-
-                doc.autoTable(exportColumns, TableSchema.Data);
+    
+                const formattedData = TableSchema.Data.map((row) => {
+                    return Object.fromEntries(
+                        Object.entries(row).map(([key, value]) => {
+                            if (key.toLowerCase().includes('fecha') || key.toLowerCase().includes('date')) {
+                                return [key, formatDate(value)];
+                            }
+                            if ((key.toLowerCase().includes('pago') && !key.toLowerCase().includes('estatus')) || (key.toLowerCase().includes('monto') && !key.toLowerCase().includes('estatus')) || (key.toLowerCase().includes('costo') && !key.toLowerCase().includes('estatus'))) {
+                                return [key, `$ ${value}`]; 
+                            }
+                            return [key, value];
+                        })
+                    );
+                });
+    
+                doc.autoTable(exportColumns, formattedData);
                 doc.save(`${TableSchema.Configuration.title.toLocaleLowerCase()}.pdf`);
             });
         });
     };
+    
+
 
     const exportExcel = () => {
         import('xlsx').then((xlsx) => {
@@ -165,8 +180,6 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
     };
 
     const deleteSelectedDatas = () => {
-        console.log(val);
-        
         setDeleteDatasDialog(false);
         setSelectedData(null);
         // toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
@@ -192,7 +205,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
                 <Button label="Crear" icon="pi pi-plus" severity="success" onClick={TableSchema.Services?.CreateOrEdit} />
                 {
                     TableSchema.Configuration?.checked && 
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected}  disabled={!selectedData || !selectedData.length}/>
+                    <Button label="Eliminar" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected}  disabled={!selectedData || !selectedData.length}/>
                 }
             </div>
         </div>
@@ -222,7 +235,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
             loading={loading}
             globalFilterFields={TableSchema.Configuration.globalFilterFields} 
             header={header} 
-            emptyMessage={TableSchema.Configuration?.emptyMessage ?? "No data found."}
+            emptyMessage={TableSchema.Configuration?.emptyMessage ?? "No hay datos por el momento."}
             selection={selectedData} 
             onSelectionChange={(e) => setSelectedData(e.value)}
             >
@@ -243,7 +256,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
                             filter={column.filter ?? true}
                             showFilterMenu={column.showFilterMenu ?? true}
                             filterMenuStyle={column.filterMenuStyle}
-                            filterPlaceholder={column.filterPlaceholder ?? `Search by ${column.header.toLowerCase()}`}
+                            filterPlaceholder={column.filterPlaceholder ?? `Buscar por ${column.header.toLowerCase()}`}
                             style={column.style}
                             body={column.isDate ? (rowData) => {
                                 const value = rowData[column.field];
@@ -263,7 +276,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
                 }
                 {
                         <Column
-                            header={'Actions'}
+                            header={'Acciones'}
                             body={(rowData) => (
                                 <div className="flex gap-2 justify-content-center">
                                     {TableSchema.Actions.map((action, actionIndex) => (
@@ -288,7 +301,7 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
                 TableSchema.Configuration?.checked &&
                 <Dialog visible={deleteDatasDialog} style={{ width: '32rem' }} 
                 breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
-                header="Confirm" modal footer={deleteDatasDialogFooter} 
+                header="Confirmar" modal footer={deleteDatasDialogFooter} 
                 onHide={hideDeleteDatasDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />

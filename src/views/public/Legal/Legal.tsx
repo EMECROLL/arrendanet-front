@@ -20,7 +20,7 @@ export default function Legal() {
             <div className="flex flex-col">
               <div className="border-2 p-4 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                 <div>
-                  <h1>Política de Privacidad</h1>
+                  <h1 className='text-2xl md:text-4xl'>Política de Privacidad</h1>
 
                   <h3>Introducción</h3>
                   <p>En ArrendaNet nos comprometemos a proteger tu privacidad. Esta Política de Privacidad explica cómo recopilamos, utilizamos y protegemos la información personal que proporcionas al utilizar nuestra plataforma. Al acceder o utilizar nuestros servicios, aceptas las prácticas descritas en esta política.</p>
@@ -67,7 +67,7 @@ export default function Legal() {
             <div className="flex flex-col">
               <div className="border-2 p-4 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
                 <div>
-                  <h1>Términos y Condiciones</h1>
+                  <h1 className='text-2xl md:text-4xl'>Términos y Condiciones</h1>
                   <h3>Introducción</h3>
                   <p>Los siguientes términos y condiciones gobiernan el uso de nuestra plataforma. Al acceder o utilizar nuestros servicios, aceptas estos términos. Si no estás de acuerdo con estos términos, no utilices nuestros servicios.</p>
 
@@ -99,7 +99,7 @@ export default function Legal() {
             <div className="flex flex-col">
               <div className="border-2 p-4 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
               <div>
-                  <h1>Política de Cookies</h1>
+                  <h1 className='text-2xl md:text-4xl'>Política de Cookies</h1>
                   <h3>Introducción</h3>
                   <p>En ArrendaNet utilizamos cookies para mejorar tu experiencia en nuestra plataforma. Esta Política de Cookies explica qué son las cookies, cómo las utilizamos y cómo puedes controlarlas.</p>
 

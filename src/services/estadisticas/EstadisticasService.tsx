@@ -1,15 +1,15 @@
 import { BaseService } from '../core/BaseService';
 
-const controller = "Pago";
+const controller = "Estadistica";
 
-export class PagoService extends BaseService {
+export class EstadisticaService extends BaseService {
     constructor() {
         super(controller);
     }
-    
-    async getAllByRol(token: string) {
+
+    async getEstadisticasByUser(token: string) {
         try {            
-            const response = await fetch(`${this.baseAPI}/${controller}/GetAllByRol`, {
+            const response = await fetch(`${this.baseAPI}/${controller}/GetEstadisticasByUser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

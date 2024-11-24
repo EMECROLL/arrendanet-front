@@ -9,18 +9,29 @@ import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 import BasicModal from '../../../../components/basic-modal/BasicModal';
 import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
 import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
+import { EstatusContrato, EstatusMantenimiento, Roles, TipoContrato } from '../../../../common/enums/enums';
+import { MantenimientoService } from '../../../../services/mantenimiento/MantenimientoService';
+import { useAuth } from '../../../../AuthContext';
+import { ContratoService } from '../../../../services/contrato/ContratoService';
 
 function MantenimentosEncargado() {
     const [data, setData] = useState()
+    const [contratos, setContratos] = useState();
+    const [contratosActivos, setContratosActivos] = useState();
+    const contratoService = new ContratoService(); 
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState()
-    const toast = useRef(null);
-    const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
+    const toast = useRef<Toast>(null);
+    const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
-
+    const estatusMantenimientoList = Object.values(EstatusMantenimiento);
+    const estatusContratoList = Object.values(EstatusContrato);
+    const tipoContratoList = Object.values(TipoContrato);
+    const { userRole, token } = useAuth();
+    const ignoreColumns = ['idContrato',"rutaContrato", "idInquilino", "idHabitacion", 'duracion', 'capacidadInquilinos', 'idEdificio', 'estatusHabitacion', 'edificio']
     useEffect(() => {  
       loadData();
       handleResize();
@@ -35,11 +46,34 @@ function MantenimentosEncargado() {
     };
     
     function loadData(){
-      edificioService.getAll().then((data) => {
-        setData(data);
+      getContratos();
+      mantenimientoService.getAllByRol(token).then((data) => {
+        const updatedData = data.data.map((element) => ({
+          ...element,
+          estatus: estatusMantenimientoList[element.estatus],
+        }));
+        setData(updatedData);
+        
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
+      
+    }
+
+    async function getContratos(){
+      const response = await contratoService.getAllByRol(token);
+      try {        
+        setContratos(response.data)
+        const contratosFiltrados = response.data.filter((contrato)=>{ 
+          if (contrato.estatusContrato == Object.values(EstatusContrato).indexOf(EstatusContrato.ACTIVO)){
+            return contrato
+          }
+          })
+        setContratosActivos(contratosFiltrados);
+        return response.data;
+      } catch (error) {
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });}
+      }
     }
 
     // ? Función para abrir modal de eliminar
@@ -52,15 +86,15 @@ function MantenimentosEncargado() {
     async function deleteFunction() {
       if (selectedData && selectedData.id) {
           try {
-              await edificioService.delete(selectedData.id);
+              await mantenimientoService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Eliminado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Eliminado Exitosamente', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });
-              console.error('Error al eliminar a la persona:', error);
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el mantenimiento', life: 3000 });}
+              console.error('Error al eliminar a el mantenimiento:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun mantenimiento para eliminar', life: 3000 });}
       }
     }
 
@@ -68,17 +102,43 @@ function MantenimentosEncargado() {
     function editData(rowData) {
       setShowCreateEditModal(true);
       setIsEdit(true);
-      setSelectedData(rowData)
+      const rowDataModified = {
+        ...rowData,
+        estatus: Object.values(estatusMantenimientoList).indexOf(rowData.estatus)
+      }
+      setSelectedData(rowDataModified)
     }
 
     // ? Función para cargar modal con datos
     function showData(rowData) {
       setShowDataModal(true);
-      setSelectedData(rowData)
-    }
+      const estatusContratoValue = rowData.contrato?.estatusContrato;
+  
+      const estatusContratoFinal = estatusContratoList[estatusContratoValue] 
+          ? estatusContratoList[estatusContratoValue] 
+          : estatusContratoList[0]; 
+
+      const tipoContratoValue = rowData.contrato?.tipoContrato;
+  
+      const tipoContratoFinal = tipoContratoList[tipoContratoValue] 
+          ? tipoContratoList[tipoContratoValue] 
+          : tipoContratoList[0]; 
+  
+      const rowDataModified = {
+          ...rowData,
+          contrato: rowData.contrato ? {
+              ...rowData.contrato,
+              estatusContrato: estatusContratoFinal,
+              tipoContrato: tipoContratoFinal 
+          } : rowData.contrato
+      };
+    
+      setSelectedData(rowDataModified);
+  }
   
   
-    const filtersName: string[] = ['direccion', 'contacto', 'apellidoMaterno'];
+  
+    const filtersName: string[] = ['titulo', 'descripcion', 'estatus', 'costo', 'idContrato'];
     const TableSchema: ITableSchema = {
       Configuration: {
         title:'Mantenimientos',
@@ -87,13 +147,19 @@ function MantenimentosEncargado() {
         globalFilterFields: filtersName,
       },
       Columns: [
-        { header: 'Direccion', field: 'direccion'},
-        { header: 'contacto', field: 'contacto'},
+        { header: 'Título', field: 'titulo' },
+        { header: 'Descripción', field: 'descripcion' },
+        { header: 'Estatus', field: 'estatus' },
+        { header: 'Costo', field: 'costo', body: ((rowData) => <div>${rowData.costo}</div>)  },
+        { header: 'Contrato', field: 'idContrato' },
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
         [filtersName[0]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         [filtersName[1]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        [filtersName[2]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        [filtersName[3]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        [filtersName[4]]: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
       },
       Data: data,
       Actions:[
@@ -106,35 +172,74 @@ function MantenimentosEncargado() {
       }
     }
 
+    // let filteredEstatusMantenimientoList = estatusMantenimientoList;
+
+    // if (userRole === Roles.INQUILINO) {
+    //   filteredEstatusMantenimientoList = estatusMantenimientoList.filter((item) => ![EstatusMantenimiento.EN_PROCESO, EstatusMantenimiento.FINALIZADO].includes(item));
+    // }
+
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
-        { name: 'id', label: 'Id', type: 'number', showField:false},
-        { name: 'direccion', label: 'Dirección', type: 'text' },
-        { name: 'contacto', label: 'Contacto', type: 'text' },
+        { name: 'titulo', label: 'Título', type: 'text' },
+        { name: 'descripcion', label: 'Descripción', type: 'text' },
+        { name: 'estatus', label: 'Estatus', type: 'text', isEnum: true, listEnum: estatusMantenimientoList },
+        { name: 'costo', label: 'Costo', type: 'number', defaultValue: 0, min: 0},
+        { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: isEdit ? contratos : contratosActivos , labelField: 'id', valueField: 'id' },
+        { name: 'id', label: 'Id', type: 'number', hiddeField: true},
+
+
       ]
     }
 
     function CreateEdit(formData) {
+
+      const errors = {};
+      const fieldsToValidate = [
+        { name: 'titulo', label: 'Título'},
+        { name: 'descripcion', label: 'Descripción'},
+        { name: 'estatus', label: 'Estatus', isEnum: true},
+        { name: 'idContrato', label: 'Contrato', isId:true },
+      ];
+
+      fieldsToValidate.forEach(field => {
+        if (field.isEnum || field.isId) {
+            if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        } else {
+            if (!formData[field.name] || !formData[field.name].trim()) {
+                errors[field.name] = `${field.label} es obligatorio.`;
+            }
+        }
+      });
+
+      if (Object.keys(errors).length > 0) {
+        return Promise.resolve({ success: false, errors });
+      }
         if (isEdit) {
-            edificioService.edit(formData.id, formData).then(() => {
+            return mantenimientoService.edit(formData.id, formData).then(() => {
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
+              if (toast?.current) { toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Editado Exitosamente', life: 3000 });}
+              return { success: true };
             }).catch((error) => {
                 console.error('Error fetching edificios:', error);
+                return { success: false, errors: { general: 'Error al editar el mantenimiento.' } };
             })
         } else {
           const newFormData = { ...formData, id: 0 };
-          edificioService.create(newFormData).then((data) => {
+          return mantenimientoService.create(newFormData).then((data) => {
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({severity: 'success', summary: 'Successful', detail: 'Mantenimiento Creado Exitosamente', life: 3000, });}            
+              return { success: true };
           }).catch((error) => {
-            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el edificio', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el mantenimiento', life: 3000 });} 
               console.error('Error al crear:', error);
+              return { success: false, errors: { general: 'Error al crear el mantenimiento.' } };
           });
         }
     }
-  
+
     return (
       <div className="App p-10">
             <Toast ref={toast} />
@@ -146,20 +251,21 @@ function MantenimentosEncargado() {
                     </div>
                 </div>
             ) : (
-                <BasicDataTable TableSchema={TableSchema} />
+              <BasicDataTable TableSchema={TableSchema} />
             )}
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
         data={selectedData}
         deleteFunction={deleteFunction}
-        message={selectedData?.nombre}
+        message={`el mantenimiento "${selectedData?.titulo}"`}
         ></DeleteModal>
         <BasicModal
         title="Mantenimientos"
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
+        ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
             visible={showCreateEditModal}

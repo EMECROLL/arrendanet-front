@@ -6,22 +6,24 @@ import BasicDataTable from '../../../components/basic-data-table/BasicDataTable'
 import DeleteModal from '../../../components/delete-modal/DeleteModal';
 // import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
 import { EdificioService } from '../../../services/edificio/EdificioService';
-import { IPersona } from '../../../interfaces/persona/Persona';
 import BasicModal from '../../../components/basic-modal/BasicModal';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
+import { IEdificio } from '../../../interfaces/edificio/Edificio';
+import { useAuth } from '../../../AuthContext';
 
-function Edificios() {
+const Edificios: React.FC = () => {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
-    const [selectedData, setSelectedData] = useState<IPersona>()
-    const toast = useRef(null);
+    const [selectedData, setSelectedData] = useState<IEdificio>()
+    const toast = useRef<Toast>(null);
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
+    const { token } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -37,8 +39,8 @@ function Edificios() {
     };
     
     function loadData(){
-      edificioService.getAll().then((data) => {
-        setData(data);
+      edificioService.getAllByRol(token).then((data) => {
+        setData(data.data);
       }).catch((error) => {
           console.error('Error fetching personas:', error);
       });
@@ -56,13 +58,13 @@ function Edificios() {
           try {
               await edificioService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Eliminado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Eliminado Exitosamente', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });}
               console.error('Error al eliminar a la persona:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });}
       }
     }
 
@@ -111,9 +113,9 @@ function Edificios() {
     const formSchema:IFormSchema = {
       title: TableSchema.Configuration.title,
       fields: [
-        { name: 'id', label: 'Id', type: 'number', showField:false},
+        { name: 'id', label: 'Id', type: 'number', hiddeField: true},
         { name: 'direccion', label: 'Dirección', type: 'text' },
-        { name: 'contacto', label: 'Contacto', type: 'text' },
+        { name: 'contacto', label: 'Contacto (Telefóno o Correo electrónico)', type: 'text' },
       ]
     }
     
@@ -127,7 +129,7 @@ function Edificios() {
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
-            if (formData[field.name] === undefined || formData[field.name] === null) {
+            if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         } else {
@@ -145,7 +147,7 @@ function Edificios() {
           return edificioService.edit(formData.id, formData)
               .then(() => {
                   loadData();
-                  toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Editado Exitosamente', life: 3000 });
+                  if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Editado Exitosamente', life: 3000 });}
                   return { success: true };
               })
               .catch((error) => {
@@ -157,7 +159,7 @@ function Edificios() {
           return edificioService.create(newFormData)
               .then(() => {
                   loadData();
-                  toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Edificio Creado Exitosamente', life: 3000 });
+                  if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Creado Exitosamente', life: 3000 });}
                   return { success: true };
               })
               .catch((error) => {
@@ -166,9 +168,6 @@ function Edificios() {
               });
       }
     }
-  
-  
-  
   
     return (
       <div className="App p-10">
@@ -188,7 +187,7 @@ function Edificios() {
         setShowDeleteModal={setShowDeleteModal}
         data={selectedData}
         deleteFunction={deleteFunction}
-        message={selectedData?.nombre}
+        message={selectedData?.direccion}
         ></DeleteModal>
         <BasicModal
         title="Edificio"
@@ -204,6 +203,7 @@ function Edificios() {
             data={selectedData}
             setIsEdit={setIsEdit}
             isEdit={isEdit}
+            columns={1}
         />
       </div>
     );

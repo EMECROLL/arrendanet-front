@@ -3,8 +3,9 @@ import CryptoJS from 'crypto-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AccountService } from './services/account/AccountService';
 import { useNavigate } from 'react-router-dom';
+import { IAccount } from './interfaces/account/Account';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 const encryptJWT = (token) => {
     return CryptoJS.AES.encrypt(token, SECRET_KEY).toString();
@@ -19,16 +20,16 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [token, setToke] = useState(null);
     const accountService = new AccountService();
     const navigate = useNavigate();
 
     useEffect(() => {
         const checkAuth = async () => { 
             const encryptedToken = localStorage.getItem('token'); 
-            // console.log(encryptedToken);
-
             if (encryptedToken) {
-                const token = decryptJWT(encryptedToken);                
+                const token = decryptJWT(encryptedToken);
+                setToke(token);                
                 const decoded = jwtDecode(token);                
                 const response = await accountService.validateToken(token);
                 
@@ -45,14 +46,15 @@ export const AuthProvider = ({ children }) => {
         };
 
         checkAuth();
-    }, []);
+    },  [isAuthenticated]);
 
-    const login = async (credentials) => {
+    const login = async (credentials:IAccount) => {
         try {            
             const response = await accountService.login(credentials);
             
             if (response && response.success) {
                 const token = response.token;
+                setToke(token);
                 const encryptedToken = encryptJWT(token);
                 localStorage.setItem('token', encryptedToken);
                 setIsAuthenticated(true);
@@ -85,7 +87,7 @@ export const AuthProvider = ({ children }) => {
     const userRole = user ? user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] : null;
         
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, loading, user, userRole}}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, loading, user, userRole, token}}>
             {children}
         </AuthContext.Provider>
     );

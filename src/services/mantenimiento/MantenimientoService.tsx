@@ -1,12 +1,12 @@
 import { BaseService } from '../core/BaseService';
 
-const controller = "Pago";
+const controller = "Mantenimiento";
 
-export class PagoService extends BaseService {
+export class MantenimientoService extends BaseService {
     constructor() {
         super(controller);
     }
-    
+
     async getAllByRol(token: string) {
         try {            
             const response = await fetch(`${this.baseAPI}/${controller}/GetAllByRol`, {
