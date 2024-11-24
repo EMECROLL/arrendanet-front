@@ -5,6 +5,7 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 
 export default function Ayuda() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ export default function Ayuda() {
   });
   const [cargando, setCargando] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [error, setError] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -29,10 +31,38 @@ export default function Ayuda() {
     e.preventDefault();
     setCargando(true);
 
+    const { nombre, correo, telefono, asunto, mensaje } = formData;
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_SERVICE_ID,
+        import.meta.env.VITE_TEMPLATE_ID,
+        {
+          nombre,
+          correo,
+          telefono,
+          asunto,
+          mensaje,
+        },
+        import.meta.env.VITE_PUBLIC_KEY
+      );
+
     setTimeout(() => {
       setCargando(false);
       setVisible(true);
+      setFormData({
+        nombre: '',
+        correo: '',
+        telefono: '',
+        asunto: '',
+        mensaje: '',
+      });
     }, 2000);
+  } catch (error) {
+      console.error('Error al enviar el correo:', error);
+      setCargando(false);
+      setError(true);
+    }
   };
 
   return (
@@ -62,7 +92,7 @@ export default function Ayuda() {
 
               <div className="flex flex-col">
                 <FloatLabel>
-                  <InputText id="correo" type="email" value={formData.correo} onChange={handleChange} />
+                  <InputText id="correo" type="email" name="correo" value={formData.correo} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="correo">
                     Correo electrónico
                   </label>
@@ -75,6 +105,7 @@ export default function Ayuda() {
                     className="w-full"
                     id="telefono"
                     type="tel"
+                    name="telefono"
                     value={formData.telefono}
                     onChange={handleChange}
                   />
@@ -86,7 +117,7 @@ export default function Ayuda() {
 
               <div className="flex flex-col">
                 <FloatLabel>
-                  <InputText className="w-full" id="asunto" type="tel" value={formData.asunto} onChange={handleChange} />
+                  <InputText className="w-full" id="asunto" type="tel" name="asunto" value={formData.asunto} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="asunto">
                     Asunto (Tema o motivo de contacto)
                   </label>
@@ -95,7 +126,7 @@ export default function Ayuda() {
 
               <div className="flex flex-col">
                 <FloatLabel>
-                  <InputTextarea className="w-full" id="mensaje" value={formData.mensaje} onChange={handleChange} />
+                  <InputTextarea className="w-full" name="mensaje" id="mensaje" value={formData.mensaje} onChange={handleChange} />
                   <label style={{ fontSize: '16px' }} htmlFor="mensaje">
                     Mensaje
                   </label>
@@ -113,7 +144,11 @@ export default function Ayuda() {
                 setVisible(false);
               }}
             >
-              <p className="m-0">¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.</p>
+              {error ? (
+                <p className="m-0">Ocurrió un error al enviar tu mensaje. Por favor, inténtalo nuevamente.</p>
+              ) : (
+                <p className="m-0">¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.</p>
+              )}
             </Dialog>
           </form>
           <div className="mt-3 text-center">
