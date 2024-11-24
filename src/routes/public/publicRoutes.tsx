@@ -7,11 +7,11 @@ import SobreNostros from '../../views/public/SobreNosotros/SobreNostros';
 import Ayuda from '../../views/public/Ayuda/Ayuda';
 
 const publicRoutes = [
-    <Route path="/" element={<Home />} />,
-    <Route path="/sobre-nosotros" element={<SobreNostros />} />,
-    <Route path="/contacto" element={<Ayuda />} />,
-    <Route path="/legal" element={<Legal />} />,
-    <Route path="/ejemplo" element={<Ejemplo />} />,
+    <Route key="home" path="/" element={<Home />} />,
+    <Route key="sobre-nosotros" path="/sobre-nosotros" element={<SobreNostros />} />,
+    <Route key="contacto" path="/contacto" element={<Ayuda />} />,
+    <Route key="legal" path="/legal" element={<Legal />} />,
+    <Route key="ejemplo" path="/ejemplo" element={<Ejemplo />} />,
 ];
 
 export default publicRoutes;

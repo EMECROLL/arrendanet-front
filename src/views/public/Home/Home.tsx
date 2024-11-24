@@ -2,22 +2,24 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import "./CustomHero.css";
 import { Accordion, AccordionTab } from "primereact/accordion";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
   return (
     <main className="font-Nunito">
       <section className="hero p-10 flex flex-col justify-center min-h-[600px] text-center">
         <h1 className="text-white font-Nunito text-4xl font-bold my-0">Simplifica la gestión de tus propiedades con una plataforma todo-en-uno.</h1>
         <h2 className="text-white text-2xl font-light my-0">Conectamos a propietarios, encargados e inquilinos en una plataforma eficiente y segura.</h2>
         <div className="flex justify-center gap-4 my-5">
-          <Button label="Conocer más" />
-          <Button label="Entrar" />
+          <Button onClick={() => navigate("/sobre-nosotros")} label="Conocer más" />
+          <Button onClick={() => navigate("/login")} label="Entrar" />
         </div>
       </section>
 
       <section className="p-10">
         <h1 className="text-navy text-center font-bold text-4xl mb-10">¿Por qué elegirnos?</h1>
-        <div className="flex flex-wrap md:flex-nowrap justify-center gap-6">
+        <div className="flex flex-wrap md:flex-nowrap justify-center gap-6 text-center">
           <Card title="Gestión simplificada" header={<><img src="/src/assets/images/porque_1.jpg" alt="" className="w-full" /></>} className="w-full sm:w-1/3 md:w-1/4 lg:w-1/4">
             <p className="m-0">
               Nuestra plataforma te permite administrar todas tus propiedades en un solo lugar, desde contratos hasta mantenimiento, con la seguridad de una experiencia confiable y transparente para propietarios e inquilinos.
@@ -38,7 +40,7 @@ function Home() {
 
       <section className="p-10">
         <h1 className="text-navy text-center font-bold text-4xl mb-10">Características</h1>
-        <div className="cards-container grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <div className="cards-container grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 text-center">
           <Card title="Gestión Completa de Contratos" className="w-full">
             <p className="m-0">
               Crea, almacena y renueva contratos de arrendamiento en minutos. Simplifica el proceso y mantén todo en orden desde cualquier dispositivo.

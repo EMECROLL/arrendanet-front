@@ -4,8 +4,8 @@ import SignUp from '../../views/auth/SignUp/SignUp';
 import Login from '../../views/auth/Login/Login';
 
 const authRoutes = [
-    <Route path="/login" element={<Login />} />,
-    <Route path="/sign-up" element={<SignUp />} />,
+    <Route key="login" path="/login" element={<Login />} />,
+    <Route key="sig-up"  path="/sign-up" element={<SignUp />} />,
 ];
 
 export default authRoutes;

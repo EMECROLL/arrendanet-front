@@ -1,22 +1,26 @@
 import { FilterMatchMode } from 'primereact/api';
 import { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
-import { ITableSchema } from '../../../interfaces/data-table/DataTable';
-import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
-import DeleteModal from '../../../components/delete-modal/DeleteModal';
+import { ITableSchema } from '../../../../interfaces/data-table/DataTable';
+import BasicDataTable from '../../../../components/basic-data-table/BasicDataTable';
+import DeleteModal from '../../../../components/delete-modal/DeleteModal';
 // import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
-import { PagoService } from '../../../services/pago/PagoService';
-import { IPersona } from '../../../interfaces/persona/Persona';
-import BasicModal from '../../../components/basic-modal/BasicModal';
-import { EstatusPago } from '../../../common/enums/enums';
-import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
-import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
-import { ContratoService } from '../../../services/contrato/ContratoService';
-import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
-import { useAuth } from '../../../AuthContext';
+import { PagoService } from '../../../../services/pago/PagoService';
+import { IPersona } from '../../../../interfaces/persona/Persona';
+import BasicModal from '../../../../components/basic-modal/BasicModal';
+import { EstatusPago } from '../../../../common/enums/enums';
+import { IFormSchema } from '../../../../interfaces/data-form-field/DataFormField';
+import CreateEditModal from '../../../../components/create-edit-modal/CreateEditModal';
+import { ContratoService } from '../../../../services/contrato/ContratoService';
+import iconoGirarCelular from '../../../../assets/gif/icono-girar.gif'
+import { Button } from 'primereact/button';
+import { classNames } from 'primereact/utils';
+import { DataView } from 'primereact/dataview';
+import { Tag } from 'primereact/tag';
+import { useAuth } from '../../../../AuthContext';
 
-const Pagos: React.FC = () => {
-    const [data, setData] = useState()
+const PagosInquilino: React.FC = () => {
+    const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -64,7 +68,7 @@ const Pagos: React.FC = () => {
         setContratos(response.data)
         return response.data;
       } catch (error) {
-        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });}
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });}
       }
     }
 
@@ -117,9 +121,9 @@ const Pagos: React.FC = () => {
       },
       Columns: [
         { header: 'Fecha', field: 'fecha', isDate: true},
-        { header: 'Monto', field: 'monto', body: ((rowData) => <div>${rowData.monto}</div>) },
-        { header: 'Estatus Pago', field: 'estatusPago', filterType: 'multiSelect', showFilterMenu: false},
-        { header: 'Contrato', field: `idContrato`},
+        { header: 'Monto', field: 'monto'},
+        { header: 'Estatus Pago', field: 'estatusPago', filterType: 'multiSelect'},
+        { header: 'Contrato', field: 'idContrato'},
       ],
       Filters: {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -143,8 +147,8 @@ const Pagos: React.FC = () => {
       title: TableSchema.Configuration.title,
       fields: [
         { name: 'fecha', label: 'Fecha', type: 'date' },
-        { name: 'monto', label: 'Monto', type: 'number', defaultValue: 0, min: 0},
-        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, 
+        { name: 'monto', label: 'Monto', type: 'number' },
+        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList },
         { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
         { name: 'id', label: 'id', type: 'number', hiddeField: true},
       ]
@@ -155,8 +159,9 @@ const Pagos: React.FC = () => {
       const errors = {};
       const fieldsToValidate = [
         { name: 'fecha', label: 'Fecha' },
-        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true }, 
-        { name: 'idContrato', label: 'Contrato', isEnum: true },
+        { name: 'monto', label: 'Monto' },
+        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true },
+        { name: 'idContrato', label: 'Contrato' },
       ];
 
       fieldsToValidate.forEach(field => {
@@ -200,27 +205,96 @@ const Pagos: React.FC = () => {
         });
       }
     }
+
+    const formatDate = (value: any) => {
+      if (!value) return '';
+      const date = new Date(value);
+      return !isNaN(date.getTime()) ? new Intl.DateTimeFormat('es-MX').format(date) : value;
+    };
+
+    const getSeverityEstatusPago = (data) => {
+      
+      switch (data.estatusPago) {
+          case 'Aprobado':
+              return 'success';
+
+          case 'En proceso':
+              return 'warning';
+
+          case 'Rechazado':
+              return 'danger';
+
+          default:
+              return null;
+      }
+  };
+
+
+    const itemTemplate = (data, index) => {
+      return (
+          <div className="col-12 shadow-xl rounded-xl" key={data.id}>
+              <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
+                  <div className="flex flex-column md:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                      <div className="self-start flex flex-column align-items-start gap-3">
+                        <div className="text-xs md:text-2xl font-bold text-900">
+                            <span>Fecha: {formatDate(data.fecha)}</span>
+                          </div>
+                          <div className="md:flex align-items-center gap-3">
+                              <span className="flex align-items-center gap-2">
+                                  <p className='text-xs md:text-base'><strong>Monto: </strong></p>
+                                  <span className="text-xs md:text-base font-semibold">$ {data.monto}</span>
+                              </span>
+                              <span className="flex align-items-center gap-2">
+                                  <p className='text-xs md:text-base'><strong>Contrato: </strong></p>
+                                  <span className="text-xs md:text-base font-semibold">{data.idContrato}</span>
+                              </span>
+                              <strong className="text-xs md:text-base font-semibold">Estatus:</strong>
+                              <Tag className='ml-2 md:m-0' value={data.estatusPago} severity={getSeverityEstatusPago(data)}></Tag>
+                          </div>
+                      </div>
+                      <div className="flex md:grid grid-cols-4 md:grid-cols-1 sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 w-full md:w-auto">
+                          <Button className='p-button-warning w-full text-xs md:text-base flex justify-center font-semibold md:font-normal' onClick={()=>showData(data)}>
+                            <span className="flex">Más información</span>
+                          </Button>
+                          {/* <Button className='p-button-primary w-full text-xs md:text-base' onClick={()=>editData(data)}>
+                            <i className="pi pi-pencil flex md:hidden"></i>
+                            <span className="hidden md:flex">Editar</span>
+                          </Button>
+                          <Button className='p-button-danger w-full text-xs md:text-base' onClick={()=>deleteData(data)}>
+                            <i className="pi pi-trash flex md:hidden"></i>
+                            <span className="hidden md:flex">Eliminar</span>
+                          </Button> */}
+                      </div>
+                  </div>
+              </div>
+          </div>
+      );
+  };
+
+    const listTemplate = (items) => {
+      if (!items || items.length === 0) return null;
+
+      let list = items.map((product, index) => {
+          return itemTemplate(product, index);
+      });
+
+      return <div className="grid grid-nogutter">{list}</div>;
+  };
     
   
     return (
       <div className="App p-10">
             <Toast ref={toast} />
-            {isMobile ? (
-                <div className="flex justify-center">
-                    <div className="flex flex-col p-button p-button-rounded p-button-primary">
-                        <img src={iconoGirarCelular} alt="Rotate Phone" />
-                        Rota tu teléfono para una mejor experiencia
-                    </div>
-                </div>
-            ) : (
-                <BasicDataTable TableSchema={TableSchema} />
-            )}
+              <div className="card">
+                <h1 className='ml-4'>Pagos</h1>
+                <DataView value={data} listTemplate={listTemplate} paginator rows={5}/>
+              </div>
         <DeleteModal 
         showDeleteModal={showDeleteModal} 
         setShowDeleteModal={setShowDeleteModal}
         data={selectedData}
         deleteFunction={deleteFunction}
-        message={'este pago'}
+        message={selectedData?.nombre}
         ></DeleteModal>
         <BasicModal
         title="Pago"
@@ -230,7 +304,6 @@ const Pagos: React.FC = () => {
         ignoreColumns={ignoreColumns}
         ></BasicModal>
         <CreateEditModal
-            columns={1}
             visible={showCreateEditModal}
             setVisible={setShowCreateEditModal}
             formSchema={formSchema}
@@ -243,4 +316,4 @@ const Pagos: React.FC = () => {
     );
 }
 
-export default Pagos
+export default PagosInquilino

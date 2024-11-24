@@ -4,8 +4,8 @@ import NotFound from '../../views/error/NotFound/NotFound';
 import Unauthorized from '../../views/error/Unauthorized/Unauthorized';
 
 const errorRoutes = [
-    <Route path="/*" element={<NotFound />} />,
-    <Route path="/unauthorized" element={<Unauthorized />} />,
+    <Route key="404" path="/*" element={<NotFound />} />,
+    <Route key="401" path="/unauthorized" element={<Unauthorized />} />,
 ];
 
 export default errorRoutes;

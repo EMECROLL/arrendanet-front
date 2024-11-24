@@ -3,14 +3,15 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import React, { useEffect, useState } from 'react';
-
-function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data }) {
+import { Password } from 'primereact/password';
+import './CreateEditModal.css'
+function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, isEdit, data, columns }) {
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const initialFormData = formSchema.fields.reduce((acc, field) => {
-            let value = isEdit && data ? data[field.name] : field.value;
+            let value = isEdit && data ? data[field.name] : (field.defaultValue ?? field.value);
             
             if (field.isEnum && (value === undefined || value === '')) {
                 value = 0;
@@ -69,20 +70,21 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
         <Dialog
             visible={visible}
             header={isEdit ? `Editar ${formSchema.title}` : `Crear ${formSchema.title}`}
-            style={{ width: '50vw' }}
+            className='w-[90%] md:w-[50vw]'
             footer={dialogFooter}
             onHide={hideDialog}
         >
             <form className='p-5'>
                 {fieldGroups.map((group, groupIndex) => (
-                    <div className='grid grid-cols-2 gap-5 mb-5' key={groupIndex}>
+                    <div className={`grid grid-cols-${columns} gap-5 mb-5`} key={groupIndex}>
                         {group.map((field, index) => (
-                            field.showField !== false &&
-                            <div className="card flex justify-content-center" style={{ width: '45%' }} key={index}>
+                            <div className={`card flex justify-content-center ${columns == 2 ? 'w-[45%]' : 'w-full' }`} key={index}>
                                 <div className="flex flex-column gap-2" style={{ width: '100%' }}>
-                                    <label htmlFor={field.name}>{field.label}</label>
+                                    <label htmlFor={field.name} className={field.hiddeField ? 'hidden' :''}>{field.label}</label>
                                     {field.type === 'file' ? (
                                         <input
+                                            disabled={field.disableField}
+                                            defaultValue={!isEdit ? field.defaultValue : ''}
                                             id={field.name}
                                             type="file"
                                             onChange={(e) => handleChange(e, field)}
@@ -90,6 +92,7 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                         />
                                     ) : field.isEnum ? (
                                         <Dropdown
+                                        disabled={field.disableField}
                                         id={field.name}
                                         value={formData[field.name] !== undefined ? Number(formData[field.name]) : ''}
                                         options={field.listEnum.map((item, idx) => ({
@@ -104,8 +107,9 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                       
                                     ) : field.isEndpoint && field.endpointData ? (
                                         <Dropdown
+                                            disabled={field.disableField}
                                             id={field.name}
-                                            value={formData[field.name] || ''}
+                                            value={formData[field.name] || (field.defaultValue ?? '')}
                                             options={field.endpointData.map(item => ({
                                                 label: item[field.labelField],
                                                 value: item[field.valueField]
@@ -114,11 +118,29 @@ function CreateEditModal({ formSchema, visible, setVisible, onSave, setIsEdit, i
                                             placeholder={`Seleccione ${field.label}`}
                                             className={errors[field.name] ? 'p-invalid' : ''}
                                         />
-                                    ) : (
-                                        <InputText
+                                    ) 
+                                    : field.type == 'password' ? (
+                                        <Password
+                                            toggleMask
+                                            hidden={field.hiddeField}
+                                            disabled={field.disableField}
                                             id={field.name}
                                             aria-describedby={`${field.name}-help`}
-                                            value={formData[field.name] || ''}
+                                            value={formData[field.name] || (field.defaultValue ?? '')}
+                                            onChange={(e) => handleChange(e, field)}
+                                            type={field.type || 'text'}
+                                            min={field.min}
+                                            max={field.max}
+                                            className={`w-full ${errors[field.name] ? 'p-invalid' : ''}`} // Asegúrate de incluir w-full
+                                            />
+                                    )
+                                    : (
+                                        <InputText
+                                            hidden={field.hiddeField}
+                                            disabled={field.disableField}
+                                            id={field.name}
+                                            aria-describedby={`${field.name}-help`}
+                                            value={formData[field.name] || (field.defaultValue ?? '')}
                                             onChange={(e) => handleChange(e, field)}
                                             type={field.type || 'text'}
                                             min={field.min}

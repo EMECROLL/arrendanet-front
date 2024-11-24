@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useAuth } from '../../../AuthContext';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Password } from 'primereact/password';
 import './CustomLogin.css';
+import { jwtDecode } from 'jwt-decode';
 
 function Login() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function Login() {
   });
   const [errors, setErrors] = useState({ user: '', email: '', password: '', rememberMe: false });
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name == 'rememberMe') {
       setCredentials(prevState => ({
@@ -39,12 +40,12 @@ function Login() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:FormEvent) => {
     e.preventDefault();
     
     const newErrors = {};
-    if (!credentials.email) newErrors.email = 'Email is required';
-    if (!credentials.password) newErrors.password = 'Password is required';
+    if (!credentials.email) newErrors.email = 'El correo electrónico es necesario';
+    if (!credentials.password) newErrors.password = 'La contraseña es necesaria';
   
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -57,11 +58,12 @@ function Login() {
         setErrors({ ...newErrors, user: 'Error con el usuario o contraseña' });
       } else {
         setCredentials({ email: '', password: '', rememberMe: false });
-        navigate('/dashboard');
+        const decoded = jwtDecode(response.token);    
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] == "Inquilino" ? navigate('/consultar-contratos') : navigate('/dashboard');
       }
     } catch (error) {
       console.error("Login error:", error);
-      setErrors({ user: 'Ocurrió un error inesperado. Intente de nuevo.' });
+      setErrors({ ...newErrors, user: 'Ocurrió un error inesperado. Intente de nuevo.' });
     }
   };
 
@@ -95,7 +97,7 @@ function Login() {
                 name="password" 
                 value={credentials.password} 
                 onChange={(e) => handleChange(e)} 
-                className={errors.password ? 'p-invalid w-full' : 'w-full password-input-custom'} 
+                className={errors.password ? 'p-invalid password-input-custom w-full' : 'w-full password-input-custom'} 
                 toggleMask 
                 panelClassName="hidden" 
               />
@@ -139,7 +141,7 @@ function Login() {
       <section className="hidden xl:block w-full sm:w-5/12 h-screen ml-auto">
         <img 
           className="w-full h-full object-cover rounded-l-3xl" 
-          src="/src/assets/images/login.jpg" 
+          src="/src/assets/images/login.webp" 
           alt="Cancún" 
         />
       </section>

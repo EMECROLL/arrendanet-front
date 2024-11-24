@@ -1,6 +1,7 @@
+import React from 'react'
 import ringsLoader from '/src/assets/Loaders/rings.svg';
 
-function Loading() {
+const Loading: React.FC = () => {
   return (
     <div>
         <img src={ringsLoader} alt="Loading..." />

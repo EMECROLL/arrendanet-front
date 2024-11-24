@@ -58,5 +58,24 @@ export class AccountService extends BaseService {
             throw error;
         }
     }
+
+    async getAllAccounts(token: string) {
+        try {            
+            const response = await fetch(`${this.baseAPI}/${controller}/GetAllAccounts`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(token),
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating data:', error);
+            throw error;
+        }
+    }
     
 }

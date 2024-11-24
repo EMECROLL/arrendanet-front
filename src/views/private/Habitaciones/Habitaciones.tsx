@@ -5,28 +5,30 @@ import { ITableSchema } from '../../../interfaces/data-table/DataTable';
 import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
 import DeleteModal from '../../../components/delete-modal/DeleteModal';
 import { HabitacionService } from '../../../services/habitacion/HabitacionService';
-import { IPersona } from '../../../interfaces/persona/Persona';
 import BasicModal from '../../../components/basic-modal/BasicModal';
 import { EstatusHabitacion } from '../../../common/enums/enums';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
 import { EdificioService } from '../../../services/edificio/EdificioService';
 import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
+import { IHabitacion } from '../../../interfaces/habitacion/Habitacion';
+import { useAuth } from '../../../AuthContext';
 
-function Habitaciones() {
+const Habitaciones: React.FC = () => {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
-    const [selectedData, setSelectedData] = useState<IPersona>()
+    const [selectedData, setSelectedData] = useState<IHabitacion>()
     const [edificios, setEdificios] = useState()
-    const toast = useRef(null);
+    const toast = useRef<Toast>(null);
     const habitacionService = new HabitacionService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusHabitacionList = Object.values(EstatusHabitacion)
     const ignoreColumns = ['idHabitacion', 'idEdificio']
     const [isMobile, setIsMobile] = useState(false);
+    const { token } = useAuth();
 
     useEffect(() => {  
       loadData();
@@ -49,8 +51,8 @@ function Habitaciones() {
         return acc;
       }, {});
 
-      habitacionService.getAll().then((data) => {
-        const updatedData = data.map((element) => ({
+      habitacionService.getAllByRol(token).then((data) => {
+        const updatedData = data.data.map((element) => ({
           ...element,
           edificio: edificiosMap[element.idEdificio].direccion,
           estatusHabitacion: estatusHabitacionList[element.estatusHabitacion],
@@ -73,13 +75,13 @@ function Habitaciones() {
           try {
               await habitacionService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Persona Eliminada', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Habitación Eliminada', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a la persona', life: 3000 });
-              console.error('Error al eliminar a la persona:', error);
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar la habitación', life: 3000 });}
+              console.error('Error al eliminar la habitación:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ninguna persona para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ninguna habitación para eliminar', life: 3000 });}
       }
     }
 
@@ -100,7 +102,7 @@ function Habitaciones() {
       setSelectedData(rowData)
     }
   
-    const filtersName: string[] = ['numeroHabitacion', 'capacidadInquilinos', 'estatusHabitacion', 'idEdificio'];
+    const filtersName: string[] = ['numeroHabitacion', 'capacidadInquilinos', 'estatusHabitacion', 'edificio'];
     const TableSchema: ITableSchema = {
       Configuration: {
         title:'Habitaciones',
@@ -111,7 +113,7 @@ function Habitaciones() {
       Columns: [
         { header: 'Número de habitación', field: 'numeroHabitacion'},
         { header: 'Capacidad Inquilinos', field: 'capacidadInquilinos'},
-        { header: 'Estatus Habitación', field: 'estatusHabitacion', filterType: 'dropdown'},
+        { header: 'Estado de la habitación', field: 'estatusHabitacion', filterType: 'dropdown'},
         { header: 'Edificio', field: 'edificio'},
       ],
       Filters: {
@@ -133,12 +135,12 @@ function Habitaciones() {
     }
 
     async function getEdificios(){
-      const response = await edificioService.getAll();
+      const response = await edificioService.getAllByRol(token);
       try {
-        setEdificios(response)
-        return response;
+        setEdificios(response.data)
+        return response.data;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });}
       }
     }
 
@@ -147,9 +149,9 @@ function Habitaciones() {
       fields: [
         { name: 'numeroHabitacion', label: 'Número de habitación', type: 'number' },
         { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos', type: 'number' },
-        { name: 'estatusHabitacion', label: 'Estatus Habitación', type: 'select', isEnum: true, listEnum: estatusHabitacionList },
+        { name: 'estatusHabitacion', label: 'Estado de la habitación', type: 'select', isEnum: true, listEnum: estatusHabitacionList },
         { name: 'idEdificio', label: 'Edificio', type: 'select', isEndpoint: true, endpointData: edificios, valueField:'id', labelField: 'direccion'  },
-        { name: 'id', label: 'id', type: 'number', showField: false},
+        { name: 'id', label: 'id', type: 'number', hiddeField: true},
       ]
     }
 
@@ -158,17 +160,17 @@ function Habitaciones() {
       const fieldsToValidate = [
         { name: 'numeroHabitacion', label: 'Número de habitación'},
         { name: 'capacidadInquilinos', label: 'Capacidad de inquilinos'},
-        { name: 'estatusHabitacion', label: 'Estatus Habitación', isEnum: true},
+        { name: 'estatusHabitacion', label: 'Estado de la habitación', isEnum: true},
         { name: 'idEdificio', label: 'Edificio'},
       ];
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
-            if (formData[field.name] === undefined || formData[field.name] === null) {
+            if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         } else {
-            if (!formData[field.name] || !formData[field.name].trim()) {
+            if (!formData[field.name] || (typeof (formData[field.name]) == 'string' ? (!formData[field.name].trim()) : null)) {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         }
@@ -181,7 +183,7 @@ function Habitaciones() {
       if (isEdit) {
         return habitacionService.edit(formData.id, formData).then(() => {
           loadData();
-          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Editada Exitosamente', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Habitación Editada Exitosamente', life: 3000 });}
           return { success: true };
         }).catch((error) => {
             console.error('Error fetching habitaciones:', error);
@@ -191,10 +193,10 @@ function Habitaciones() {
         const newFormData = { ...formData, id: 0 };
         return habitacionService.create(newFormData).then((data) => {
             loadData();
-            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Habitación Creada Exitosamente', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Habitación Creada Exitosamente', life: 3000 });}
             return { success: true };
         }).catch((error) => {
-          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear la habitación', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear la habitación', life: 3000 });}
             console.error('Error al crear:', error);
             return { success: false, errors: { general: 'Error al crear la habitación.' } };
         });
@@ -220,10 +222,10 @@ function Habitaciones() {
         setShowDeleteModal={setShowDeleteModal}
         data={selectedData}
         deleteFunction={deleteFunction}
-        message={selectedData?.nombre}
+        message={`habitación número ${selectedData?.numeroHabitacion}`}
         ></DeleteModal>
          <BasicModal
-        title="Habticación"
+        title="Habitación"
         showDataModal={showDataModal} 
         setShowDataModal={setShowDataModal}
         data={selectedData}
@@ -237,6 +239,7 @@ function Habitaciones() {
             data={selectedData}
             setIsEdit={setIsEdit}
             isEdit={isEdit}
+            columns={2}
         />
       </div>
     );
