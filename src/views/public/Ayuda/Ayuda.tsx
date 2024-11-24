@@ -1,4 +1,3 @@
-import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { FloatLabel } from 'primereact/floatlabel';

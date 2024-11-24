@@ -16,7 +16,7 @@ import { Tag } from 'primereact/tag';
 import { useAuth } from '../../../../AuthContext';
 import { ContratoService } from '../../../../services/contrato/ContratoService';
 
-function MantenimentosInquilino() {
+const MantenimentosInquilino: React.FC = () => {
     const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [contratos, setContratos] = useState();
@@ -25,7 +25,7 @@ function MantenimentosInquilino() {
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState()
-    const toast = useRef(null);
+    const toast = useRef<Toast>(null);
     const mantenimientoService = new MantenimientoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
     const estatusMantenimientoList = Object.values(EstatusMantenimiento);
@@ -73,7 +73,7 @@ function MantenimentosInquilino() {
         setContratosActivos(contratosFiltrados);
         return response.data;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los contratos', life: 3000 });}
       }
     }
 
@@ -89,13 +89,13 @@ function MantenimentosInquilino() {
           try {
               await mantenimientoService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Eliminado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Eliminado Exitosamente', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el mantenimiento', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el mantenimiento', life: 3000 });}
               console.error('Error al eliminar a la persona:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun mantenimiento para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun mantenimiento para eliminar', life: 3000 });}
       }
     }
 
@@ -191,7 +191,7 @@ function MantenimentosInquilino() {
         if (isEdit) {
             mantenimientoService.edit(formData.id, formData).then(() => {
               loadData();
-              toast!.current!.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Editado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Editado Exitosamente', life: 3000 });}
             }).catch((error) => {
                 console.error('Error fetching mantenimiento:', error);
             })
@@ -200,9 +200,9 @@ function MantenimentosInquilino() {
 
           mantenimientoService.create(newFormData).then((data) => {
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Creado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Mantenimiento Creado Exitosamente', life: 3000 });}
           }).catch((error) => {
-            toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el mantenimiento', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el mantenimiento', life: 3000 });}
               console.error('Error al crear:', error);
           });
         }

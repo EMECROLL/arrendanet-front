@@ -19,7 +19,7 @@ import { DataView } from 'primereact/dataview';
 import { Tag } from 'primereact/tag';
 import { useAuth } from '../../../../AuthContext';
 
-function PagosInquilino() {
+const PagosInquilino: React.FC = () => {
     const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
@@ -27,7 +27,7 @@ function PagosInquilino() {
     const [contratos, setContratos] = useState()
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
-    const toast = useRef(null);
+    const toast = useRef<Toast>(null);
     const pagoService = new PagoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const contratoService = new ContratoService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const estatusPagoList = Object.values(EstatusPago);
@@ -68,7 +68,7 @@ function PagosInquilino() {
         setContratos(response.data)
         return response.data;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });}
       }
     }
 
@@ -84,13 +84,13 @@ function PagosInquilino() {
           try {
               await pagoService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Eliminado exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Eliminado exitosamente', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a el pago', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a el pago', life: 3000 });}
               console.error('Error al eliminar a el pago:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun pago para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun pago para eliminar', life: 3000 });}
       }
     }
 
@@ -148,7 +148,7 @@ function PagosInquilino() {
       fields: [
         { name: 'fecha', label: 'Fecha', type: 'date' },
         { name: 'monto', label: 'Monto', type: 'number' },
-        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList }, // ? Me funciona cuando esta en enum false, eso no deberia ser
+        { name: 'estatusPago', label: 'Estatus Pago', type: 'select', isEnum: true, listEnum: estatusPagoList },
         { name: 'idContrato', label: 'Contrato', type: 'select', isEndpoint:true, endpointData: contratos, labelField: 'id', valueField: 'id'  },
         { name: 'id', label: 'id', type: 'number', hiddeField: true},
       ]
@@ -160,13 +160,13 @@ function PagosInquilino() {
       const fieldsToValidate = [
         { name: 'fecha', label: 'Fecha' },
         { name: 'monto', label: 'Monto' },
-        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true }, // ? Me funciona cuando esta en enum false, eso no deberia ser
+        { name: 'estatusPago', label: 'Estatus Pago', isEnum: true },
         { name: 'idContrato', label: 'Contrato' },
       ];
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
-            if (formData[field.name] === undefined || formData[field.name] === null) {
+            if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         } else {
@@ -183,7 +183,7 @@ function PagosInquilino() {
       if (isEdit) {
         return pagoService.edit(formData.id, formData).then(() => {
           loadData();
-          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Editado Exitosamente', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Editado Exitosamente', life: 3000 });}
           return { success: true };
 
         }).catch((error) => {
@@ -195,11 +195,11 @@ function PagosInquilino() {
         const newFormData = { ...formData, id: 0 };
         return pagoService.create(newFormData).then((data) => {
             loadData();
-            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Creado Exitosamente', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Pago Creado Exitosamente', life: 3000 });}
             return { success: true };
 
         }).catch((error) => {
-          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el pago', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el pago', life: 3000 });}
             console.error('Error al crear:', error);
             return { success: false, errors: { general: 'Error al crear el pago.' } };
         });
@@ -213,7 +213,6 @@ function PagosInquilino() {
     };
 
     const getSeverityEstatusPago = (data) => {
-      console.log(data);
       
       switch (data.estatusPago) {
           case 'Aprobado':

@@ -1,6 +1,7 @@
+import React from 'react'
 import accessDenied from '../../../assets/images/access_denied.svg'
 
-function Unauthorized() {
+const Unauthorized: React.FC = () =>  {
   return (
     <div className='flex flex-col justify-center items-center'>
       <h1 className='text-center text-8xl mb-0'>401</h1>

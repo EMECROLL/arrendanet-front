@@ -20,7 +20,6 @@ function SignUp() {
 
   const handleSubmit = () => {
     // Aquí se manejaría la lógica de registro, como validaciones y envío al backend
-    console.log("Registrado");
     navigate('/');
   };
 

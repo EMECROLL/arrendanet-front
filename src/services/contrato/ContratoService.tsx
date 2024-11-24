@@ -9,7 +9,6 @@ export class ContratoService extends BaseService {
     }
 
     async createContrato(data:IContrato) {
-        console.log(data);
         
         try {
             const formData = new FormData();
@@ -42,7 +41,6 @@ export class ContratoService extends BaseService {
     }
 
     async updateContrato(id:number, data:IContrato) {
-        console.log(data);
         
         try {
             const formData = new FormData();

@@ -16,7 +16,7 @@ import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 import { IContrato } from '../../../interfaces/contrato/Contrato';
 import { useAuth } from '../../../AuthContext';
 
-function Contratos() {
+const Contratos: React.FC = () => {
     const url = import.meta.env.VITE_BACKEND_URL;
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -25,7 +25,7 @@ function Contratos() {
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IContrato>()
-    const toast = useRef(null);
+    const toast = useRef<Toast>(null);
     const estatusContratoList = Object.values(EstatusContrato);
     const tipoContratoList = Object.values(TipoContrato);
     const [inquilinos, setInquilinos] = useState()
@@ -94,19 +94,18 @@ function Contratos() {
           try {
               await contratoService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Eliminado', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Eliminado', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el contrato', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el contrato', life: 3000 });}
               console.error('Error al eliminar el contrato:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun contrato para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun contrato para eliminar', life: 3000 });}
       }
     }
 
     // ? Función para abrir modal para editar
     function editData(rowData) {
-      console.log(rowData);
       getHabitaciones();
       setShowCreateEditModal(true);
       setIsEdit(true);
@@ -175,41 +174,56 @@ function Contratos() {
 
     function CreateEdit(formData) {  
       const errors = {};
+
       const fieldsToValidate = [
-        { name: 'fechaInicio', label: 'Fecha Inicio'},
-        { name: 'fechaFin', label: 'Fecha Fin'},
-        { name: 'estatusContrato', label: 'Estatus Contrato', isEnum: true},
-        { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true}
+        { name: 'fechaInicio', label: 'Fecha Inicio' },
+        { name: 'fechaFin', label: 'Fecha Fin' },
+        { name: 'estatusContrato', label: 'Estatus Contrato', isEnum: true },
+        { name: 'tipoContrato', label: 'Tipo Contrato', isEnum: true }
       ];
-      
-      if(!isEdit){
+
+      if (!isEdit) {
         fieldsToValidate.push(
-          { name: 'contratoPDF', label: 'Contrato' },
-          { name: 'idInquilino', label: 'Inquilino' },
-          { name: 'idHabitacion', label: 'Habitación' },
-        )
+          { name: 'contratoPDF', label: 'Contrato', isFile: true },
+          { name: 'idInquilino', label: 'Inquilino', isEnum: true },
+          { name: 'idHabitacion', label: 'Habitación', isEnum: true }
+        );
       }
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
-            if (formData[field.name] === undefined || formData[field.name] === null) {
-                errors[field.name] = `${field.label} es obligatorio.`;
-            }
+          if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
+            errors[field.name] = `${field.label} es obligatorio.`;
+          }
+        } else if (field.isFile) {
+          const file = formData[field.name];
+          if (!file) {
+            errors[field.name] = `${field.label} es obligatorio.`;
+          } else if (!file.name || !file.name.endsWith('.pdf')) {
+            errors[field.name] = `${field.label} debe ser un archivo PDF válido.`;
+          }
         } else {
-            if (!formData[field.name] || !formData[field.name].trim()) {
-                errors[field.name] = `${field.label} es obligatorio.`;
-            }
+          if (!formData[field.name] || !formData[field.name].trim()) {
+            errors[field.name] = `${field.label} es obligatorio.`;
+          }
         }
       });
 
-      if (Object.keys(errors).length > 0) {
-          return Promise.resolve({ success: false, errors });
+      const fechaInicio = new Date(formData.fechaInicio);
+      const fechaFin = new Date(formData.fechaFin);
+
+      if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
+        errors.fechaInicio = `La Fecha Inicio no puede ser mayor a la Fecha Fin.`;
       }
-          
+
+      if (Object.keys(errors).length > 0) {
+        return Promise.resolve({ success: false, errors });
+      }
+   
       if (isEdit) {
         return contratoService.updateContrato(formData.id, formData).then((data) => {
           loadData();
-          toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Editado Exitosamente', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Editado Exitosamente', life: 3000 });}
           return { success: true };
         }).catch((error) => {
             console.error('Error fetching contratos:', error);
@@ -219,10 +233,10 @@ function Contratos() {
         const newFormData = { ...formData, id: 0 };
         return contratoService.createContrato(newFormData).then((data) => {
             loadData();
-            toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Creado Exitosamente', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Contrato Creado Exitosamente', life: 3000 });}
             return { success: true };
         }).catch((error) => {
-          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el contrato', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el contrato', life: 3000 });}
             console.error('Error al crear:', error);
             return { success: false, errors: { general: 'Error al crear el contrato.' } };
         });
@@ -235,7 +249,7 @@ function Contratos() {
         setInquilinos(response.data)
         return response.data;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });}
       }
     }
 
@@ -251,7 +265,7 @@ function Contratos() {
         setHabitacionesDisponibles(habitacionesFiltradas);
         return response.data;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });}
       }
     }
 

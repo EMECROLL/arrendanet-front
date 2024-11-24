@@ -3,8 +3,9 @@ import CryptoJS from 'crypto-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AccountService } from './services/account/AccountService';
 import { useNavigate } from 'react-router-dom';
+import { IAccount } from './interfaces/account/Account';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 const encryptJWT = (token) => {
     return CryptoJS.AES.encrypt(token, SECRET_KEY).toString();
@@ -26,8 +27,6 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => { 
             const encryptedToken = localStorage.getItem('token'); 
-            // console.log(encryptedToken);
-
             if (encryptedToken) {
                 const token = decryptJWT(encryptedToken);
                 setToke(token);                
@@ -49,7 +48,7 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     },  [isAuthenticated]);
 
-    const login = async (credentials) => {
+    const login = async (credentials:IAccount) => {
         try {            
             const response = await accountService.login(credentials);
             

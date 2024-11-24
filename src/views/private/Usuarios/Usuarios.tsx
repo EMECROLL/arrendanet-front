@@ -4,7 +4,6 @@ import { Toast } from 'primereact/toast';
 import { ITableSchema } from '../../../interfaces/data-table/DataTable';
 import BasicDataTable from '../../../components/basic-data-table/BasicDataTable';
 import DeleteModal from '../../../components/delete-modal/DeleteModal';
-// import checkedBodyTemplate from '../../../components/checked-body-template/checkedBodyTemplate';
 import BasicModal from '../../../components/basic-modal/BasicModal';
 import { IFormSchema } from '../../../interfaces/data-form-field/DataFormField';
 import CreateEditModal from '../../../components/create-edit-modal/CreateEditModal';
@@ -15,7 +14,7 @@ import { IPersona } from '../../../interfaces/persona/Persona';
 import { useAuth } from '../../../AuthContext';
 import { Roles } from '../../../common/enums/enums';
 
-function Usuarios() {
+const Usuarios: React.FC = () => {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
@@ -24,7 +23,7 @@ function Usuarios() {
     const [roles, setRoles] = useState()
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
-    const toast = useRef(null);
+    const toast = useRef<Toast>(null);
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const accountService = new AccountService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const ignoreColumns = ['idPersona', 'idUsuario', 'idEdificio', 'idRol', 'contacto']
@@ -65,10 +64,9 @@ function Usuarios() {
 
       accountService.getAllAccounts(token).then((data) => {
         if(data.success){
-          // console.log(data.data);
           setData(data.data);
         }else{
-          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener a los usuarios', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener a los usuarios', life: 3000 });}
         }
       }).catch((error) => {
           console.error('Error fetching personas:', error);
@@ -77,7 +75,6 @@ function Usuarios() {
 
      // ? Función para abrir modal de eliminar
     function deleteData(rowData) {
-      console.log(rowData);
       
       setShowDeleteModal(true);
       setSelectedData(rowData)
@@ -85,25 +82,23 @@ function Usuarios() {
 
     // ? Función para eliminar el elemento seleccionado
     async function deleteFunction() {
-      console.log(selectedData);
       
       if (selectedData && selectedData.idPersona) {
           try {
               await accountService.delete(selectedData.idPersona);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Eliminado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Eliminado Exitosamente', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el usuario', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el usuario', life: 3000 });}
               console.error('Error al eliminar el usuario:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun Usuario para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun Usuario para eliminar', life: 3000 });}
       }
     }
 
     // ? Función para abrir modal para editar
     function editData(rowData) {
-      console.log(rowData);
       setShowCreateEditModal(true);
       setIsEdit(true);
       setSelectedData(rowData)
@@ -156,7 +151,7 @@ function Usuarios() {
         setEdificios(response.data)
         return response.data;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los edificios', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener los edificios', life: 3000 });}
       }
     }
 
@@ -198,7 +193,7 @@ function Usuarios() {
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
-            if (formData[field.name] === undefined || formData[field.name] === null) {
+            if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         } else {
@@ -229,10 +224,10 @@ function Usuarios() {
             return accountService.edit(formData.idPersona, formData).then((data) => {
               if(data.success){
                 loadData();
-                toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Editado Exitosamente', life: 3000 });
+                if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Editado Exitosamente', life: 3000 });}
                 return { success: true };  
               }else{
-                toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });}
                 console.error('Error al crear:', error);
                 return { success: false, errors: { general: data.message } };
               }
@@ -245,10 +240,10 @@ function Usuarios() {
           return accountService.create(newFormData).then((data) => {
               if(data.success){
                 loadData();
-                toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Creado Exitosamente', life: 3000 });
+                if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Usuario Creado Exitosamente', life: 3000 });}
                 return { success: true };  
               }else{
-                toast!.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });}
                 console.error('Error al crear:', error);
                 return { success: false, errors: { general: data.message } };
               }

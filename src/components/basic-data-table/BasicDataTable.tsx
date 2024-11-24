@@ -180,8 +180,6 @@ const BasicDataTable: React.FC<BasicDataTableProps> = ({ TableSchema }) => {
     };
 
     const deleteSelectedDatas = () => {
-        console.log(val);
-        
         setDeleteDatasDialog(false);
         setSelectedData(null);
         // toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });

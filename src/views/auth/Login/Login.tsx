@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useAuth } from '../../../AuthContext';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -19,7 +19,7 @@ function Login() {
   });
   const [errors, setErrors] = useState({ user: '', email: '', password: '', rememberMe: false });
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name == 'rememberMe') {
       setCredentials(prevState => ({
@@ -40,7 +40,7 @@ function Login() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:FormEvent) => {
     e.preventDefault();
     
     const newErrors = {};
@@ -63,7 +63,7 @@ function Login() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      setErrors({ user: 'Ocurrió un error inesperado. Intente de nuevo.' });
+      setErrors({ ...newErrors, user: 'Ocurrió un error inesperado. Intente de nuevo.' });
     }
   };
 

@@ -13,14 +13,14 @@ import iconoGirarCelular from '../../../assets/gif/icono-girar.gif'
 import { IEdificio } from '../../../interfaces/edificio/Edificio';
 import { useAuth } from '../../../AuthContext';
 
-function Edificios() {
+const Edificios: React.FC = () => {
     const [data, setData] = useState()
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showDataModal, setShowDataModal] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IEdificio>()
-    const toast = useRef(null);
+    const toast = useRef<Toast>(null);
     const edificioService = new EdificioService(); // Los servicios de cualquier endpoint lo deben declarar primero, generan una instancia de su clase
     const [isMobile, setIsMobile] = useState(false);
     const { token } = useAuth();
@@ -58,13 +58,13 @@ function Edificios() {
           try {
               await edificioService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Eliminado Exitosamente', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Eliminado Exitosamente', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar el edificio', life: 3000 });}
               console.error('Error al eliminar a la persona:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ningun edificio para eliminar', life: 3000 });}
       }
     }
 
@@ -129,7 +129,7 @@ function Edificios() {
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
-            if (formData[field.name] === undefined || formData[field.name] === null) {
+            if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         } else {
@@ -147,7 +147,7 @@ function Edificios() {
           return edificioService.edit(formData.id, formData)
               .then(() => {
                   loadData();
-                  toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Editado Exitosamente', life: 3000 });
+                  if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Editado Exitosamente', life: 3000 });}
                   return { success: true };
               })
               .catch((error) => {
@@ -159,7 +159,7 @@ function Edificios() {
           return edificioService.create(newFormData)
               .then(() => {
                   loadData();
-                  toast!.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Creado Exitosamente', life: 3000 });
+                  if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Éxito', detail: 'Edificio Creado Exitosamente', life: 3000 });}
                   return { success: true };
               })
               .catch((error) => {

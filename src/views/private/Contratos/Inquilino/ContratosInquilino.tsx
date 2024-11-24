@@ -20,7 +20,7 @@ import { classNames } from 'primereact/utils';
 import { Tag } from 'primereact/tag';
 import { useAuth } from '../../../../AuthContext';
 
-function ContratosInquilino() {
+const ContratosInquilino: React.FC = () => {
     const url = import.meta.env.VITE_BACKEND_URL;
     const [data, setData] = useState([])
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -29,7 +29,7 @@ function ContratosInquilino() {
     const [isEdit, setIsEdit] = useState(false)
     const [showCreateEditModal, setShowCreateEditModal] = useState(false)
     const [selectedData, setSelectedData] = useState<IPersona>()
-    const toast = useRef(null);
+    const toast = useRef<Toast>(null);
     const estatusContratoList = Object.values(EstatusContrato);
     const tipoContratoList = Object.values(TipoContrato);
     const [inquilinos, setInquilinos] = useState()
@@ -97,13 +97,13 @@ function ContratosInquilino() {
           try {
               await contratoService.delete(selectedData.id);
               loadData();
-              toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Persona Eliminada', life: 3000 });
+              if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Persona Eliminada', life: 3000 });}
           } catch (error) {
-              toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a la persona', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar a la persona', life: 3000 });}
               console.error('Error al eliminar a la persona:', error);
           }
       } else {
-          toast!.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ninguna persona para eliminar', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'warn', summary: 'Advertencia', detail: 'No se ha seleccionado ninguna persona para eliminar', life: 3000 });}
       }
     }
 
@@ -183,7 +183,7 @@ function ContratosInquilino() {
 
       fieldsToValidate.forEach(field => {
         if (field.isEnum) {
-            if (formData[field.name] === undefined || formData[field.name] === null) {
+            if (formData[field.name] === undefined || formData[field.name] === null || formData[field.name] === '') {
                 errors[field.name] = `${field.label} es obligatorio.`;
             }
         } else {
@@ -201,7 +201,7 @@ function ContratosInquilino() {
         return contratoService.updateContrato(formData.id, formData).then((data) => {
           
           loadData();
-          toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Editado Exitosamente', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Editado Exitosamente', life: 3000 });}
           return { success: true };
         }).catch((error) => {
             console.error('Error fetching contratos:', error);
@@ -212,10 +212,10 @@ function ContratosInquilino() {
         return contratoService.createContrato(newFormData).then((data) => {
 
             loadData();
-            toast!.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Creado Exitosamente', life: 3000 });
+            if (toast?.current) {toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Contrato Creado Exitosamente', life: 3000 });}
             return { success: true };
         }).catch((error) => {
-          toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el contrato', life: 3000 });
+          if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al crear el contrato', life: 3000 });}
             console.error('Error al crear:', error);
             return { success: false, errors: { general: 'Error al crear el contrato.' } };
         });
@@ -228,7 +228,7 @@ function ContratosInquilino() {
         setInquilinos(response)
         return response;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });}
       }
     }
 
@@ -238,7 +238,7 @@ function ContratosInquilino() {
         setHabitaciones(response)
         return response;
       } catch (error) {
-        toast!.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });
+        if (toast?.current) {toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error al obtener las habitaciones', life: 3000 });}
       }
     }
 
