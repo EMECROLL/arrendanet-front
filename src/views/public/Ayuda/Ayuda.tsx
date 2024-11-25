@@ -16,7 +16,8 @@ export default function Ayuda() {
   });
   const [cargando, setCargando] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -24,11 +25,28 @@ export default function Ayuda() {
       ...formData,
       [name]: value,
     });
+    setFieldErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const validateFields = () => {
+    const errors: Record<string, string> = {};
+    if (!formData.nombre.trim()) errors.nombre = 'El nombre es obligatorio.';
+    if (!formData.correo.trim()) errors.correo = 'El correo es obligatorio.';
+    if (!formData.asunto.trim()) errors.asunto = 'El asunto es obligatorio.';
+    if (!formData.mensaje.trim()) errors.mensaje = 'El mensaje es obligatorio.';
+    return errors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setCargando(true);
+
+    const errors = validateFields();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setCargando(false);
+      return;
+    }
 
     const { nombre, correo, telefono, asunto, mensaje } = formData;
 
@@ -87,6 +105,7 @@ export default function Ayuda() {
                     Nombre completo
                   </label>
                 </FloatLabel>
+                {fieldErrors.nombre && <small className="p-error">{fieldErrors.nombre}</small>}
               </div>
 
               <div className="flex flex-col mx-auto w-full">
@@ -96,6 +115,7 @@ export default function Ayuda() {
                     Correo electrónico
                   </label>
                 </FloatLabel>
+                {fieldErrors.correo && <small className="p-error">{fieldErrors.correo}</small>}
               </div>
 
               <div className="flex flex-col mx-auto w-full">
@@ -121,6 +141,7 @@ export default function Ayuda() {
                     Asunto (Motivo de contacto)
                   </label>
                 </FloatLabel>
+                {fieldErrors.asunto && <small className="p-error">{fieldErrors.asunto}</small>}
               </div>
 
               <div className="flex flex-col mx-auto w-full">
@@ -130,6 +151,7 @@ export default function Ayuda() {
                     Mensaje
                   </label>
                 </FloatLabel>
+                {fieldErrors.mensaje && <small className="p-error">{fieldErrors.mensaje}</small>}
               </div>
             </div>
 
